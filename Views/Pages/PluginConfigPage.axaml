@@ -1,0 +1,63 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MicroPanelAvalonia.Views.Pages.PluginConfigPage">
+  <Grid RowDefinitions="Auto,*">
+    <!-- 标题栏 -->
+    <Border Grid.Row="0"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Padding="16"
+            Margin="0,0,0,16">
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        <Button x:Name="BackButton"
+                Grid.Column="0"
+                IsVisible="False"
+                Click="OnBackClick">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <PathIcon Data="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"
+                      Width="16" Height="16"/>
+            <TextBlock Text="返回"/>
+          </StackPanel>
+        </Button>
+        
+        <TextBlock Grid.Column="1"
+                   Text="插件配置"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Left"/>
+        
+        <Button x:Name="SaveButton"
+                Grid.Column="2"
+                Classes="Accent"
+                IsVisible="False"
+                Click="OnSaveClick">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <PathIcon Data="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H7A2,2 0 0,0 5,5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V5A2,2 0 0,0 17,3Z"
+                      Width="16" Height="16"/>
+            <TextBlock Text="保存"/>
+          </StackPanel>
+        </Button>
+      </Grid>
+    </Border>
+    
+    <!-- 内容区域 -->
+    <Border Grid.Row="1"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Padding="16">
+      <ScrollViewer>
+        <StackPanel x:Name="ContentPanel">
+          <!-- 插件列表 -->
+          <StackPanel x:Name="PluginsListPanel"
+                      Orientation="Vertical"/>
+          
+          <!-- 配置表单 -->
+          <StackPanel x:Name="ConfigFormPanel"
+                      IsVisible="False"
+                      Spacing="16"/>
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+  </Grid>
+</UserControl>

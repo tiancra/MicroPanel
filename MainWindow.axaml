@@ -1,0 +1,323 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="using:MicroPanelAvalonia.Views"
+        xmlns:pages="using:MicroPanelAvalonia.Views.Pages"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="MicroPanelAvalonia.MainWindow"
+        Title="MicroPanel"
+        Width="1200" Height="800"
+        MinWidth="900" MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        TransparencyLevelHint="Mica"
+        Background="Transparent">
+
+  <Grid ColumnDefinitions="Auto,*">
+
+    <Border Grid.Column="0"
+            Width="200"
+            Background="{DynamicResource LayerFillColorDefaultBrush}"
+            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+            BorderThickness="0,0,1,0">
+      <Grid RowDefinitions="Auto,*,Auto">
+
+        <Border Grid.Row="0" Padding="16,20">
+          <TextBlock Text="MicroPanel"
+                     FontSize="20"
+                     FontWeight="Bold"
+                     HorizontalAlignment="Center"/>
+        </Border>
+
+        <StackPanel Grid.Row="1" Margin="8,0">
+          <Button x:Name="HomeButton"
+                  Classes="Navigation"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Left"
+                  Padding="12,10"
+                  Click="OnHomeClick">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <PathIcon Data="M12,3L4,9v12h5v-7h6v7h5V9L12,3zM12,5.5L18,10v9h-3v-7H9v7H6v-9L12,5.5z"
+                        Width="18" Height="18"/>
+              <TextBlock Text="主页" FontSize="14"/>
+            </StackPanel>
+          </Button>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Margin="16,16" Spacing="8">
+          <Button Classes="Navigation"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Left"
+                  Padding="12,10"
+                  Click="OnAboutClick">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <PathIcon Data="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
+                        Width="18" Height="18"/>
+              <TextBlock Text="关于" FontSize="14"/>
+            </StackPanel>
+          </Button>
+          <TextBlock Text="MicroPanel v2.0.0_Beta"
+                     FontSize="11"
+                     Opacity="0.5"
+                     HorizontalAlignment="Center"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Grid Grid.Column="1">
+      <Grid x:Name="ServerListView" RowDefinitions="Auto,*">
+        <Border Grid.Row="0"
+                Background="{DynamicResource LayerFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="20,16">
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Grid.Column="0"
+                       Text="服务器管理"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
+
+            <Button Grid.Column="1"
+                    x:Name="RefreshButton"
+                    Classes="Ghost"
+                    Padding="8"
+                    Click="OnRefreshClick">
+              <PathIcon Data="M17.65,6.35C16.2,4.9 14.21,4 12,4c-4.42,0 -7.99,3.58 -7.99,8s3.57,8 7.99,8c3.73,0 6.84,-2.55 7.73,-6h-2.08c-0.82,2.33 -3.04,4 -5.65,4 -3.31,0 -6,-2.69 -6,-6s2.69,-6 6,-6c1.66,0 3.14,0.69 4.22,1.78L13,11h7V4l-2.35,2.35z"
+                        Width="16" Height="16"/>
+            </Button>
+          </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto"
+                      Padding="20">
+          <WrapPanel x:Name="ServersWrapPanel"
+                     Orientation="Horizontal"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Top">
+            <ItemsControl x:Name="ServersItemsControl">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+            <Button x:Name="AddServerButton"
+                    Width="320"
+                    Height="200"
+                    Classes="Ghost"
+                    BorderThickness="2"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    CornerRadius="8"
+                    Click="OnAddServerClick">
+              <StackPanel Spacing="12" HorizontalAlignment="Center">
+                <PathIcon Data="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                          Width="48" Height="48"
+                          Opacity="0.4"/>
+                <TextBlock Text="添加服务器"
+                           FontSize="16"
+                           Opacity="0.6"/>
+              </StackPanel>
+            </Button>
+          </WrapPanel>
+        </ScrollViewer>
+      </Grid>
+
+      <!-- 关于页面 -->
+      <pages:AboutPage x:Name="AboutView" IsVisible="False"/>
+    </Grid>
+
+    <!-- 添加服务器弹窗 -->
+    <Border x:Name="AddServerOverlay"
+            Grid.Column="0" Grid.ColumnSpan="2"
+            Grid.Row="0" Grid.RowSpan="2"
+            Background="#80000000"
+            IsVisible="False"
+            Opacity="0">
+      <Border.Transitions>
+        <Transitions>
+          <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+        </Transitions>
+      </Border.Transitions>
+      <Grid HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+        <Border x:Name="AddServerDialogContainer"
+                Background="{DynamicResource LayerFillColorDefaultBrush}"
+                CornerRadius="8"
+                BoxShadow="0 8 32 0 #40000000"
+                RenderTransformOrigin="0.5,0.5"
+                Opacity="0">
+          <Border.RenderTransform>
+            <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
+          </Border.RenderTransform>
+          <Border.Transitions>
+            <Transitions>
+              <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
+              <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25">
+                <TransformOperationsTransition.Easing>
+                  <CubicEaseOut/>
+                </TransformOperationsTransition.Easing>
+              </TransformOperationsTransition>
+            </Transitions>
+          </Border.Transitions>
+          <views:AddServerDialog x:Name="AddServerDialog"/>
+        </Border>
+      </Grid>
+    </Border>
+
+    <!-- 用户选择弹窗 -->
+    <Border x:Name="UserSelectOverlay"
+            Grid.Column="0" Grid.ColumnSpan="2"
+            Grid.Row="0" Grid.RowSpan="2"
+            Background="#80000000"
+            IsVisible="False"
+            Opacity="0">
+      <Border.Transitions>
+        <Transitions>
+          <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+        </Transitions>
+      </Border.Transitions>
+      <Grid HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+        <Border x:Name="UserSelectDialogContainer"
+                Background="{DynamicResource LayerFillColorDefaultBrush}"
+                CornerRadius="8"
+                BoxShadow="0 8 32 0 #40000000"
+                RenderTransformOrigin="0.5,0.5"
+                Opacity="0">
+          <Border.RenderTransform>
+            <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
+          </Border.RenderTransform>
+          <Border.Transitions>
+            <Transitions>
+              <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
+              <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25">
+                <TransformOperationsTransition.Easing>
+                  <CubicEaseOut/>
+                </TransformOperationsTransition.Easing>
+              </TransformOperationsTransition>
+            </Transitions>
+          </Border.Transitions>
+          <views:UserSelectDialog x:Name="UserSelectDialog"/>
+        </Border>
+      </Grid>
+    </Border>
+
+    <!-- 用户管理弹窗 -->
+    <Border x:Name="UserManagementOverlay"
+            Grid.Column="0" Grid.ColumnSpan="2"
+            Grid.Row="0" Grid.RowSpan="2"
+            Background="#80000000"
+            IsVisible="False"
+            Opacity="0">
+      <Border.Transitions>
+        <Transitions>
+          <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+        </Transitions>
+      </Border.Transitions>
+      <Grid HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+        <Border x:Name="UserManagementDialogContainer"
+                Background="{DynamicResource LayerFillColorDefaultBrush}"
+                CornerRadius="8"
+                BoxShadow="0 8 32 0 #40000000"
+                RenderTransformOrigin="0.5,0.5"
+                Opacity="0">
+          <Border.RenderTransform>
+            <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
+          </Border.RenderTransform>
+          <Border.Transitions>
+            <Transitions>
+              <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
+              <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25">
+                <TransformOperationsTransition.Easing>
+                  <CubicEaseOut/>
+                </TransformOperationsTransition.Easing>
+              </TransformOperationsTransition>
+            </Transitions>
+          </Border.Transitions>
+          <views:UserManagementDialog x:Name="UserManagementDialog"/>
+        </Border>
+      </Grid>
+    </Border>
+
+    <!-- 编辑/添加用户弹窗 -->
+    <Border x:Name="EditUserOverlay"
+            Grid.Column="0" Grid.ColumnSpan="2"
+            Grid.Row="0" Grid.RowSpan="2"
+            Background="#80000000"
+            IsVisible="False"
+            Opacity="0">
+      <Border.Transitions>
+        <Transitions>
+          <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+        </Transitions>
+      </Border.Transitions>
+      <Grid HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+        <Border x:Name="EditUserDialogContainer"
+                Background="{DynamicResource LayerFillColorDefaultBrush}"
+                CornerRadius="8"
+                BoxShadow="0 8 32 0 #40000000"
+                RenderTransformOrigin="0.5,0.5"
+                Opacity="0">
+          <Border.RenderTransform>
+            <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
+          </Border.RenderTransform>
+          <Border.Transitions>
+            <Transitions>
+              <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
+              <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25">
+                <TransformOperationsTransition.Easing>
+                  <CubicEaseOut/>
+                </TransformOperationsTransition.Easing>
+              </TransformOperationsTransition>
+            </Transitions>
+          </Border.Transitions>
+          <views:EditUserDialog x:Name="EditUserDialog"/>
+        </Border>
+      </Grid>
+    </Border>
+
+    <!-- 确认弹窗 -->
+    <Border x:Name="ConfirmOverlay"
+            Grid.Column="0" Grid.ColumnSpan="2"
+            Grid.Row="0" Grid.RowSpan="2"
+            Background="#80000000"
+            IsVisible="False"
+            Opacity="0">
+      <Border.Transitions>
+        <Transitions>
+          <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+        </Transitions>
+      </Border.Transitions>
+      <Grid HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+        <Border x:Name="ConfirmDialogContainer"
+                Background="{DynamicResource LayerFillColorDefaultBrush}"
+                CornerRadius="8"
+                BoxShadow="0 8 32 0 #40000000"
+                RenderTransformOrigin="0.5,0.5"
+                Opacity="0">
+          <Border.RenderTransform>
+            <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
+          </Border.RenderTransform>
+          <Border.Transitions>
+            <Transitions>
+              <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
+              <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25">
+                <TransformOperationsTransition.Easing>
+                  <CubicEaseOut/>
+                </TransformOperationsTransition.Easing>
+              </TransformOperationsTransition>
+            </Transitions>
+          </Border.Transitions>
+          <views:ConfirmDialog x:Name="ConfirmDialogControl"/>
+        </Border>
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

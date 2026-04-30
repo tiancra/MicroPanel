@@ -1,0 +1,78 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:MicroPanelAvalonia.Models"
+             x:Class="MicroPanelAvalonia.Views.Pages.FileManagerPage">
+  <Grid RowDefinitions="Auto,Auto,*">
+    <!-- 路径栏 -->
+    <Border Grid.Row="0"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Padding="16,12"
+            Margin="0,0,0,12">
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        <Button Grid.Column="0"
+                Content="返回"
+                Click="OnGoBackClick"
+                Margin="0,0,8,0"/>
+        <TextBox Grid.Column="1"
+                 x:Name="PathTextBox"
+                 Text="0"
+                 KeyDown="OnPathTextBoxKeyDown"/>
+        <Button Grid.Column="2"
+                Content="前往"
+                Click="OnGoClick"
+                Margin="8,0,0,0"/>
+      </Grid>
+    </Border>
+
+    <!-- 工具栏 -->
+    <Border Grid.Row="1"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Padding="16,12"
+            Margin="0,0,0,12">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <ComboBox x:Name="CreateComboBox"
+                  Width="100"
+                  PlaceholderText="新建"
+                  SelectionChanged="OnCreateSelectionChanged">
+          <ComboBoxItem Content="文件"/>
+          <ComboBoxItem Content="目录"/>
+        </ComboBox>
+        <Button Content="上传"
+                Click="OnUploadClick"/>
+        <Button Content="刷新"
+                Click="OnRefreshClick"/>
+        <TextBox x:Name="SearchTextBox"
+                 Width="200"
+                 Watermark="搜索文件..."
+                 KeyDown="OnSearchTextBoxKeyDown"/>
+      </StackPanel>
+    </Border>
+
+    <!-- 文件列表 -->
+    <Border Grid.Row="2"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8">
+      <DataGrid x:Name="FilesDataGrid"
+                AutoGenerateColumns="False"
+                IsReadOnly="True"
+                GridLinesVisibility="Horizontal"
+                BorderThickness="0"
+                Margin="8"
+                x:DataType="models:FileItem">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="名称"
+                              Binding="{Binding Name}"
+                              Width="*"/>
+          <DataGridTextColumn Header="大小"
+                              Binding="{Binding Size}"
+                              Width="100"/>
+          <DataGridTextColumn Header="修改时间"
+                              Binding="{Binding Mtime}"
+                              Width="180"/>
+        </DataGrid.Columns>
+      </DataGrid>
+    </Border>
+  </Grid>
+</UserControl>

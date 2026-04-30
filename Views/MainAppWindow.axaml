@@ -1,0 +1,292 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="using:MicroPanelAvalonia.Views"
+        mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="900"
+        x:Class="MicroPanelAvalonia.Views.MainAppWindow"
+        Title="MicroPanel - 管理后台"
+        Width="1400" Height="900"
+        MinWidth="1000" MinHeight="700"
+        WindowStartupLocation="CenterScreen"
+        TransparencyLevelHint="Mica"
+        Background="Transparent">
+
+  <Grid ColumnDefinitions="260,*">
+
+    <!-- 侧边栏 -->
+    <Border Grid.Column="0"
+            Background="{DynamicResource LayerFillColorDefaultBrush}"
+            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+            BorderThickness="0,0,1,0">
+      <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Logo区域 -->
+        <Border Grid.Row="0" Padding="20,24">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <PathIcon Data="M12,2L2,7L12,12L22,7L12,2M2,17L12,22L22,17L22,12L12,17L2,12L2,17Z"
+                      Width="32" Height="32"
+                      Foreground="{DynamicResource AccentFillColorDefaultBrush}"/>
+            <TextBlock Text="MicroPanel"
+                       FontSize="22"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"/>
+          </StackPanel>
+        </Border>
+
+        <!-- 导航菜单 -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      Padding="12,0">
+          <StackPanel x:Name="MenuStackPanel" Spacing="4">
+
+            <!-- 首页 -->
+            <Button x:Name="HomeMenuButton"
+                    Classes="Navigation"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"
+                    Padding="12,10"
+                    Click="OnMenuClick"
+                    Tag="Home">
+              <StackPanel Orientation="Horizontal" Spacing="12">
+                <PathIcon Data="M12,3L4,9v12h5v-7h6v7h5V9L12,3z"
+                          Width="20" Height="20"/>
+                <TextBlock Text="首页" FontSize="14"/>
+              </StackPanel>
+            </Button>
+
+            <!-- 大屏数据分组 -->
+            <Expander HorizontalAlignment="Stretch"
+                      IsExpanded="True"
+                      Margin="0,8,0,0">
+              <Expander.Header>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                  <PathIcon Data="M4,6H20V16H4M2,18H22V20H2V18M20,4H4V6H20V4Z"
+                            Width="20" Height="20"/>
+                  <TextBlock Text="数据监控" FontSize="14"/>
+                </StackPanel>
+              </Expander.Header>
+              <StackPanel Spacing="4" Margin="0,4,0,0">
+                <Button Classes="Navigation"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="36,8"
+                        Click="OnMenuClick"
+                        Tag="Status">
+                  <TextBlock Text="系统状态" FontSize="13"/>
+                </Button>
+                <Button Classes="Navigation"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="36,8"
+                        Click="OnMenuClick"
+                        Tag="Logs">
+                  <TextBlock Text="日志输出" FontSize="13"/>
+                </Button>
+              </StackPanel>
+            </Expander>
+
+            <!-- 开发工具分组 -->
+            <Expander HorizontalAlignment="Stretch"
+                      IsExpanded="True"
+                      Margin="0,8,0,0">
+              <Expander.Header>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                  <PathIcon Data="M9.4,16.6L4.8,12L9.4,7.4L8,6L2,12L8,18L9.4,16.6M14.6,16.6L19.2,12L14.6,7.4L16,6L22,12L16,18L14.6,16.6Z"
+                            Width="20" Height="20"/>
+                  <TextBlock Text="开发工具" FontSize="14"/>
+                </StackPanel>
+              </Expander.Header>
+              <StackPanel Spacing="4" Margin="0,4,0,0">
+                <Button Classes="Navigation"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="36,8"
+                        Click="OnMenuClick"
+                        Tag="Plugins">
+                  <TextBlock Text="插件开发" FontSize="13"/>
+                </Button>
+                <Button Classes="Navigation"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="36,8"
+                        Click="OnMenuClick"
+                        Tag="Files">
+                  <TextBlock Text="文件管理" FontSize="13"/>
+                </Button>
+                <Button Classes="Navigation"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="36,8"
+                        Click="OnMenuClick"
+                        Tag="Sandbox">
+                  <TextBlock Text="沙盒调试" FontSize="13"/>
+                </Button>
+                <Button Classes="Navigation"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="36,8"
+                        Click="OnMenuClick"
+                        Tag="Database">
+                  <TextBlock Text="数据库" FontSize="13"/>
+                </Button>
+              </StackPanel>
+            </Expander>
+
+            <!-- 配置管理分组 -->
+            <Expander HorizontalAlignment="Stretch"
+                      IsExpanded="True"
+                      Margin="0,8,0,0">
+              <Expander.Header>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                  <PathIcon Data="M19.14,12.94C19.19,12.64 19.22,12.33 19.22,12C19.22,11.68 19.19,11.36 19.14,11.06L21.54,9.11C21.75,8.95 21.81,8.65 21.67,8.42L19.42,4.81C19.28,4.58 19,4.47 18.73,4.57L15.9,5.67C15.43,5.32 14.93,5.03 14.4,4.81L14,1.81C13.96,1.55 13.73,1.36 13.46,1.36H9.54C9.27,1.36 9.04,1.55 9,1.81L8.6,4.81C8.07,5.03 7.57,5.32 7.1,5.67L4.27,4.57C4,4.47 3.72,4.58 3.58,4.81L1.33,8.42C1.19,8.65 1.25,8.95 1.46,9.11L3.86,11.06C3.81,11.36 3.78,11.68 3.78,12C3.78,12.33 3.81,12.64 3.86,12.94L1.46,14.89C1.25,15.05 1.19,15.35 1.33,15.58L3.58,19.19C3.72,19.42 4,19.53 4.27,19.43L7.1,18.33C7.57,18.68 8.07,18.97 8.6,19.19L9,22.19C9.04,22.45 9.27,22.64 9.54,22.64H13.46C13.73,22.64 13.96,22.45 14,22.19L14.4,19.19C14.93,18.97 15.43,18.68 15.9,18.33L18.73,19.43C19,19.53 19.28,19.42 19.42,19.19L21.67,15.58C21.81,15.35 21.75,15.05 21.54,14.89L19.14,12.94M12,15.6A3.6,3.6 0 0,1 8.4,12A3.6,3.6 0 0,1 12,8.4A3.6,3.6 0 0,1 15.6,12A3.6,3.6 0 0,1 12,15.6Z"
+                            Width="20" Height="20"/>
+                  <TextBlock Text="配置管理" FontSize="14"/>
+                </StackPanel>
+              </Expander.Header>
+              <StackPanel Spacing="4" Margin="0,4,0,0">
+                <Button Classes="Navigation"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="36,8"
+                        Click="OnMenuClick"
+                        Tag="ConfigBot">
+                  <TextBlock Text="Bot配置" FontSize="13"/>
+                </Button>
+                <Button Classes="Navigation"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="36,8"
+                        Click="OnMenuClick"
+                        Tag="ConfigPlugin">
+                  <TextBlock Text="插件配置" FontSize="13"/>
+                </Button>
+                <Button Classes="Navigation"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="36,8"
+                        Click="OnMenuClick"
+                        Tag="ConfigUser">
+                  <TextBlock Text="权限配置" FontSize="13"/>
+                </Button>
+                <Button Classes="Navigation"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Padding="36,8"
+                        Click="OnMenuClick"
+                        Tag="ConfigProtocol">
+                  <TextBlock Text="协议配置" FontSize="13"/>
+                </Button>
+              </StackPanel>
+            </Expander>
+
+            <!-- 关于 -->
+            <Button Classes="Navigation"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Left"
+                    Padding="12,10"
+                    Margin="0,8,0,0"
+                    Click="OnMenuClick"
+                    Tag="About">
+              <StackPanel Orientation="Horizontal" Spacing="12">
+                <PathIcon Data="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
+                          Width="20" Height="20"/>
+                <TextBlock Text="关于" FontSize="14"/>
+              </StackPanel>
+            </Button>
+
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- 底部用户信息 -->
+        <Border Grid.Row="2"
+                Background="{DynamicResource LayerFillColorAltBrush}"
+                Padding="16,12"
+                Margin="12,12,12,12"
+                CornerRadius="8">
+          <Grid ColumnDefinitions="Auto,*,Auto">
+            <Border Grid.Column="0"
+                    Width="36" Height="36"
+                    CornerRadius="18"
+                    Background="{DynamicResource AccentFillColorDefaultBrush}"
+                    ClipToBounds="True">
+              <Grid>
+                <Image x:Name="UserAvatarImage"
+                       Stretch="UniformToFill"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       IsVisible="False"/>
+                <TextBlock x:Name="UserAvatarText"
+                           Text="U"
+                           FontSize="14"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+              </Grid>
+            </Border>
+            <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+              <TextBlock x:Name="UsernameText"
+                         Text="用户名"
+                         FontSize="13"
+                         FontWeight="SemiBold"/>
+              <TextBlock x:Name="ServerAddressText"
+                         Text="服务器地址"
+                         FontSize="11"
+                         Opacity="0.6"/>
+            </StackPanel>
+            <Button Grid.Column="2"
+                    Classes="Ghost"
+                    Padding="6"
+                    Click="OnLogoutClick">
+              <PathIcon Data="M17,7L15.59,8.41L18.17,11H8V13H18.17L15.59,15.58L17,17L22,12M4,5H12V3H4A2,2 0 0,0 2,5V19A2,2 0 0,0 4,21H12V19H4V5Z"
+                        Width="18" Height="18"
+                        Opacity="0.6"/>
+            </Button>
+          </Grid>
+        </Border>
+      </Grid>
+    </Border>
+
+    <!-- 主内容区 -->
+    <Grid Grid.Column="1" RowDefinitions="Auto,*">
+
+      <!-- 顶部标题栏 -->
+      <Border Grid.Row="0"
+              Background="{DynamicResource LayerFillColorDefaultBrush}"
+              BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+              BorderThickness="0,0,0,1"
+              Padding="24,16">
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock x:Name="PageTitleText"
+                     Grid.Column="0"
+                     Text="首页"
+                     FontSize="20"
+                     FontWeight="SemiBold"
+                     VerticalAlignment="Center"/>
+          <TextBlock Grid.Column="1"
+                     Text="{Binding $parent[Window].Title}"
+                     FontSize="12"
+                     Opacity="0.5"
+                     VerticalAlignment="Center"/>
+        </Grid>
+      </Border>
+
+      <!-- 页面内容 -->
+      <Border Grid.Row="1"
+              Background="{DynamicResource LayerFillColorDefaultBrush}"
+              ClipToBounds="True">
+        <ContentControl x:Name="MainContentControl"
+                        Margin="24"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+          <ContentControl.Transitions>
+            <Transitions>
+              <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
+            </Transitions>
+          </ContentControl.Transitions>
+        </ContentControl>
+      </Border>
+    </Grid>
+  </Grid>
+</Window>

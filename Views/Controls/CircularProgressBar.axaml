@@ -1,0 +1,14 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MicroPanelAvalonia.Views.Controls.CircularProgressBar">
+  <Grid x:Name="MainGrid">
+    <!-- 背景圆环 -->
+    <Ellipse x:Name="BackgroundEllipse"
+             Fill="Transparent"/>
+    
+    <!-- 进度圆环 -->
+    <Path x:Name="ProgressPath"
+          Fill="Transparent"
+          StrokeLineCap="Round"/>
+  </Grid>
+</UserControl>

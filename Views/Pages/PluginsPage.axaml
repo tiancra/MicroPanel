@@ -1,0 +1,96 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:pages="clr-namespace:MicroPanelAvalonia.Views.Pages"
+             x:Class="MicroPanelAvalonia.Views.Pages.PluginsPage">
+  <Grid RowDefinitions="Auto,*">
+    <!-- 顶部工具栏 -->
+    <Border Grid.Row="0" 
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Margin="16,16,16,8"
+            Padding="16,12">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Grid.Column="0"
+                   Text="指令列表"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"/>
+        <StackPanel Grid.Column="1" 
+                    Orientation="Horizontal"
+                    Spacing="8">
+          <TextBox x:Name="SearchTextBox"
+                   Width="200"
+                   Watermark="筛选指令"
+                   TextChanged="OnSearchTextChanged"/>
+          <Button Content="添加指令"
+                  Click="OnAddPluginClick"
+                  Theme="{DynamicResource AccentButtonTheme}"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- 插件列表 -->
+    <Border Grid.Row="1"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Margin="16,8,16,16">
+      <ScrollViewer>
+        <ItemsControl x:Name="PluginsItemsControl"
+                      Margin="16">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Vertical" Spacing="8"/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="pages:PluginViewModel">
+              <Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                      CornerRadius="6"
+                      Padding="16,12"
+                      BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="1">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                  <!-- 序号 -->
+                  <TextBlock Grid.Column="0"
+                             Text="{Binding Index}"
+                             Width="32"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                  
+                  <!-- 指令信息 -->
+                  <StackPanel Grid.Column="1" 
+                              Orientation="Vertical"
+                              Spacing="4">
+                    <TextBlock Text="{Binding Plugin.Reg}"
+                               FontSize="14"
+                               FontWeight="Medium"/>
+                    <TextBlock Text="{Binding MessageTypes}"
+                               FontSize="12"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock Text="{Binding Plugin.Id}"
+                               FontSize="11"
+                               Foreground="{DynamicResource TextFillColorTertiaryBrush}"/>
+                  </StackPanel>
+                  
+                  <!-- 操作按钮 -->
+                  <StackPanel Grid.Column="2"
+                              Orientation="Horizontal"
+                              Spacing="8">
+                    <Button Content="编辑"
+                            Click="OnEditPluginClick"
+                            Tag="{Binding Index}"
+                            Theme="{DynamicResource AccentButtonTheme}"/>
+                    <Button Content="删除"
+                            Click="OnDeletePluginClick"
+                            Tag="{Binding Index}"
+                            Theme="{DynamicResource DefaultButtonTheme}"/>
+                  </StackPanel>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </Border>
+  </Grid>
+</UserControl>

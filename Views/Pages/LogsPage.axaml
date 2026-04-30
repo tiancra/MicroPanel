@@ -1,0 +1,109 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="using:MicroPanelAvalonia.Views.Pages"
+             xmlns:controls="using:MicroPanelAvalonia.Views.Controls"
+             mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="800"
+             x:Class="MicroPanelAvalonia.Views.Pages.LogsPage"
+             x:DataType="local:LogsPage">
+
+  <Grid RowDefinitions="Auto,*">
+    <!-- 顶部工具栏 -->
+    <Border Grid.Row="0"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="12"
+            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            Padding="16"
+            Margin="0,0,0,16">
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        <TextBlock Grid.Column="0"
+                   Text="实时日志输出"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"/>
+        
+        <StackPanel x:Name="ToolbarPanel"
+                    Grid.Column="2" 
+                    Orientation="Horizontal" 
+                    Spacing="12">
+          <!-- 连接状态指示器 -->
+          <Border x:Name="ConnectionStatusBorder"
+                  Background="{DynamicResource SystemFillColorCautionBrush}"
+                  CornerRadius="4"
+                  Padding="8,4">
+            <TextBlock x:Name="ConnectionStatusText"
+                       Text="未连接"
+                       FontSize="12"
+                       Foreground="White"/>
+          </Border>
+          <Button x:Name="ClearButton"
+                  Content="清空"/>
+          <Button x:Name="ReconnectButton"
+                  Classes="Accent"
+                  Content="重新连接"/>
+          <Button x:Name="OpenWindowButton"
+                  Click="OnOpenWindowClick">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <PathIcon Data="M4,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M4,6V18H20V6H4Z"
+                        Width="16" Height="16"/>
+              <TextBlock Text="打开独立窗口"/>
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- 日志显示区域 -->
+    <Border Grid.Row="1"
+            x:Name="LogContainer"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="12"
+            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1">
+      <Grid RowDefinitions="Auto,*">
+        <!-- 终端头部 -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource LayerFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="12,8">
+          <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Grid.Column="0" 
+                        Orientation="Horizontal" 
+                        Spacing="8">
+              <Border Background="{DynamicResource AccentFillColorDefaultBrush}"
+                      CornerRadius="4"
+                      Padding="8,4">
+                <TextBlock Text="实时输出"
+                           FontSize="12"
+                           Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"/>
+              </Border>
+            </StackPanel>
+            
+            <StackPanel Grid.Column="1" 
+                        Orientation="Horizontal" 
+                        Spacing="8">
+              <Slider x:Name="FontSizeSlider"
+                      Minimum="10"
+                      Maximum="24"
+                      Value="14"
+                      Width="120"
+                      VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding #FontSizeSlider.Value, StringFormat='{}{0:F0}pt'}"
+                         VerticalAlignment="Center"
+                         Width="30"/>
+            </StackPanel>
+          </Grid>
+        </Border>
+
+        <!-- 日志内容 -->
+        <controls:LogViewer Grid.Row="1"
+                            x:Name="LogViewer"
+                            Background="{DynamicResource LayerFillColorDefaultBrush}"
+                            Margin="0"/>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

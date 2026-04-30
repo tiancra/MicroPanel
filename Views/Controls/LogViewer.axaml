@@ -1,0 +1,11 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MicroPanelAvalonia.Views.Controls.LogViewer">
+  <ScrollViewer x:Name="ScrollViewer"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto">
+    <StackPanel x:Name="LogStackPanel" 
+                Orientation="Vertical"
+                Spacing="2"/>
+  </ScrollViewer>
+</UserControl>

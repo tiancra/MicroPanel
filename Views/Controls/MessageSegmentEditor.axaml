@@ -1,0 +1,166 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MicroPanelAvalonia.Views.Controls"
+             x:Class="MicroPanelAvalonia.Views.Controls.MessageSegmentEditor">
+  <Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+          CornerRadius="6"
+          Padding="12"
+          BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+          BorderThickness="1"
+          Margin="0,0,0,8">
+    <Grid RowDefinitions="Auto,*">
+      <!-- 头部：类型标签和删除按钮 -->
+      <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+        <Border Grid.Column="0"
+                Background="{DynamicResource AccentFillColorDefaultBrush}"
+                CornerRadius="4"
+                Padding="8,4"
+                HorizontalAlignment="Left">
+          <TextBlock x:Name="TypeTextBlock"
+                     Text="文本"
+                     Foreground="White"
+                     FontSize="12"
+                     FontWeight="SemiBold"/>
+        </Border>
+        <Button Grid.Column="1"
+                Content="删除"
+                Click="OnDeleteClick"
+                Theme="{DynamicResource DefaultButtonTheme}"/>
+      </Grid>
+
+      <!-- 内容区域 -->
+      <StackPanel Grid.Row="1" Margin="0,12,0,0" Spacing="8">
+        
+        <!-- 文本类型 -->
+        <StackPanel x:Name="TextPanel" IsVisible="False">
+          <TextBox x:Name="TextContentTextBox"
+                   AcceptsReturn="True"
+                   TextWrapping="Wrap"
+                   MinHeight="80"
+                   Watermark="输入文本内容..."/>
+        </StackPanel>
+
+        <!-- 图片类型 -->
+        <StackPanel x:Name="ImagePanel" IsVisible="False" Spacing="8">
+          <TextBox x:Name="ImageUrlTextBox"
+                   Watermark="http://或https://或file://"/>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Content="上传图片"
+                    Click="OnUploadImageClick"/>
+            <Button Content="在线制作"
+                    Click="OnEditImageClick"/>
+          </StackPanel>
+          <TextBlock x:Name="ImageHashTextBlock"
+                     FontSize="11"
+                     Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                     IsVisible="False"/>
+        </StackPanel>
+
+        <!-- 音频类型 -->
+        <StackPanel x:Name="RecordPanel" IsVisible="False" Spacing="8">
+          <TextBox x:Name="RecordUrlTextBox"
+                   Watermark="http://或https://或file://"/>
+          <Button Content="上传音频"
+                  Click="OnUploadRecordClick"/>
+        </StackPanel>
+
+        <!-- 视频类型 -->
+        <StackPanel x:Name="VideoPanel" IsVisible="False" Spacing="8">
+          <TextBox x:Name="VideoUrlTextBox"
+                   Watermark="http://或https://或file://"/>
+          <Button Content="上传视频"
+                  Click="OnUploadVideoClick"/>
+        </StackPanel>
+
+        <!-- 表情类型 -->
+        <StackPanel x:Name="FacePanel" IsVisible="False" Spacing="8">
+          <Grid ColumnDefinitions="Auto,*">
+            <NumericUpDown Grid.Column="0"
+                           x:Name="FaceIdNumeric"
+                           Minimum="0"
+                           Maximum="300"
+                           Value="0"
+                           Width="100"/>
+            <Button Grid.Column="1"
+                    Content="选择表情"
+                    Margin="8,0,0,0"
+                    Click="OnSelectFaceClick"/>
+          </Grid>
+          <Border x:Name="FacePreviewBorder"
+                  Width="40"
+                  Height="40"
+                  Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                  CornerRadius="4"
+                  IsVisible="False">
+            <Image x:Name="FacePreviewImage"
+                   Stretch="Uniform"/>
+          </Border>
+        </StackPanel>
+
+        <!-- 戳一戳类型 -->
+        <StackPanel x:Name="PokePanel" IsVisible="False" Spacing="8">
+          <Grid ColumnDefinitions="Auto,*">
+            <NumericUpDown Grid.Column="0"
+                           x:Name="PokeIdNumeric"
+                           Minimum="0"
+                           Maximum="6"
+                           Value="0"
+                           Width="100"/>
+            <Button Grid.Column="1"
+                    Content="选择类型"
+                    Margin="8,0,0,0"
+                    Click="OnSelectPokeClick"/>
+          </Grid>
+          <TextBlock Text="0-6 分别代表不同类型的戳一戳"
+                     FontSize="11"
+                     Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+        </StackPanel>
+
+        <!-- 骰子类型 -->
+        <StackPanel x:Name="DicePanel" IsVisible="False" Spacing="8">
+          <Grid ColumnDefinitions="Auto,*">
+            <NumericUpDown Grid.Column="0"
+                           x:Name="DiceIdNumeric"
+                           Minimum="0"
+                           Maximum="6"
+                           Value="1"
+                           Width="100"/>
+            <Button Grid.Column="1"
+                    Content="选择点数"
+                    Margin="8,0,0,0"
+                    Click="OnSelectDiceClick"/>
+          </Grid>
+          <TextBlock Text="0为随机，1-6为指定点数（协议端不一定可用）"
+                     FontSize="11"
+                     Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+        </StackPanel>
+
+        <!-- 猜拳类型 -->
+        <StackPanel x:Name="RpsPanel" IsVisible="False" Spacing="8">
+          <Grid ColumnDefinitions="Auto,*">
+            <NumericUpDown Grid.Column="0"
+                           x:Name="RpsIdNumeric"
+                           Minimum="0"
+                           Maximum="3"
+                           Value="1"
+                           Width="100"/>
+            <Button Grid.Column="1"
+                    Content="选择"
+                    Margin="8,0,0,0"
+                    Click="OnSelectRpsClick"/>
+          </Grid>
+          <TextBlock Text="0为随机，1=石头，2=剪刀，3=布（协议端不一定可用）"
+                     FontSize="11"
+                     Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+        </StackPanel>
+
+        <!-- 代码类型 -->
+        <StackPanel x:Name="CodePanel" IsVisible="False">
+          <local:CodeEditor x:Name="CodeEditorControl"
+                            Height="300"/>
+        </StackPanel>
+
+      </StackPanel>
+    </Grid>
+  </Border>
+</UserControl>

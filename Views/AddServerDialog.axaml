@@ -1,0 +1,79 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="350"
+             x:Class="MicroPanelAvalonia.Views.AddServerDialog"
+             Width="400">
+
+  <StackPanel Spacing="16" Margin="24">
+
+    <TextBlock Text="添加服务器"
+               FontSize="20"
+               FontWeight="SemiBold"/>
+
+    <StackPanel Spacing="8">
+      <TextBlock Text="服务器地址"
+                 FontSize="12"
+                 Opacity="0.8"/>
+      <TextBox x:Name="ServerAddressTextBox"
+               Watermark="例如: 192.168.1.1:8080"
+               UseFloatingWatermark="True"/>
+    </StackPanel>
+
+    <StackPanel Spacing="8">
+      <TextBlock Text="账号"
+                 FontSize="12"
+                 Opacity="0.8"/>
+      <TextBox x:Name="UsernameTextBox"
+               Watermark="请输入账号"
+               UseFloatingWatermark="True"/>
+    </StackPanel>
+
+    <StackPanel Spacing="8">
+      <TextBlock Text="密码"
+                 FontSize="12"
+                 Opacity="0.8"/>
+      <TextBox x:Name="PasswordTextBox"
+               Watermark="请输入密码"
+               PasswordChar="*"
+               UseFloatingWatermark="True"/>
+    </StackPanel>
+
+    <StackPanel x:Name="ErrorPanel"
+                Spacing="8"
+                IsVisible="False">
+      <Border Background="{DynamicResource SystemFillColorCriticalBackgroundBrush}"
+              CornerRadius="4"
+              Padding="12,8">
+        <TextBlock x:Name="ErrorTextBlock"
+                   Text=""
+                   Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                   TextWrapping="Wrap"/>
+      </Border>
+    </StackPanel>
+
+    <StackPanel x:Name="ProgressPanel"
+                Spacing="8"
+                IsVisible="False"
+                HorizontalAlignment="Center">
+      <ProgressBar IsIndeterminate="True" Width="32" Height="32"/>
+      <TextBlock x:Name="ProgressTextBlock"
+                 Text="正在验证..."
+                 Opacity="0.6"/>
+    </StackPanel>
+
+    <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Spacing="8"
+                Margin="0,8,0,0">
+      <Button x:Name="CancelButton"
+              Content="取消"
+              Click="OnCancelClick"/>
+      <Button x:Name="ConfirmButton"
+              Content="确定"
+              Classes="Accent"
+              Click="OnConfirmClickHandler"/>
+    </StackPanel>
+  </StackPanel>
+</UserControl>

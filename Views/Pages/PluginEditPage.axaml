@@ -1,0 +1,227 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MicroPanelAvalonia.Views.Pages.PluginEditPage">
+  <Grid RowDefinitions="Auto,*">
+    <!-- 顶部工具栏 -->
+    <Border Grid.Row="0" 
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Margin="16,16,16,8"
+            Padding="16,12">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="返回"
+                Click="OnGoBackClick"/>
+        <Button Content="保存"
+                Click="OnSaveClick"
+                Theme="{DynamicResource AccentButtonTheme}"/>
+      </StackPanel>
+    </Border>
+
+    <!-- 内容区域 -->
+    <ScrollViewer Grid.Row="1" Margin="16,8,16,16">
+      <StackPanel Spacing="16">
+        <!-- 触发规则卡片 -->
+        <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="8"
+                Padding="16">
+          <StackPanel Spacing="12">
+            <TextBlock Text="触发规则"
+                       FontSize="16"
+                       FontWeight="SemiBold"/>
+            
+            <!-- 事件类型 -->
+            <Grid ColumnDefinitions="120,*">
+              <TextBlock Grid.Column="0" 
+                         Text="事件类型"
+                         VerticalAlignment="Center"/>
+              <TextBox Grid.Column="1"
+                       Text="message"
+                       IsReadOnly="True"
+                       IsEnabled="False"/>
+            </Grid>
+
+            <!-- 定时任务 -->
+            <Grid ColumnDefinitions="120,*">
+              <TextBlock Grid.Column="0" 
+                         Text="定时任务"
+                         VerticalAlignment="Center"/>
+              <TextBox Grid.Column="1"
+                       x:Name="CronTextBox"
+                       Watermark="cron表达式，如：0 0 0 * * ?"/>
+            </Grid>
+
+            <!-- 正则表达式 -->
+            <Grid ColumnDefinitions="120,*,Auto">
+              <TextBlock Grid.Column="0" 
+                         Text="正则表达式"
+                         VerticalAlignment="Center"/>
+              <TextBox Grid.Column="1"
+                       x:Name="RegTextBox"
+                       Watermark="^hello"/>
+              <ComboBox Grid.Column="2"
+                        x:Name="FlagComboBox"
+                        Width="150"
+                        Margin="8,0,0,0"
+                        PlaceholderText="默认Flags"/>
+            </Grid>
+
+            <!-- 延迟 -->
+            <Grid ColumnDefinitions="120,*">
+              <TextBlock Grid.Column="0" 
+                         Text="延迟"
+                         VerticalAlignment="Center"/>
+              <NumericUpDown Grid.Column="1"
+                             x:Name="DelayNumeric"
+                             Watermark="毫秒"
+                             Minimum="0"
+                             Value="0"/>
+            </Grid>
+
+            <!-- @回复 -->
+            <Grid ColumnDefinitions="120,*">
+              <TextBlock Grid.Column="0" 
+                         Text="@回复"
+                         VerticalAlignment="Center"/>
+              <ToggleSwitch Grid.Column="1"
+                            x:Name="IsAtToggle"/>
+            </Grid>
+
+            <!-- 引用回复 -->
+            <Grid ColumnDefinitions="120,*">
+              <TextBlock Grid.Column="0" 
+                         Text="引用回复"
+                         VerticalAlignment="Center"/>
+              <ToggleSwitch Grid.Column="1"
+                            x:Name="IsQuoteToggle"/>
+            </Grid>
+
+            <!-- 全局触发 -->
+            <Grid ColumnDefinitions="120,*">
+              <TextBlock Grid.Column="0" 
+                         Text="全局触发"
+                         VerticalAlignment="Center"/>
+              <ToggleSwitch Grid.Column="1"
+                            x:Name="IsGlobalToggle"
+                            IsCheckedChanged="OnIsGlobalChanged"/>
+            </Grid>
+
+            <!-- 群组列表 -->
+            <Grid ColumnDefinitions="120,*,Auto">
+              <TextBlock Grid.Column="0" 
+                         x:Name="GroupsLabel"
+                         Text="黑名单群"
+                         VerticalAlignment="Center"/>
+              <TextBox Grid.Column="1"
+                       x:Name="GroupTextBox"
+                       Watermark="群号"/>
+              <Button Grid.Column="2"
+                      Content="添加"
+                      Margin="8,0,0,0"
+                      Click="OnAddGroupClick"/>
+            </Grid>
+            
+            <!-- 群组标签列表 -->
+            <ItemsControl x:Name="GroupsItemsControl">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border Background="{DynamicResource AccentFillColorDefaultBrush}"
+                          CornerRadius="4"
+                          Padding="8,4"
+                          Margin="0,0,4,4">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                      <TextBlock Text="{Binding}" 
+                                 Foreground="White"
+                                 VerticalAlignment="Center"/>
+                      <Button Content="×"
+                              Padding="4,0"
+                              Background="Transparent"
+                              Foreground="White"
+                              Tag="{Binding}"
+                              Click="OnRemoveGroupClick"/>
+                    </StackPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- 好友列表 -->
+            <Grid ColumnDefinitions="120,*,Auto">
+              <TextBlock Grid.Column="0" 
+                         x:Name="FriendsLabel"
+                         Text="黑名单用户"
+                         VerticalAlignment="Center"/>
+              <TextBox Grid.Column="1"
+                       x:Name="FriendTextBox"
+                       Watermark="好友QQ"/>
+              <Button Grid.Column="2"
+                      Content="添加"
+                      Margin="8,0,0,0"
+                      Click="OnAddFriendClick"/>
+            </Grid>
+            
+            <!-- 好友标签列表 -->
+            <ItemsControl x:Name="FriendsItemsControl">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border Background="{DynamicResource AccentFillColorDefaultBrush}"
+                          CornerRadius="4"
+                          Padding="8,4"
+                          Margin="0,0,4,4">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                      <TextBlock Text="{Binding}" 
+                                 Foreground="White"
+                                 VerticalAlignment="Center"/>
+                      <Button Content="×"
+                              Padding="4,0"
+                              Background="Transparent"
+                              Foreground="White"
+                              Tag="{Binding}"
+                              Click="OnRemoveFriendClick"/>
+                    </StackPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+
+        <!-- 消息段卡片 -->
+        <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="8"
+                Padding="16">
+          <StackPanel Spacing="12">
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Text="消息段"
+                         FontSize="16"
+                         FontWeight="SemiBold"
+                         VerticalAlignment="Center"/>
+              <ComboBox Grid.Column="1"
+                        x:Name="MessageTypeComboBox"
+                        Width="120"
+                        PlaceholderText="添加消息"
+                        SelectionChanged="OnMessageTypeChanged"/>
+            </Grid>
+            
+            <TextBlock Text="注意：该卡片内的所有消息均为同一条消息，这意味着你可以同时添加文字和多张图片，但是受平台限制音视频需要单独发送！"
+                       FontSize="12"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       TextWrapping="Wrap"/>
+
+            <!-- 消息段列表 -->
+            <StackPanel x:Name="MessageSegmentsStackPanel" Spacing="8"/>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

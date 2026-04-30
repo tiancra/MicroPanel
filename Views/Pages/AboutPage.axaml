@@ -1,0 +1,157 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MicroPanelAvalonia.Views.Pages.AboutPage">
+  <Grid RowDefinitions="Auto,*">
+    <!-- 标题栏 -->
+    <Border Grid.Row="0"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Padding="16"
+            Margin="0,0,0,16">
+      <TextBlock Text="关于"
+                 FontSize="18"
+                 FontWeight="SemiBold"
+                 VerticalAlignment="Center"
+                 HorizontalAlignment="Left"/>
+    </Border>
+
+    <!-- 内容区域 -->
+    <ScrollViewer Grid.Row="1"
+                  HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="16">
+        <!-- 基本信息卡片 -->
+        <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="8"
+                Padding="32">
+          <StackPanel Spacing="24" HorizontalAlignment="Center">
+            <!-- Logo -->
+            <PathIcon Data="M12,2L2,7L12,12L22,7L12,2M2,17L12,22L22,17V12L12,17L2,12V17Z"
+                      Width="80" Height="80"
+                      Foreground="{DynamicResource AccentFillColorDefaultBrush}"/>
+
+            <!-- 应用名称 -->
+            <TextBlock Text="MicroPanel"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"/>
+
+            <!-- 版本号 -->
+            <TextBlock Text="版本 2.0.0_Beta"
+                       FontSize="14"
+                       Opacity="0.6"
+                       HorizontalAlignment="Center"/>
+
+            <!-- 系统信息 -->
+            <Border Background="{DynamicResource LayerFillColorDefaultBrush}"
+                    CornerRadius="8"
+                    Padding="16"
+                    HorizontalAlignment="Stretch"
+                    MaxWidth="500">
+              <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" HorizontalAlignment="Center">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="CPU: " FontSize="13" Opacity="0.7" Margin="0,2,8,2"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" x:Name="CpuInfoText" FontSize="13" Opacity="0.9" Text="加载中..."/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="内存: " FontSize="13" Opacity="0.7" Margin="0,2,8,2"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" x:Name="MemoryInfoText" FontSize="13" Opacity="0.9" Text="加载中..."/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="磁盘: " FontSize="13" Opacity="0.7" Margin="0,2,8,2"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" x:Name="DiskInfoText" FontSize="13" Opacity="0.9" Text="加载中..."/>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="系统版本: " FontSize="13" Opacity="0.7" Margin="0,2,8,2"/>
+                <TextBlock Grid.Row="3" Grid.Column="1" x:Name="OsVersionText" FontSize="13" Opacity="0.9" Text="加载中..."/>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="内核版本: " FontSize="13" Opacity="0.7" Margin="0,2,8,2"/>
+                <TextBlock Grid.Row="4" Grid.Column="1" x:Name="KernelVersionText" FontSize="13" Opacity="0.9" Text="加载中..."/>
+              </Grid>
+            </Border>
+
+            <!-- 描述 -->
+            <TextBlock Text="MicroPanel 是一个用于管理 Yunzai-Bot 的桌面应用程序，提供系统状态监控、日志查看、文件管理、数据库管理等功能。"
+                       FontSize="14"
+                       Opacity="0.8"
+                       TextWrapping="Wrap"
+                       MaxWidth="500"
+                       HorizontalAlignment="Center"/>
+
+            <!-- 分隔线 -->
+            <Border Height="1"
+                    Background="{DynamicResource CardStrokeColorDefaultBrush}"
+                    Margin="0,8"/>
+
+            <!-- 技术栈 -->
+            <StackPanel Spacing="8">
+              <TextBlock Text="技术栈"
+                         FontSize="16"
+                         FontWeight="SemiBold"
+                         HorizontalAlignment="Center"/>
+              <TextBlock Text="• Avalonia UI - 跨平台 UI 框架"
+                         FontSize="13"
+                         Opacity="0.7"
+                         HorizontalAlignment="Center"/>
+              <TextBlock Text="• .NET 10 - 开发平台"
+                         FontSize="13"
+                         Opacity="0.7"
+                         HorizontalAlignment="Center"/>
+              <TextBlock Text="• FluentAvalonia - Windows 11 风格控件"
+                         FontSize="13"
+                         Opacity="0.7"
+                         HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- 分隔线 -->
+            <Border Height="1"
+                    Background="{DynamicResource CardStrokeColorDefaultBrush}"
+                    Margin="0,8"/>
+
+            <!-- 版权信息 -->
+            <TextBlock Text="© 2025 MicroPanel. All rights reserved."
+                       FontSize="12"
+                       Opacity="0.5"
+                       HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Border>
+
+        <!-- 开源地址折叠卡片 -->
+        <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="8">
+          <Expander HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    Padding="16,8">
+            <Expander.Header>
+              <TextBlock Text="开源地址"
+                         FontSize="16"
+                         FontWeight="SemiBold"/>
+            </Expander.Header>
+            <StackPanel Spacing="8" Margin="0,8,0,0">
+              <!-- Micro Plugin -->
+              <Border Background="{DynamicResource LayerFillColorDefaultBrush}"
+                      CornerRadius="6"
+                      Padding="12,10">
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                  <TextBlock Grid.Column="0" Text="Micro Plugin" FontSize="14" VerticalAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Text="https://github.com/V2233/micro-plugin" FontSize="12" Opacity="0.6" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                  <Button Grid.Column="2" Classes="Accent" Padding="12,6" Click="OnOpenMicroPluginRepo">
+                    <TextBlock Text="跳转" FontSize="12"/>
+                  </Button>
+                </Grid>
+              </Border>
+              <!-- Micro Panel -->
+              <Border Background="{DynamicResource LayerFillColorDefaultBrush}"
+                      CornerRadius="6"
+                      Padding="12,10">
+                <Grid ColumnDefinitions="*,Auto,Auto">
+                  <TextBlock Grid.Column="0" Text="Micro Panel" FontSize="14" VerticalAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Text="https://github.com/tiancra/MicroPanel" FontSize="12" Opacity="0.6" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                  <Button Grid.Column="2" Classes="Accent" Padding="12,6" Click="OnOpenMicroPanelRepo">
+                    <TextBlock Text="跳转" FontSize="12"/>
+                  </Button>
+                </Grid>
+              </Border>
+            </StackPanel>
+          </Expander>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

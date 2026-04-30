@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MicroPanelAvalonia.Views.Controls.CodeEditor">
+  <Grid RowDefinitions="Auto,*">
+    <!-- 工具栏 -->
+    <Border Grid.Row="0"
+            Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+            CornerRadius="4"
+            Padding="8,4"
+            Margin="0,0,0,8">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <ComboBox x:Name="LanguageComboBox"
+                  Width="100"
+                  SelectedIndex="0">
+          <ComboBoxItem Content="JavaScript"/>
+          <ComboBoxItem Content="Markdown"/>
+        </ComboBox>
+        
+        <ComboBox x:Name="ThemeComboBox"
+                  Width="120"
+                  SelectedIndex="0">
+          <ComboBoxItem Content="Dark"/>
+          <ComboBoxItem Content="Light"/>
+        </ComboBox>
+        
+        <Button Content="插入模板"
+                Click="OnInsertTemplateClick"/>
+        
+        <Button Content="保存"
+                Click="OnSaveClick"
+                Theme="{DynamicResource AccentButtonTheme}"/>
+      </StackPanel>
+    </Border>
+
+    <!-- 代码编辑区域 -->
+    <Border Grid.Row="1"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="4"
+            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1">
+      <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Auto">
+        <TextBox x:Name="CodeTextBox"
+                 AcceptsReturn="True"
+                 AcceptsTab="True"
+                 TextWrapping="NoWrap"
+                 FontFamily="Consolas, Monaco, 'Courier New', monospace"
+                 FontSize="14"
+                 Padding="12"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 Watermark="在此输入代码..."/>
+      </ScrollViewer>
+    </Border>
+  </Grid>
+</UserControl>

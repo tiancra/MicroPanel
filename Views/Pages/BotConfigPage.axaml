@@ -1,0 +1,57 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MicroPanelAvalonia.Views.Pages.BotConfigPage">
+  <Grid RowDefinitions="Auto,*">
+    <!-- 标题栏 -->
+    <Border Grid.Row="0"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Padding="16"
+            Margin="0,0,0,16">
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        <TextBlock Grid.Column="0"
+                   Text="Bot配置"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"/>
+        
+        <!-- 配置类型选择 -->
+        <ComboBox x:Name="ConfigTypeComboBox"
+                  Grid.Column="1"
+                  Width="150"
+                  HorizontalAlignment="Center"
+                  SelectionChanged="OnConfigTypeChanged">
+          <ComboBoxItem Content="Bot" Tag="bot"/>
+          <ComboBoxItem Content="群组" Tag="group"/>
+          <ComboBoxItem Content="通知" Tag="notice"/>
+          <ComboBoxItem Content="其它" Tag="other"/>
+          <ComboBoxItem Content="截图工具" Tag="puppeteer"/>
+          <ComboBoxItem Content="QQ" Tag="qq"/>
+          <ComboBoxItem Content="Redis" Tag="redis"/>
+          <ComboBoxItem Content="渲染器" Tag="renderer"/>
+        </ComboBox>
+        
+        <!-- 保存按钮 -->
+        <Button Grid.Column="2"
+                Classes="Accent"
+                Click="OnSaveClick">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <PathIcon Data="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H7A2,2 0 0,0 5,5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V5A2,2 0 0,0 17,3Z"
+                      Width="16" Height="16"/>
+            <TextBlock Text="保存配置"/>
+          </StackPanel>
+        </Button>
+      </Grid>
+    </Border>
+    
+    <!-- 配置内容 -->
+    <Border Grid.Row="1"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Padding="16">
+      <ScrollViewer>
+        <StackPanel x:Name="ConfigPanel" Spacing="16"/>
+      </ScrollViewer>
+    </Border>
+  </Grid>
+</UserControl>

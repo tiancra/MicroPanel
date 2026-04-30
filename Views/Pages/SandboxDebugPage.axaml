@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MicroPanelAvalonia.Views.Pages.SandboxDebugPage">
+  <Grid>
+    <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Padding="24">
+      <StackPanel Orientation="Vertical"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Spacing="16">
+        <!-- 图标 -->
+        <PathIcon Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"
+                  Width="80" 
+                  Height="80"
+                  Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                  Opacity="0.8"/>
+        
+        <!-- 即将上线 -->
+        <TextBlock Text="即将上线"
+                   FontSize="32"
+                   FontWeight="Bold"
+                   Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                   HorizontalAlignment="Center"/>
+        
+        <!-- 分隔线 -->
+        <Rectangle Width="80"
+                   Height="2"
+                   Fill="{DynamicResource AccentFillColorDefaultBrush}"
+                   Opacity="0.5"/>
+        
+        <!-- 敬请期待 -->
+        <TextBlock Text="敬请期待"
+                   FontSize="24"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   HorizontalAlignment="Center"/>
+        
+        <!-- 说明文字 -->
+        <TextBlock Text="更多高级功能正在开发中，敬请期待后续更新"
+                   FontSize="14"
+                   Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                   HorizontalAlignment="Center"
+                   TextWrapping="Wrap"
+                   TextAlignment="Center"
+                   Margin="0,16,0,0"/>
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

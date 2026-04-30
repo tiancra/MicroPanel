@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MicroPanelAvalonia.Views.Pages.ProtocolConfigPage">
+  <Grid RowDefinitions="Auto,*">
+    <!-- 标题栏 -->
+    <Border Grid.Row="0"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Padding="16"
+            Margin="0,0,0,16">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Grid.Column="0"
+                   Text="协议配置"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Left"/>
+        
+        <Button x:Name="SaveButton"
+                Grid.Column="1"
+                Classes="Accent"
+                Click="OnSaveClick">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <PathIcon Data="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H7A2,2 0 0,0 5,5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V5A2,2 0 0,0 17,3Z"
+                      Width="16" Height="16"/>
+            <TextBlock Text="保存"/>
+          </StackPanel>
+        </Button>
+      </Grid>
+    </Border>
+    
+    <!-- 内容区域 -->
+    <Border Grid.Row="1"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Padding="16">
+      <ScrollViewer>
+        <StackPanel x:Name="ConfigPanel" Spacing="24">
+          <!-- Stdin 配置 -->
+          <Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                  CornerRadius="8"
+                  Padding="16">
+            <StackPanel Spacing="16">
+              <TextBlock Text="Stdin"
+                         FontSize="16"
+                         FontWeight="SemiBold"/>
+              <StackPanel x:Name="StdinPanel" Spacing="12"/>
+            </StackPanel>
+          </Border>
+          
+          <!-- OneBot V11 配置 -->
+          <Border Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
+                  CornerRadius="8"
+                  Padding="16">
+            <StackPanel Spacing="16">
+              <TextBlock Text="OneBot V11"
+                         FontSize="16"
+                         FontWeight="SemiBold"/>
+              <StackPanel x:Name="Onebotv11Panel" Spacing="12"/>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+  </Grid>
+</UserControl>

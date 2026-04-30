@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="MicroPanelAvalonia.Views.Windows.ToastWindow"
+        Height="50"
+        WindowStartupLocation="Manual"
+        ShowInTaskbar="False"
+        SystemDecorations="None"
+        Background="Transparent"
+        Topmost="True"
+        CanResize="False"
+        Opacity="0">
+  <Border x:Name="ToastBorder"
+          Height="50"
+          VerticalAlignment="Top"
+          HorizontalAlignment="Stretch"
+          CornerRadius="0,0,8,8"
+          BoxShadow="0 4 16 0 #80000000">
+    <TextBlock x:Name="ToastText"
+               FontSize="14"
+               FontWeight="SemiBold"
+               Foreground="White"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               TextWrapping="Wrap"
+               Margin="20,0,20,0"/>
+  </Border>
+</Window>

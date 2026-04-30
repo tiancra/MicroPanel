@@ -454,6 +454,8 @@ namespace MicroPanelAvalonia.Views.Pages
             var response = await _apiService.SetUserConfigAsync(session.Token, _userConfig);
             if (response?.IsSuccess == true)
             {
+                // 显示保存成功 Toast
+                ToastService.Instance.ShowSuccess("用户配置保存成功");
                 // 保存成功，刷新列表
                 await LoadUserConfigAsync();
             }

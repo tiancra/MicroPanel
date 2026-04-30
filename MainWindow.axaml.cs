@@ -39,7 +39,10 @@ namespace MicroPanelAvalonia
             SetupConverters();
             SetupDialogs();
             LoadServers();
-            
+
+            // 注册到桌面模式管理器
+            DesktopModeManager.Instance.RegisterMainWindow(this);
+
             // 窗口加载完成后立即刷新所有服务器状态
             Loaded += async (s, e) => await _serverManager.RefreshAllServersAsync();
         }

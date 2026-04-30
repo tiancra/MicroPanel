@@ -263,6 +263,8 @@ namespace MicroPanelAvalonia.Views.Pages
             var response = await _apiService.SetProtocolConfigAsync(session.Token, _protocolConfig);
             if (response?.IsSuccess == true)
             {
+                // 显示保存成功 Toast
+                ToastService.Instance.ShowSuccess("协议配置保存成功");
                 // 保存成功，刷新列表
                 await LoadProtocolConfigAsync();
             }

@@ -719,7 +719,8 @@ namespace MicroPanelAvalonia.Views.Pages
             var response = await _apiService.SetPluginConfigAsync(session.Token, _currentPluginName, _currentSource, _pluginConfig);
             if (response?.IsSuccess == true)
             {
-                // 显示保存成功提示
+                // 显示保存成功 Toast
+                ToastService.Instance.ShowSuccess("插件配置保存成功");
                 RenderPluginsList();
             }
         }

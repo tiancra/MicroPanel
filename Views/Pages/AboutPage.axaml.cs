@@ -2,10 +2,12 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
 
 namespace MicroPanelAvalonia.Views.Pages
@@ -67,30 +69,71 @@ namespace MicroPanelAvalonia.Views.Pages
         }
 
         /// <summary>
-        /// 获取 CPU 信息
+        /// 获取 CPU 详细信息
         /// </summary>
         private string GetCpuInfo()
         {
             try
             {
+                var processorCount = Environment.ProcessorCount;
+                string cpuName = "未知";
+
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    var processorCount = Environment.ProcessorCount;
-                    return $"{processorCount} 核处理器";
+                    try
+                    {
+                        using var searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_Processor");
+                        foreach (var obj in searcher.Get())
+                        {
+                            cpuName = obj["Name"]?.ToString()?.Trim() ?? "未知";
+                            break;
+                        }
+                    }
+                    catch
+                    {
+                        // 如果 WMI 失败，尝试从注册表读取
+                        cpuName = GetCpuNameFromRegistry() ?? "未知";
+                    }
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
-                    var processorCount = Environment.ProcessorCount;
-                    return $"{processorCount} 核处理器";
+                    // 从 /proc/cpuinfo 读取
+                    if (File.Exists("/proc/cpuinfo"))
+                    {
+                        var lines = File.ReadAllLines("/proc/cpuinfo");
+                        var modelNameLine = lines.FirstOrDefault(l => l.StartsWith("model name"));
+                        if (modelNameLine != null)
+                        {
+                            var parts = modelNameLine.Split(':');
+                            if (parts.Length >= 2)
+                            {
+                                cpuName = parts[1].Trim();
+                            }
+                        }
+                    }
                 }
-                else
-                {
-                    return $"{Environment.ProcessorCount} 核处理器";
-                }
+
+                return $"{cpuName} ({processorCount} 核)";
             }
             catch
             {
-                return "未知";
+                return $"{Environment.ProcessorCount} 核处理器";
+            }
+        }
+
+        /// <summary>
+        /// 从注册表获取 CPU 名称
+        /// </summary>
+        private string? GetCpuNameFromRegistry()
+        {
+            try
+            {
+                using var key = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
+                return key?.GetValue("ProcessorNameString")?.ToString()?.Trim();
+            }
+            catch
+            {
+                return null;
             }
         }
 
@@ -131,6 +174,23 @@ namespace MicroPanelAvalonia.Views.Pages
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
+                    try
+                    {
+                        using var searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem");
+                        foreach (var obj in searcher.Get())
+                        {
+                            var totalBytes = obj["TotalPhysicalMemory"];
+                            if (totalBytes != null)
+                            {
+                                return Convert.ToInt64(totalBytes);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // WMI 失败时使用 GC 信息
+                    }
+
                     var gcInfo = GC.GetGCMemoryInfo();
                     return gcInfo.TotalAvailableMemoryBytes;
                 }
@@ -184,12 +244,26 @@ namespace MicroPanelAvalonia.Views.Pages
         }
 
         /// <summary>
-        /// 获取操作系统版本
+        /// 获取操作系统版本（友好名称）
         /// </summary>
         private string GetOsVersion()
         {
             try
             {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return GetWindowsVersionName();
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    // 尝试读取 /etc/os-release
+                    var osRelease = GetLinuxDistributionName();
+                    if (!string.IsNullOrEmpty(osRelease))
+                    {
+                        return osRelease;
+                    }
+                }
+
                 var osDescription = RuntimeInformation.OSDescription;
                 var osArchitecture = RuntimeInformation.OSArchitecture;
                 return $"{osDescription} ({osArchitecture})";
@@ -198,6 +272,137 @@ namespace MicroPanelAvalonia.Views.Pages
             {
                 return "未知";
             }
+        }
+
+        /// <summary>
+        /// 获取 Windows 版本友好名称
+        /// </summary>
+        private string GetWindowsVersionName()
+        {
+            try
+            {
+                var version = Environment.OSVersion.Version;
+                var major = version.Major;
+                var minor = version.Minor;
+                var build = version.Build;
+
+                string versionName;
+
+                if (major == 10 && build >= 22000)
+                {
+                    versionName = "Windows 11";
+                }
+                else if (major == 10)
+                {
+                    versionName = "Windows 10";
+                }
+                else if (major == 6 && minor == 3)
+                {
+                    versionName = "Windows 8.1";
+                }
+                else if (major == 6 && minor == 2)
+                {
+                    versionName = "Windows 8";
+                }
+                else if (major == 6 && minor == 1)
+                {
+                    versionName = "Windows 7";
+                }
+                else if (major == 6 && minor == 0)
+                {
+                    versionName = "Windows Vista";
+                }
+                else if (major == 5 && minor == 2)
+                {
+                    versionName = "Windows XP x64 / Server 2003";
+                }
+                else if (major == 5 && minor == 1)
+                {
+                    versionName = "Windows XP";
+                }
+                else
+                {
+                    versionName = $"Windows {major}.{minor}";
+                }
+
+                // 尝试获取显示版本（如 22H2）
+                var displayVersion = GetWindowsDisplayVersion();
+                if (!string.IsNullOrEmpty(displayVersion))
+                {
+                    versionName += $" {displayVersion}";
+                }
+
+                var arch = RuntimeInformation.OSArchitecture.ToString().ToLower();
+                return $"{versionName} ({arch})";
+            }
+            catch
+            {
+                return "Windows 未知版本";
+            }
+        }
+
+        /// <summary>
+        /// 获取 Windows 显示版本（如 22H2）
+        /// </summary>
+        private string? GetWindowsDisplayVersion()
+        {
+            try
+            {
+                using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion");
+                var displayVersion = key?.GetValue("DisplayVersion")?.ToString();
+                if (!string.IsNullOrEmpty(displayVersion))
+                {
+                    return displayVersion;
+                }
+
+                // 旧版本使用 ReleaseId
+                var releaseId = key?.GetValue("ReleaseId")?.ToString();
+                if (!string.IsNullOrEmpty(releaseId))
+                {
+                    return releaseId;
+                }
+            }
+            catch
+            {
+                // 忽略错误
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 获取 Linux 发行版名称
+        /// </summary>
+        private string? GetLinuxDistributionName()
+        {
+            try
+            {
+                if (File.Exists("/etc/os-release"))
+                {
+                    var lines = File.ReadAllLines("/etc/os-release");
+                    var prettyNameLine = lines.FirstOrDefault(l => l.StartsWith("PRETTY_NAME="));
+                    if (prettyNameLine != null)
+                    {
+                        var value = prettyNameLine.Substring("PRETTY_NAME=".Length).Trim('"');
+                        return value;
+                    }
+
+                    var nameLine = lines.FirstOrDefault(l => l.StartsWith("NAME="));
+                    var versionLine = lines.FirstOrDefault(l => l.StartsWith("VERSION_ID="));
+
+                    var name = nameLine?.Substring("NAME=".Length).Trim('"');
+                    var version = versionLine?.Substring("VERSION_ID=".Length).Trim('"');
+
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        return string.IsNullOrEmpty(version) ? name : $"{name} {version}";
+                    }
+                }
+            }
+            catch
+            {
+                // 忽略错误
+            }
+            return null;
         }
 
         /// <summary>

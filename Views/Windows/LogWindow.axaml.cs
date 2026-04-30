@@ -72,6 +72,9 @@ namespace MicroPanelAvalonia.Views.Windows
         private void OnWindowClosed(object? sender, EventArgs e)
         {
             DisconnectWebSocket();
+
+            // 通知桌面模式管理器窗口已关闭
+            DesktopModeManager.Instance.OnLogWindowClosed();
         }
 
         private async Task ConnectWebSocketAsync()
@@ -119,13 +122,16 @@ namespace MicroPanelAvalonia.Views.Windows
 
             try
             {
-                while (_webSocket.State == WebSocketState.Open && !_cts.Token.IsCancellationRequested)
+                while (_webSocket?.State == WebSocketState.Open && !_cts.Token.IsCancellationRequested)
                 {
                     var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), _cts.Token);
 
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, _cts.Token);
+                        if (_webSocket?.State == WebSocketState.Open)
+                        {
+                            await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, _cts.Token);
+                        }
                         break;
                     }
 
@@ -142,7 +148,7 @@ namespace MicroPanelAvalonia.Views.Windows
                             {
                                 continue;
                             }
-                            
+
                             // 去除 ANSI 转义序列
                             var cleanData = RemoveAnsiCodes(msgObj.Data);
                             AppendLog(cleanData);

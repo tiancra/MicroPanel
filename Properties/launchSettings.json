@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MicroPanelAvalonia": {
+      "commandName": "Project",
+      "commandLineArgs": "--desktopmode"
+    }
+  }
+}

@@ -175,13 +175,16 @@ namespace MicroPanelAvalonia.Views.Pages
 
             try
             {
-                while (_webSocket.State == WebSocketState.Open && !_cts.Token.IsCancellationRequested)
+                while (_webSocket?.State == WebSocketState.Open && !_cts.Token.IsCancellationRequested)
                 {
                     var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), _cts.Token);
 
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, _cts.Token);
+                        if (_webSocket?.State == WebSocketState.Open)
+                        {
+                            await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, null, _cts.Token);
+                        }
                         break;
                     }
 
@@ -201,7 +204,7 @@ namespace MicroPanelAvalonia.Views.Pages
                                 Debug.WriteLine($"[LogsPage] 过滤掉连接消息");
                                 continue;
                             }
-                            
+
                             Debug.WriteLine($"[LogsPage] 调用 AppendLog，数据长度: {msgObj.Data.Length}");
                             // 去除 ANSI 转义序列
                             var cleanData = RemoveAnsiCodes(msgObj.Data);
@@ -326,6 +329,14 @@ namespace MicroPanelAvalonia.Views.Pages
         /// </summary>
         private void OnOpenWindowClick(object? sender, RoutedEventArgs e)
         {
+            OpenLogWindowInternal();
+        }
+
+        /// <summary>
+        /// 内部方法：打开日志独立窗口
+        /// </summary>
+        private void OpenLogWindowInternal()
+        {
             if (_logWindow != null)
             {
                 // 如果窗口已存在，激活它
@@ -339,30 +350,33 @@ namespace MicroPanelAvalonia.Views.Pages
 
             // 创建独立窗口
             _logWindow = new Windows.LogWindow();
-            
+
             // 复制日志内容到独立窗口
             if (!string.IsNullOrEmpty(existingLogs))
             {
                 _logWindow.SetInitialLogs(existingLogs);
             }
-            
+
             // 断开原页面的WebSocket连接（由独立窗口接管）
             DisconnectWebSocket();
-            
+
             // 隐藏原页面的日志容器和工具栏
             var logContainer = this.FindControl<Border>("LogContainer");
             if (logContainer != null)
             {
                 logContainer.IsVisible = false;
             }
-            
+
             var toolbarPanel = this.FindControl<StackPanel>("ToolbarPanel");
             if (toolbarPanel != null)
             {
                 toolbarPanel.IsVisible = false;
             }
-            
+
             _isInSeparateWindow = true;
+
+            // 注册到桌面模式管理器
+            DesktopModeManager.Instance.RegisterLogWindow(_logWindow);
 
             // 监听窗口关闭事件
             _logWindow.Closed += (s, args) =>
@@ -370,10 +384,10 @@ namespace MicroPanelAvalonia.Views.Pages
                 // 清空静态变量
                 _logWindow = null;
                 _isInSeparateWindow = false;
-                
+
                 // 断开WebSocket连接
                 DisconnectWebSocket();
-                
+
                 // 触发静态事件，通知所有日志页面实例
                 LogWindowClosed?.Invoke(this, EventArgs.Empty);
             };
@@ -405,12 +419,15 @@ namespace MicroPanelAvalonia.Views.Pages
 
             // 创建新的独立窗口
             _logWindow = new Windows.LogWindow();
-            
+
+            // 注册到桌面模式管理器
+            DesktopModeManager.Instance.RegisterLogWindow(_logWindow);
+
             // 监听窗口关闭事件
             _logWindow.Closed += (s, args) =>
             {
                 _logWindow = null;
-                
+
                 // 触发静态事件，通知所有日志页面实例
                 LogWindowClosed?.Invoke(null, EventArgs.Empty);
             };

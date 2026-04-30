@@ -46,10 +46,16 @@ namespace MicroPanelAvalonia.Views
         {
             InitializeComponent();
             _httpClient = new HttpClient();
-            
+
+            // 注册到桌面模式管理器
+            DesktopModeManager.Instance.RegisterMainWindow(this);
+
+            // 初始化 Toast 服务
+            ToastService.Instance.Initialize(this);
+
             // 窗口加载时初始化
             Loaded += async (s, e) => await OnWindowLoadedAsync(s, e);
-            
+
             // 注册全局键盘事件
             KeyDown += OnWindowKeyDown;
             KeyUp += OnWindowKeyUp;
@@ -475,6 +481,7 @@ namespace MicroPanelAvalonia.Views
                         "ConfigPlugin" => "插件配置",
                         "ConfigUser" => "权限配置",
                         "ConfigProtocol" => "协议配置",
+                        "About" => "关于",
                         _ => pageName
                     };
                 }

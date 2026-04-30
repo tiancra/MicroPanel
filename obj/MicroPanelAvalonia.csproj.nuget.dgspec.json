@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\MicroPanel\\MicroPanelAvalonia\\MicroPanelAvalonia.csproj": {}
+    "E:\\MicroPanel\\MicroPanel\\MicroPanelAvalonia.csproj": {}
   },
   "projects": {
-    "E:\\MicroPanel\\MicroPanelAvalonia\\MicroPanelAvalonia.csproj": {
+    "E:\\MicroPanel\\MicroPanel\\MicroPanelAvalonia.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\MicroPanel\\MicroPanelAvalonia\\MicroPanelAvalonia.csproj",
+        "projectUniqueName": "E:\\MicroPanel\\MicroPanel\\MicroPanelAvalonia.csproj",
         "projectName": "MicroPanelAvalonia",
-        "projectPath": "E:\\MicroPanel\\MicroPanelAvalonia\\MicroPanelAvalonia.csproj",
+        "projectPath": "E:\\MicroPanel\\MicroPanel\\MicroPanelAvalonia.csproj",
         "packagesPath": "C:\\Users\\Tcwbi\\.nuget\\packages\\",
-        "outputPath": "E:\\MicroPanel\\MicroPanelAvalonia\\obj\\",
+        "outputPath": "E:\\MicroPanel\\MicroPanel\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "E:\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -31,6 +31,7 @@
         },
         "frameworks": {
           "net10.0": {
+            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -49,6 +50,7 @@
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "Avalonia": {
@@ -74,6 +76,10 @@
             "FluentAvaloniaUI": {
               "target": "Package",
               "version": "[2.5.1, )"
+            },
+            "System.Management": {
+              "target": "Package",
+              "version": "[9.0.4, )"
             }
           },
           "imports": [
@@ -92,7 +98,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",

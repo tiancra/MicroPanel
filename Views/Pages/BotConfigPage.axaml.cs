@@ -486,13 +486,8 @@ namespace MicroPanelAvalonia.Views.Pages
             var response = await _apiService.SetBotConfigAsync(session.Token, _currentConfigType, saveData);
             if (response?.IsSuccess == true)
             {
-                // 显示保存成功提示
-                var notification = new Avalonia.Controls.Notifications.Notification
-                {
-                    Title = "保存成功",
-                    Message = "配置已保存",
-                    Type = Avalonia.Controls.Notifications.NotificationType.Success
-                };
+                // 显示保存成功 Toast
+                ToastService.Instance.ShowSuccess("配置保存成功");
             }
         }
     }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MicroPanelAvalonia")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8c86bbb8d237348e0bfe9f7ca07352c19809e792")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6de212d6a2874a7af1d5456c43ce9e0d098bc447")]
 [assembly: System.Reflection.AssemblyProductAttribute("MicroPanelAvalonia")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MicroPanelAvalonia")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

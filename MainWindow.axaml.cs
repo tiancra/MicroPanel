@@ -413,17 +413,37 @@ namespace MicroPanelAvalonia
         }
 
         /// <summary>
+        /// 设置按钮点击
+        /// </summary>
+        private void OnSettingsClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            // 切换显示设置页面
+            var serverListView = this.FindControl<Grid>("ServerListView");
+            var settingsView = this.FindControl<Views.Pages.SettingsPage>("SettingsView");
+            var aboutView = this.FindControl<Views.Pages.AboutPage>("AboutView");
+
+            if (serverListView != null && settingsView != null)
+            {
+                serverListView.IsVisible = false;
+                aboutView!.IsVisible = false;
+                settingsView.IsVisible = true;
+            }
+        }
+
+        /// <summary>
         /// 关于按钮点击
         /// </summary>
         private void OnAboutClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             // 切换显示关于页面
             var serverListView = this.FindControl<Grid>("ServerListView");
+            var settingsView = this.FindControl<Views.Pages.SettingsPage>("SettingsView");
             var aboutView = this.FindControl<Views.Pages.AboutPage>("AboutView");
-            
+
             if (serverListView != null && aboutView != null)
             {
                 serverListView.IsVisible = false;
+                settingsView!.IsVisible = false;
                 aboutView.IsVisible = true;
             }
         }
@@ -434,12 +454,14 @@ namespace MicroPanelAvalonia
         public void ShowServerList()
         {
             var serverListView = this.FindControl<Grid>("ServerListView");
+            var settingsView = this.FindControl<Views.Pages.SettingsPage>("SettingsView");
             var aboutView = this.FindControl<Views.Pages.AboutPage>("AboutView");
-            
-            if (serverListView != null && aboutView != null)
+
+            if (serverListView != null)
             {
                 serverListView.IsVisible = true;
-                aboutView.IsVisible = false;
+                settingsView!.IsVisible = false;
+                aboutView!.IsVisible = false;
             }
         }
     }

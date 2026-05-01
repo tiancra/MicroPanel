@@ -1,14 +1,18 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform;
 using Avalonia.VisualTree;
 using MicroPanelAvalonia.Models;
 using MicroPanelAvalonia.Services;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Media;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MicroPanelAvalonia.Views
@@ -18,6 +22,8 @@ namespace MicroPanelAvalonia.Views
         private ServerInfo? _serverInfo;
         private bool _isProcessing;
         private readonly HttpClient _httpClient = new();
+        private CancellationTokenSource? _soundCancellationTokenSource;
+        private readonly object _soundLock = new();
 
         public event EventHandler? Cancelled;
         public event EventHandler<(ServerInfo server, ServerUser user, string token)>? UserSelected;
@@ -98,8 +104,9 @@ namespace MicroPanelAvalonia.Views
 
                     if (!reLoginResult.success)
                     {
-                        // 第二次还是403，弹窗提示并打开用户配置
-                        ShowAccountExpiredDialog();
+                        // 第二次还是403，显示错误Toast并播放音效
+                        PlayErrorSound();
+                        ToastService.Instance.ShowError("账号已过期，请重新配置");
                         ShowUserConfig?.Invoke(this, (_serverInfo, selectedUser));
                         return;
                     }
@@ -110,8 +117,9 @@ namespace MicroPanelAvalonia.Views
                     userInfoResult = await GetUserInfoAsync(token);
                     if (userInfoResult?.Code == 403)
                     {
-                        // 第二次还是403，弹窗提示并打开用户配置
-                        ShowAccountExpiredDialog();
+                        // 第二次还是403，显示错误Toast并播放音效
+                        PlayErrorSound();
+                        ToastService.Instance.ShowError("账号已过期，请重新配置");
                         ShowUserConfig?.Invoke(this, (_serverInfo, selectedUser));
                         return;
                     }
@@ -284,25 +292,47 @@ namespace MicroPanelAvalonia.Views
         }
 
         /// <summary>
-        /// 显示账号过期弹窗
+        /// 播放错误音效（异步，不阻塞主线程，支持中断）
         /// </summary>
-        private void ShowAccountExpiredDialog()
+        private void PlayErrorSound()
         {
-            var dialog = new Window
+            lock (_soundLock)
             {
-                Title = "提示",
-                Width = 300,
-                Height = 150,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                CanResize = false,
-                Content = new TextBlock
+                // 取消上一个正在播放的音频
+                _soundCancellationTokenSource?.Cancel();
+                _soundCancellationTokenSource?.Dispose();
+                _soundCancellationTokenSource = new CancellationTokenSource();
+                var cancellationToken = _soundCancellationTokenSource.Token;
+
+                _ = Task.Run(async () =>
                 {
-                    Text = "账号已过期",
-                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
-                }
-            };
-            dialog.ShowDialog((Window)this.GetVisualRoot()!);
+                    try
+                    {
+                        var uri = new Uri("avares://MicroPanelAvalonia/Assets/error.wav");
+                        using var stream = AssetLoader.Open(uri);
+                        using var memoryStream = new MemoryStream();
+                        stream.CopyTo(memoryStream);
+                        memoryStream.Position = 0;
+
+                        // 检查是否已取消
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        using var player = new SoundPlayer(memoryStream);
+                        player.Play(); // 异步播放
+
+                        // 等待播放完成或取消
+                        await Task.Delay(500, cancellationToken); // 假设音频最长500ms
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // 正常取消，不需要处理
+                    }
+                    catch
+                    {
+                        // 音效播放失败时静默处理
+                    }
+                }, cancellationToken);
+            }
         }
 
         private void ShowError(string message)
@@ -314,6 +344,7 @@ namespace MicroPanelAvalonia.Views
             {
                 errorTextBlock.Text = message;
                 errorPanel.IsVisible = true;
+                PlayErrorSound();
             }
         }
 

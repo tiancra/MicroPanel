@@ -70,6 +70,8 @@
               "version": "[11.3.12, )"
             },
             "AvaloniaUI.DiagnosticsSupport": {
+              "include": "None",
+              "suppressParent": "All",
               "target": "Package",
               "version": "[2.2.0, )"
             },
@@ -78,6 +80,10 @@
               "version": "[2.5.1, )"
             },
             "System.Management": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
+            "System.Windows.Extensions": {
               "target": "Package",
               "version": "[9.0.4, )"
             }

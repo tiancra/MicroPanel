@@ -47,6 +47,9 @@ namespace MicroPanelAvalonia.Views
             InitializeComponent();
             _httpClient = new HttpClient();
 
+            // 设置窗口图标
+            App.SetWindowIcon(this);
+
             // 注册到桌面模式管理器
             DesktopModeManager.Instance.RegisterMainWindow(this);
 
@@ -60,6 +63,72 @@ namespace MicroPanelAvalonia.Views
             KeyDown += OnWindowKeyDown;
             KeyUp += OnWindowKeyUp;
         }
+
+        /// <summary>
+        /// 初始化导航历史服务
+        /// </summary>
+        private void InitializeNavigationHistory()
+        {
+            bool isDesktopMode = DesktopModeManager.Instance.IsDesktopMode;
+            NavigationHistoryService.Instance.Initialize(this, isDesktopMode);
+            NavigationHistoryService.Instance.OnNavigateBack += OnNavigateBack;
+        }
+
+        /// <summary>
+        /// 返回导航事件处理
+        /// </summary>
+        private void OnNavigateBack(object? sender, string pageName)
+        {
+            // 更新侧边栏选中状态
+            var button = FindMenuButtonByPageName(pageName);
+            if (button != null)
+            {
+                SetMenuButtonActive(button);
+            }
+
+            // 导航到返回的页面（不记录历史）
+            NavigateToPage(pageName, false);
+        }
+
+        /// <summary>
+        /// 根据页面名称查找菜单按钮
+        /// </summary>
+        private Button? FindMenuButtonByPageName(string pageName)
+        {
+            var tag = pageName switch
+            {
+                "Home" => "Home",
+                "Status" => "Status",
+                "Logs" => "Logs",
+                "Plugins" => "Plugins",
+                "Files" => "Files",
+                "Sandbox" => "Sandbox",
+                "Database" => "Database",
+                "ConfigBot" => "ConfigBot",
+                "ConfigPlugin" => "ConfigPlugin",
+                "ConfigUser" => "ConfigUser",
+                "ConfigProtocol" => "ConfigProtocol",
+                "Settings" => "Settings",
+                "About" => "About",
+                _ => null
+            };
+
+            if (tag == null) return null;
+
+            // 在侧边栏中查找对应的按钮
+            var sidebar = this.FindControl<StackPanel>("SidebarPanel");
+            if (sidebar == null) return null;
+
+            foreach (var child in sidebar.Children)
+            {
+                if (child is Button button && button.Tag?.ToString() == tag)
+                {
+                    return button;
+                }
+            }
+
+            return null;
+        }
         
         // 跟踪修饰键状态
         private bool _isCtrlPressed = false;
@@ -71,6 +140,15 @@ namespace MicroPanelAvalonia.Views
         private void OnWindowKeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine($"KeyDown: Key={e.Key}, Modifiers={e.KeyModifiers}");
+
+            // 首先检查 Esc 键（返回上一级）
+            if (e.Key == Avalonia.Input.Key.Escape)
+            {
+                if (NavigationHistoryService.Instance.HandleKeyDown(e))
+                {
+                    return; // 已处理返回操作
+                }
+            }
 
             // 更新修饰键状态
             if (e.Key == Avalonia.Input.Key.LeftCtrl || e.Key == Avalonia.Input.Key.RightCtrl)
@@ -138,10 +216,13 @@ namespace MicroPanelAvalonia.Views
         {
             // 更新用户信息显示
             await UpdateUserInfoAsync();
-            
+
+            // 初始化导航历史服务
+            InitializeNavigationHistory();
+
             // 默认显示首页
             NavigateToPage("Home");
-            
+
             // 设置首页按钮为选中状态
             var homeButton = this.FindControl<Button>("HomeMenuButton");
             if (homeButton != null)
@@ -436,7 +517,7 @@ namespace MicroPanelAvalonia.Views
             _currentMenuButton = button;
         }
 
-        private async void NavigateToPage(string pageName)
+        private async void NavigateToPage(string pageName, bool recordHistory = true)
         {
             var contentControl = this.FindControl<ContentControl>("MainContentControl");
             var titleText = this.FindControl<TextBlock>("PageTitleText");
@@ -456,6 +537,7 @@ namespace MicroPanelAvalonia.Views
                 "ConfigPlugin" => new PluginConfigPage(),
                 "ConfigUser" => new UserConfigPage(),
                 "ConfigProtocol" => new ProtocolConfigPage(),
+                "Settings" => new SettingsPage(),
                 "About" => new AboutPage(),
                 // 其他页面将在后续添加
                 _ => null
@@ -481,9 +563,16 @@ namespace MicroPanelAvalonia.Views
                         "ConfigPlugin" => "插件配置",
                         "ConfigUser" => "权限配置",
                         "ConfigProtocol" => "协议配置",
+                        "Settings" => "设置",
                         "About" => "关于",
                         _ => pageName
                     };
+                }
+
+                // 记录导航历史
+                if (recordHistory)
+                {
+                    NavigationHistoryService.Instance.Push(pageName);
                 }
             }
         }

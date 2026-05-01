@@ -1,8 +1,12 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform;
 using MicroPanelAvalonia.Services;
 using System;
+using System.IO;
+using System.Media;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MicroPanelAvalonia.Views
@@ -11,6 +15,8 @@ namespace MicroPanelAvalonia.Views
     {
         private readonly ApiService _apiService;
         private bool _isProcessing;
+        private CancellationTokenSource? _soundCancellationTokenSource;
+        private readonly object _soundLock = new();
 
         public event EventHandler? Cancelled;
         public event EventHandler<(string serverAddress, string username, string password)>? Confirmed;
@@ -143,6 +149,51 @@ namespace MicroPanelAvalonia.Views
             {
                 errorTextBlock.Text = message;
                 errorPanel.IsVisible = true;
+                PlayErrorSound();
+            }
+        }
+
+        /// <summary>
+        /// 播放错误音效（异步，不阻塞主线程，支持中断）
+        /// </summary>
+        private void PlayErrorSound()
+        {
+            lock (_soundLock)
+            {
+                // 取消上一个正在播放的音频
+                _soundCancellationTokenSource?.Cancel();
+                _soundCancellationTokenSource?.Dispose();
+                _soundCancellationTokenSource = new CancellationTokenSource();
+                var cancellationToken = _soundCancellationTokenSource.Token;
+
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        var uri = new Uri("avares://MicroPanelAvalonia/Assets/error.wav");
+                        using var stream = AssetLoader.Open(uri);
+                        using var memoryStream = new MemoryStream();
+                        stream.CopyTo(memoryStream);
+                        memoryStream.Position = 0;
+
+                        // 检查是否已取消
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        using var player = new SoundPlayer(memoryStream);
+                        player.Play(); // 异步播放
+
+                        // 等待播放完成或取消
+                        await Task.Delay(500, cancellationToken); // 假设音频最长500ms
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // 正常取消，不需要处理
+                    }
+                    catch
+                    {
+                        // 音效播放失败时静默处理
+                    }
+                }, cancellationToken);
             }
         }
 

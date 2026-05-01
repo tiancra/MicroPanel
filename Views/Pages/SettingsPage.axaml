@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MicroPanelAvalonia.Views.Pages.SettingsPage">
+  <Grid RowDefinitions="Auto,*">
+    <!-- 标题栏 -->
+    <Border Grid.Row="0"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8"
+            Padding="16"
+            Margin="0,0,0,16">
+      <TextBlock Text="设置"
+                 FontSize="18"
+                 FontWeight="SemiBold"
+                 VerticalAlignment="Center"
+                 HorizontalAlignment="Left"/>
+    </Border>
+
+    <!-- 内容区域 -->
+    <ScrollViewer Grid.Row="1"
+                  HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="16">
+        <!-- 主题设置卡片 -->
+        <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="8"
+                Padding="24">
+          <StackPanel Spacing="16">
+            <TextBlock Text="外观"
+                       FontSize="16"
+                       FontWeight="SemiBold"/>
+            
+            <Grid ColumnDefinitions="Auto,*">
+              <TextBlock Grid.Column="0" 
+                         Text="主题" 
+                         FontSize="14"
+                         VerticalAlignment="Center"
+                         Margin="0,0,16,0"/>
+              <ComboBox Grid.Column="1"
+                        x:Name="ThemeComboBox"
+                        SelectedIndex="2"
+                        HorizontalAlignment="Stretch">
+                <ComboBoxItem Content="浅色"/>
+                <ComboBoxItem Content="深色"/>
+                <ComboBoxItem Content="跟随系统"/>
+              </ComboBox>
+            </Grid>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

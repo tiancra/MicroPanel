@@ -156,3 +156,5 @@ E:\MicroPanel\MicroPanel\obj\Debug\net10.0\ref\MicroPanelAvalonia.dll
 E:\MicroPanel\MicroPanel\bin\Debug\net10.0\System.CodeDom.dll
 E:\MicroPanel\MicroPanel\bin\Debug\net10.0\System.Management.dll
 E:\MicroPanel\MicroPanel\bin\Debug\net10.0\runtimes\win\lib\net9.0\System.Management.dll
+E:\MicroPanel\MicroPanel\bin\Debug\net10.0\System.Windows.Extensions.dll
+E:\MicroPanel\MicroPanel\bin\Debug\net10.0\runtimes\win\lib\net9.0\System.Windows.Extensions.dll

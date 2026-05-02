@@ -5,11 +5,8 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Android-blue)
 ![Framework](https://img.shields.io/badge/Framework-Avalonia%20UI%20%7C%20.NET%20MAUI-purple)
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)
-[![License](https://img.shields.io/badge/License-GPL--3.0-green)](./LICENSE)
 
 **Yunzai-Bot 管理面板 - 桌面客户端与移动应用**
-
-[English](./EN_README.md) | 简体中文
 
 </div>
 
@@ -33,20 +30,18 @@ MicroPanel 是 [micro-plugin](https://github.com/V2233/micro-plugin) 的配套�
 - **离线提醒** - 服务器状态异常通知
 - **深色/浅色主题** - 支持主题切换
 
-### 📱 移动应用 (Android/iOS)
+### 📱 移动应用 (尚未开发完成)
 
 - **服务器列表** - 查看所有服务器状态
 - **状态概览** - 实时监控系统资源
-- **快速访问** - 内置浏览器访问面板
 - **推送通知** - 服务器离线提醒
-- **多平台支持** - Android、iOS、Windows
 
 ## 🚀 快速开始
 
 ### 环境要求
 
 - **桌面客户端**: Windows 10 或更高版本
-- **移动应用**: Android 8.0+ / iOS 15.0+
+- **移动应用**: Android 8.0+
 - **开发环境**: .NET 10 SDK
 
 ### 安装桌面客户端
@@ -54,17 +49,16 @@ MicroPanel 是 [micro-plugin](https://github.com/V2233/micro-plugin) 的配套�
 #### 方式一：直接下载（推荐）
 
 1. 访问 [GitHub Releases](https://github.com/V2233/micro-plugin/releases) 下载最新版本
-2. 解压到任意目录
-3. 运行 `MicroPanel.exe`
+2. 运行 `Setup.exe`
 
 #### 方式二：自行编译
 
 ```bash
 # 克隆仓库
-git clone https://github.com/V2233/micro-plugin.git
+git clone https://github.com/tiancra/MicroPanel.git
 
 # 进入桌面客户端目录
-cd MicroPanel/MicroPanel
+cd MicroPanel
 
 # 还原依赖
 dotnet restore
@@ -84,16 +78,12 @@ dotnet publish -c Release -r win-x64 --self-contained
 2. 允许安装未知来源应用
 3. 安装并打开应用
 
-#### iOS
-
-> 目前 iOS 版本正在开发中，敬请期待。
-
 ## 📖 使用指南
 
 ### 添加服务器
 
 1. 打开 MicroPanel 应用
-2. 点击 **"添加服务器"** 按钮
+2. 点击 **"＋"** 按钮
 3. 填写服务器信息：
    - 服务器地址（如：`192.168.1.100:23306`）
    - 用户名
@@ -215,11 +205,12 @@ dotnet build
 
 - QQ 交流群: [397798018](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=6qeMfgydE5k8e_nTorXz0ywmahixBTFw)
 - GitHub Issues: [V2233/micro-plugin](https://github.com/V2233/micro-plugin/issues)
+- GitHub Issues: [tiancra/MicroPanel](https://github.com/tiancra/MicroPanel/issues)
 
 ---
 
 <div align="center">
 
-**Made with ❤️ by MicroPanel Team**
+**Made with TianStudio**
 
 </div>

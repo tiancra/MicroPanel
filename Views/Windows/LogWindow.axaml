@@ -6,10 +6,7 @@
         Width="900"
         Height="600"
         MinWidth="300"
-        MinHeight="200"
-        SystemDecorations="None"
-        ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="NoChrome">
+        MinHeight="200">
   <Grid RowDefinitions="Auto,*">
     <!-- 顶部工具栏 -->
     <Border Grid.Row="0"

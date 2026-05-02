@@ -14,6 +14,11 @@ namespace MicroPanelAvalonia.Views.Pages
 {
     public partial class AboutPage : UserControl
     {
+        private int _versionClickCount = 0;
+        private DateTime _firstClickTime = DateTime.MinValue;
+        private const int RequiredClicks = 5;
+        private const int ClickTimeoutSeconds = 3;
+
         public AboutPage()
         {
             InitializeComponent();
@@ -497,6 +502,54 @@ namespace MicroPanelAvalonia.Views.Pages
             catch (Exception ex)
             {
                 Debug.WriteLine($"打开链接失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 版本号点击事件 - 连续点击5次进入调试模式（仅桌面模式可用）
+        /// </summary>
+        private async void OnVersionClick(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+        {
+            // 非桌面模式下无法通过点击版本号进入调试模式
+            if (!Services.DesktopModeManager.Instance.IsDesktopMode)
+            {
+                return;
+            }
+
+            var now = DateTime.Now;
+
+            // 如果超过3秒，重置计数
+            if ((now - _firstClickTime).TotalSeconds > ClickTimeoutSeconds)
+            {
+                _versionClickCount = 0;
+                _firstClickTime = now;
+            }
+
+            _versionClickCount++;
+
+            // 显示点击反馈
+            if (_versionClickCount < RequiredClicks)
+            {
+                var remaining = RequiredClicks - _versionClickCount;
+                Services.DebugModeService.LogDebug($"版本号点击 {_versionClickCount}/{RequiredClicks}，还需 {remaining} 次进入调试模式");
+            }
+
+            // 达到5次点击
+            if (_versionClickCount >= RequiredClicks)
+            {
+                _versionClickCount = 0;
+                Services.DebugModeService.LogDebug("版本号已点击5次，触发调试模式确认");
+
+                // 获取父窗口
+                var parentWindow = TopLevel.GetTopLevel(this) as Window;
+                if (parentWindow != null)
+                {
+                    var result = await Services.DebugModeService.ShowDebugModeConfirmDialog(parentWindow);
+                    if (result)
+                    {
+                        Services.DebugModeService.RestartInDebugMode();
+                    }
+                }
             }
         }
     }

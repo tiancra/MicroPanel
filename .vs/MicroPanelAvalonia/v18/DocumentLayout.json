@@ -23,10 +23,6 @@
       "RelativeMoniker": "D:0:0:{F07228B2-5A6A-46CD-D3C9-FD95C6492337}|MicroPanelAvalonia.csproj|solutionrelative:services\\apiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F07228B2-5A6A-46CD-D3C9-FD95C6492337}|MicroPanelAvalonia.csproj|e:\\micropanel\\micropanel\\views\\controls\\logviewer.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F07228B2-5A6A-46CD-D3C9-FD95C6492337}|MicroPanelAvalonia.csproj|solutionrelative:views\\controls\\logviewer.axaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{F07228B2-5A6A-46CD-D3C9-FD95C6492337}|MicroPanelAvalonia.csproj|e:\\micropanel\\micropanel\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F07228B2-5A6A-46CD-D3C9-FD95C6492337}|MicroPanelAvalonia.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -52,7 +48,7 @@
               "RelativeDocumentMoniker": "Views\\AddServerDialog.axaml",
               "ToolTip": "E:\\MicroPanel\\MicroPanel\\Views\\AddServerDialog.axaml",
               "RelativeToolTip": "Views\\AddServerDialog.axaml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAABTAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2026-04-30T15:38:45.981Z",
               "EditorCaption": ""
@@ -108,18 +104,6 @@
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "LogViewer.axaml.cs",
-              "DocumentMoniker": "E:\\MicroPanel\\MicroPanel\\Views\\Controls\\LogViewer.axaml.cs",
-              "RelativeDocumentMoniker": "Views\\Controls\\LogViewer.axaml.cs",
-              "ToolTip": "E:\\MicroPanel\\MicroPanel\\Views\\Controls\\LogViewer.axaml.cs",
-              "RelativeToolTip": "Views\\Controls\\LogViewer.axaml.cs",
-              "ViewState": "AgIAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-19T06:33:39.938Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
               "Title": "Program.cs",
               "DocumentMoniker": "E:\\MicroPanel\\MicroPanel\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",

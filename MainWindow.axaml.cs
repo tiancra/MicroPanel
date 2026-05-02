@@ -14,6 +14,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+using MicroPanelAvalonia.Views.Pages;
 
 namespace MicroPanelAvalonia
 {
@@ -43,8 +44,65 @@ namespace MicroPanelAvalonia
             // 注册到桌面模式管理器
             DesktopModeManager.Instance.RegisterMainWindow(this);
 
+            // 如果是调试模式，显示水印
+            if (DebugModeService.IsDebugMode)
+            {
+                ShowDebugModeWatermark();
+            }
+
             // 窗口加载完成后立即刷新所有服务器状态
-            Loaded += async (s, e) => await _serverManager.RefreshAllServersAsync();
+            Loaded += async (s, e) => 
+            {
+                await _serverManager.RefreshAllServersAsync();
+                
+                // 如果是调试模式，显示警告弹窗并打开调试菜单
+                if (DebugModeService.IsDebugMode)
+                {
+                    await DebugModeService.ShowDebugModeWarningDialog(this);
+                    
+                    // 打开调试菜单（无法关闭）
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        OpenDebugMenu();
+                    }, DispatcherPriority.Background);
+                }
+            };
+
+        }
+
+
+
+        /// <summary>
+        /// 打开调试菜单（无法关闭）
+        /// </summary>
+        private void OpenDebugMenu()
+        {
+            try
+            {
+                DebugModeService.LogDebug("正在创建调试菜单窗口...");
+                var debugMenu = new DebugMenuWindow();
+                
+                // 注意：关闭事件阻止已在 DebugMenuWindow 构造函数中处理
+                
+                debugMenu.Show();
+                DebugModeService.LogDebug("调试菜单窗口已显示（无法关闭）");
+            }
+            catch (Exception ex)
+            {
+                DebugModeService.LogDebug($"打开调试菜单失败: {ex}");
+            }
+        }
+
+        /// <summary>
+        /// 显示调试模式水印
+        /// </summary>
+        private void ShowDebugModeWatermark()
+        {
+            var watermark = this.FindControl<Border>("DebugModeWatermark");
+            if (watermark != null)
+            {
+                watermark.IsVisible = true;
+            }
         }
 
         private void InitializeComponent()

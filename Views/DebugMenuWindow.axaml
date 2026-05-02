@@ -1,0 +1,173 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
+        x:Class="MicroPanelAvalonia.Views.DebugMenuWindow"
+        Title="调试菜单"
+        Width="400" Height="600"
+        MinWidth="350" MinHeight="400"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False">
+
+  <Window.Styles>
+    <Style Selector="Button.DebugItem">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Left" />
+      <Setter Property="Padding" Value="16,12" />
+      <Setter Property="Margin" Value="8,4" />
+      <Setter Property="CornerRadius" Value="6" />
+    </Style>
+
+    <Style Selector="Button.DebugItem.Danger">
+      <Setter Property="Background" Value="#FFE0E0" />
+      <Setter Property="Foreground" Value="#D00000" />
+    </Style>
+
+    <Style Selector="Button.DebugItem.Danger:pointerover">
+      <Setter Property="Background" Value="#FFD0D0" />
+    </Style>
+
+    <Style Selector="Separator.DebugSeparator">
+      <Setter Property="Margin" Value="16,8" />
+    </Style>
+
+    <Style Selector="TextBlock.GroupHeader">
+      <Setter Property="FontSize" Value="12" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Opacity" Value="0.6" />
+      <Setter Property="Margin" Value="16,16,16,8" />
+    </Style>
+  </Window.Styles>
+
+  <Grid RowDefinitions="Auto,*">
+    <!-- 标题栏 -->
+    <Border Grid.Row="0"
+            Background="{DynamicResource LayerFillColorDefaultBrush}"
+            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+            BorderThickness="0,0,0,1"
+            Padding="16,12">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Grid.Column="0"
+                   Text="调试菜单"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"/>
+        <Border Grid.Column="1"
+                Background="#80FF0000"
+                CornerRadius="4"
+                Padding="8,4">
+          <TextBlock Text="DEBUG"
+                     FontSize="10"
+                     FontWeight="Bold"
+                     Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+        </Border>
+      </Grid>
+    </Border>
+
+    <!-- 调试项目列表 -->
+    <ScrollViewer Grid.Row="1"
+                  VerticalScrollBarVisibility="Auto">
+      <StackPanel Margin="0,8">
+
+        <!-- 应用信息 -->
+        <TextBlock Classes="GroupHeader" Text="应用信息"/>
+        <Button Classes="DebugItem"
+                Click="OnShowAppInfoClick">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <PathIcon Data="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
+                      Width="20" Height="20"/>
+            <TextBlock Text="显示应用信息" FontSize="13"/>
+          </StackPanel>
+        </Button>
+
+        <Button Classes="DebugItem"
+                Click="OnShowMemoryInfoClick">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <PathIcon Data="M4,6H20V16H4M2,18H22V20H2V18M20,4H4V6H20V4Z"
+                      Width="20" Height="20"/>
+            <TextBlock Text="显示内存信息" FontSize="13"/>
+          </StackPanel>
+        </Button>
+
+        <Separator Classes="DebugSeparator"/>
+
+        <!-- 网络测试 -->
+        <TextBlock Classes="GroupHeader" Text="网络测试"/>
+        <Button Classes="DebugItem"
+                Click="OnTestNetworkClick">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <PathIcon Data="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10-4.48 10-10S17.52,2 12,2zm-1,17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9,15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
+                      Width="20" Height="20"/>
+            <TextBlock Text="测试网络连接" FontSize="13"/>
+          </StackPanel>
+        </Button>
+
+        <Separator Classes="DebugSeparator"/>
+
+        <!-- 危险操作 -->
+        <TextBlock Classes="GroupHeader" Text="危险操作"/>
+        <Button Classes="DebugItem Danger"
+                Click="OnTestCrashClick">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <PathIcon Data="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"
+                      Width="20" Height="20"/>
+            <TextBlock Text="测试崩溃（立即崩溃）" FontSize="13"/>
+          </StackPanel>
+        </Button>
+
+        <Button Classes="DebugItem Danger"
+                Click="OnTestNullReferenceClick">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <PathIcon Data="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10-4.48 10-10S17.52,2 12,2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
+                      Width="20" Height="20"/>
+            <TextBlock Text="测试空引用异常" FontSize="13"/>
+          </StackPanel>
+        </Button>
+
+        <Button Classes="DebugItem Danger"
+                Click="OnTestUiFreezeClick">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <PathIcon Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"
+                      Width="20" Height="20"/>
+            <TextBlock Text="测试 UI 卡死（5秒）" FontSize="13"/>
+          </StackPanel>
+        </Button>
+
+        <Separator Classes="DebugSeparator"/>
+
+        <!-- 其他 -->
+        <TextBlock Classes="GroupHeader" Text="其他"/>
+        <Button Classes="DebugItem"
+                Click="OnReloadConfigClick">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <PathIcon Data="M17.65,6.35C16.2,4.9 14.21,4 12,4c-4.42,0 -7.99,3.58 -7.99,8s3.57,8 7.99,8c3.73,0 6.84,-2.55 7.73,-6h-2.08c-0.82,2.33 -3.04,4 -5.65,4 -3.31,0 -6,-2.69 -6,-6s2.69,-6 6,-6c1.66,0 3.14,0.69 4.22,1.78L13,11h7V4l-2.35,2.35z"
+                      Width="20" Height="20"/>
+            <TextBlock Text="重新加载配置" FontSize="13"/>
+          </StackPanel>
+        </Button>
+
+        <!-- 桌面模式/正常模式切换按钮 - 动态文本 -->
+        <Button x:Name="ToggleModeButton"
+                Classes="DebugItem"
+                Click="OnToggleModeClick">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <PathIcon Data="M4,6H20V16H4M2,18H22V20H2V18M20,4H4V6H20V4Z"
+                      Width="20" Height="20"/>
+            <TextBlock x:Name="ToggleModeButtonText" Text="重启到桌面模式" FontSize="13"/>
+          </StackPanel>
+        </Button>
+
+        <Button Classes="DebugItem"
+                Click="OnExitDebugModeClick">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <PathIcon Data="M17,7L15.59,8.41L18.17,11H8V13H18.17L15.59,15.58L17,17L22,12M4,5H12V3H4A2,2 0 0,0 2,5V19A2,2 0 0,0 4,21H12V19H4V5Z"
+                      Width="20" Height="20"/>
+            <TextBlock Text="退出调试模式（重启）" FontSize="13"/>
+          </StackPanel>
+        </Button>
+
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</Window>

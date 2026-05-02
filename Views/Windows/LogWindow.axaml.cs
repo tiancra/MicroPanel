@@ -25,6 +25,28 @@ namespace MicroPanelAvalonia.Views.Windows
             InitializeComponent();
             Loaded += OnWindowLoaded;
             Closed += OnWindowClosed;
+
+            // 根据桌面模式设置窗口样式
+            ApplyWindowStyle();
+        }
+
+        /// <summary>
+        /// 根据桌面模式应用窗口样式
+        /// </summary>
+        private void ApplyWindowStyle()
+        {
+            if (DesktopModeManager.Instance.IsDesktopMode)
+            {
+                // 桌面模式：无边框
+                SystemDecorations = SystemDecorations.None;
+                ExtendClientAreaToDecorationsHint = true;
+            }
+            else
+            {
+                // 非桌面模式：显示标题栏
+                SystemDecorations = SystemDecorations.Full;
+                ExtendClientAreaToDecorationsHint = false;
+            }
         }
 
         private string? _initialLogs;

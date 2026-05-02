@@ -35,11 +35,14 @@
                        FontWeight="Bold"
                        HorizontalAlignment="Center"/>
 
-            <!-- 版本号 -->
-            <TextBlock Text="版本 2.0.0_Beta"
+            <!-- 版本号 - 点击5次进入调试模式 -->
+            <TextBlock x:Name="VersionText"
+                       Text="版本 2.0.0_Beta2"
                        FontSize="14"
                        Opacity="0.6"
-                       HorizontalAlignment="Center"/>
+                       HorizontalAlignment="Center"
+                       Cursor="Hand"
+                       PointerPressed="OnVersionClick"/>
           </StackPanel>
         </Border>
 

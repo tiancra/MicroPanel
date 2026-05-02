@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using FluentAvalonia.UI;
+using MicroPanelAvalonia.Services;
 using System;
 
 namespace MicroPanelAvalonia;
@@ -17,8 +18,15 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        // 初始化调试模式服务
+        var args = Environment.GetCommandLineArgs();
+        DebugModeService.Initialize(args);
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            // 主窗口关闭时退出应用
+            desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
+            
             desktop.MainWindow = new MainWindow();
             SetApplicationIcon(desktop.MainWindow);
         }

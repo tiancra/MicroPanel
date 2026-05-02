@@ -8,11 +8,13 @@ using Avalonia.Rendering.Composition;
 using Avalonia.Rendering.Composition.Animations;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using Avalonia.Layout;
 using MicroPanelAvalonia.Models;
 using MicroPanelAvalonia.Services;
 using MicroPanelAvalonia.Views.Pages;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Numerics;
@@ -62,6 +64,27 @@ namespace MicroPanelAvalonia.Views
             // 注册全局键盘事件
             KeyDown += OnWindowKeyDown;
             KeyUp += OnWindowKeyUp;
+
+            // 如果是调试模式，显示水印
+            Debug.WriteLine($"MainAppWindow 构造函数 - IsDebugMode: {DebugModeService.IsDebugMode}");
+            if (DebugModeService.IsDebugMode)
+            {
+                Debug.WriteLine("进入调试模式初始化...");
+                ShowDebugModeWatermark();
+                // 调试菜单已在服务器选择窗口打开
+            }
+        }
+
+        /// <summary>
+        /// 显示调试模式水印
+        /// </summary>
+        private void ShowDebugModeWatermark()
+        {
+            var watermark = this.FindControl<Border>("DebugModeWatermark");
+            if (watermark != null)
+            {
+                watermark.IsVisible = true;
+            }
         }
 
         /// <summary>
@@ -160,8 +183,16 @@ namespace MicroPanelAvalonia.Views
                 _isShiftPressed = true;
             }
 
-            // 检查是否按下 Ctrl+Shift+L（同时检查状态变量和 KeyModifiers）
+            // 检测 Ctrl+Alt 组合键（用于调试模式）
             bool hasCtrl = _isCtrlPressed || (e.KeyModifiers & Avalonia.Input.KeyModifiers.Control) == Avalonia.Input.KeyModifiers.Control;
+            bool hasAlt = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Alt) == Avalonia.Input.KeyModifiers.Alt;
+            
+            if (hasCtrl && hasAlt)
+            {
+                DebugModeService.SetCtrlAltPressed(true);
+            }
+
+            // 检查是否按下 Ctrl+Shift+L（同时检查状态变量和 KeyModifiers）
             bool hasShift = _isShiftPressed || (e.KeyModifiers & Avalonia.Input.KeyModifiers.Shift) == Avalonia.Input.KeyModifiers.Shift;
 
             if (e.Key == Avalonia.Input.Key.L && hasCtrl && hasShift)
@@ -195,6 +226,16 @@ namespace MicroPanelAvalonia.Views
             if (e.Key == Avalonia.Input.Key.LeftShift || e.Key == Avalonia.Input.Key.RightShift)
             {
                 _isShiftPressed = false;
+            }
+            
+            // 检测 Ctrl+Alt 释放（用于调试模式）
+            if (e.Key == Avalonia.Input.Key.LeftCtrl || e.Key == Avalonia.Input.Key.RightCtrl ||
+                e.Key == Avalonia.Input.Key.LeftAlt || e.Key == Avalonia.Input.Key.RightAlt)
+            {
+                var isCtrlPressed = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Control) == Avalonia.Input.KeyModifiers.Control;
+                var isAltPressed = (e.KeyModifiers & Avalonia.Input.KeyModifiers.Alt) == Avalonia.Input.KeyModifiers.Alt;
+                
+                DebugModeService.SetCtrlAltPressed(isCtrlPressed && isAltPressed);
             }
         }
         
@@ -509,12 +550,57 @@ namespace MicroPanelAvalonia.Views
             // 重置之前选中的按钮
             if (_currentMenuButton != null)
             {
-                _currentMenuButton.Classes.Remove("Accent");
+                _currentMenuButton.Classes.Remove("Selected");
             }
 
             // 设置当前按钮为选中状态
-            button.Classes.Add("Accent");
+            button.Classes.Add("Selected");
             _currentMenuButton = button;
+
+            // 更新滑动蓝条位置
+            UpdateSelectionIndicator(button);
+        }
+
+        /// <summary>
+        /// 更新选中指示器（蓝条）位置，带动画效果
+        /// </summary>
+        private void UpdateSelectionIndicator(Button targetButton)
+        {
+            var indicator = this.FindControl<Border>("SelectionIndicator");
+            if (indicator == null) return;
+
+            // 显示指示器
+            indicator.IsVisible = true;
+
+            // 使用 Dispatcher 确保布局已完成
+            Dispatcher.UIThread.Post(() =>
+            {
+                // 获取按钮相对于侧边栏 Grid 的位置
+                var sidebarGrid = this.FindControl<Grid>("SidebarGrid");
+                if (sidebarGrid == null) return;
+
+                // 将按钮的坐标转换为相对于 Grid 的坐标
+                var buttonPosition = targetButton.TranslatePoint(new Point(0, 0), sidebarGrid);
+                if (!buttonPosition.HasValue) return;
+
+                // 获取按钮高度
+                double buttonHeight = targetButton.Bounds.Height;
+                if (buttonHeight <= 0) buttonHeight = 40;
+
+                // 获取指示器高度
+                double indicatorHeight = indicator.Bounds.Height;
+                if (indicatorHeight <= 0) indicatorHeight = 16;
+
+                // 计算垂直居中位置
+                // 注意：buttonPosition 是相对于整个 Grid 的，但 Canvas 在 Row 1 中
+                // 所以需要减去 Row 0 (Logo区域) 的高度
+                double logoHeight = 60; // Logo区域大约高度
+                double centerY = buttonPosition.Value.Y - logoHeight + (buttonHeight - indicatorHeight) / 2;
+
+                // 设置 Canvas.Top 属性来移动指示器
+                Canvas.SetTop(indicator, centerY);
+
+            }, DispatcherPriority.Render);
         }
 
         private async void NavigateToPage(string pageName, bool recordHistory = true)
@@ -675,13 +761,25 @@ namespace MicroPanelAvalonia.Views
             }
         }
 
-        private void OnLogoutClick(object? sender, RoutedEventArgs e)
+        private async void OnLogoutClick(object? sender, RoutedEventArgs e)
         {
+            // 检查是否按下了 Ctrl+Alt，如果是则进入调试模式
+            if (DebugModeService.IsCtrlAltPressed)
+            {
+                var result = await DebugModeService.ShowDebugModeConfirmDialog(this);
+                if (result)
+                {
+                    DebugModeService.RestartInDebugMode();
+                }
+                return;
+            }
+
             // 结束会话
             SessionService.Instance.EndSession();
             
             // 关闭当前窗口，返回主窗口
             Close();
         }
+
     }
 }

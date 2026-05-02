@@ -10,218 +10,231 @@
         MinWidth="1000" MinHeight="700"
         WindowStartupLocation="CenterScreen"
         TransparencyLevelHint="Mica"
-        Background="Transparent">
+        Background="Transparent"
+        x:Name="MainWindow">
 
-  <Grid ColumnDefinitions="260,*">
+  <Window.Styles>
+    <!-- 滑动蓝条样式 -->
+    <Style Selector="Border.SelectionIndicator">
+      <Setter Property="Width" Value="3" />
+      <Setter Property="Height" Value="16" />
+      <Setter Property="Background" Value="{DynamicResource NavigationSelectionIndicatorBrush}" />
+      <Setter Property="CornerRadius" Value="2" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="VerticalAlignment" Value="Top" />
+      <Setter Property="Margin" Value="12,0,0,0" />
+      <Setter Property="RenderTransform">
+        <TranslateTransform Y="0" />
+      </Setter>
+    </Style>
+  </Window.Styles>
+
+  <Grid ColumnDefinitions="240,*">
 
     <!-- 侧边栏 -->
     <Border Grid.Column="0"
-            Background="{DynamicResource LayerFillColorDefaultBrush}"
-            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-            BorderThickness="0,0,1,0">
-      <Grid RowDefinitions="Auto,*,Auto">
+            Classes="Sidebar"
+            x:Name="SidebarBorder">
+      <Grid x:Name="SidebarGrid">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
         <!-- Logo区域 -->
-        <Border Grid.Row="0" Padding="20,24">
-          <StackPanel Orientation="Horizontal" Spacing="12">
+        <Border Grid.Row="0" Padding="20,16">
+          <StackPanel Orientation="Horizontal" Spacing="10">
             <Image Source="avares://MicroPanelAvalonia/Assets/logo.png"
-                   Width="32" Height="32"/>
+                   Width="28" Height="28"/>
             <TextBlock Text="Micro Panel"
-                       FontSize="22"
-                       FontWeight="Bold"
-                       VerticalAlignment="Center"/>
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource NavigationItemForegroundBrush}"/>
           </StackPanel>
         </Border>
 
-        <!-- 导航菜单 -->
-        <ScrollViewer Grid.Row="1"
+        <!-- 导航菜单 - 扁平化列表 -->
+        <ScrollViewer x:Name="MenuScrollViewer"
+                      Grid.Row="1"
                       VerticalScrollBarVisibility="Auto"
-                      Padding="12,0">
-          <StackPanel x:Name="MenuStackPanel" Spacing="4">
+                      Padding="0,8">
+          <StackPanel x:Name="MenuStackPanel" Spacing="2">
 
             <!-- 首页 -->
             <Button x:Name="HomeMenuButton"
                     Classes="Navigation"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Left"
-                    Padding="12,10"
                     Click="OnMenuClick"
                     Tag="Home">
               <StackPanel Orientation="Horizontal" Spacing="12">
                 <PathIcon Data="M12,3L4,9v12h5v-7h6v7h5V9L12,3z"
-                          Width="20" Height="20"/>
-                <TextBlock Text="首页" FontSize="14"/>
+                          Width="18" Height="18"/>
+                <TextBlock Text="首页" FontSize="13"/>
               </StackPanel>
             </Button>
 
-            <!-- 大屏数据分组 -->
-            <Expander HorizontalAlignment="Stretch"
-                      IsExpanded="True"
-                      Margin="0,8,0,0">
-              <Expander.Header>
-                <StackPanel Orientation="Horizontal" Spacing="12">
-                  <PathIcon Data="M4,6H20V16H4M2,18H22V20H2V18M20,4H4V6H20V4Z"
-                            Width="20" Height="20"/>
-                  <TextBlock Text="数据监控" FontSize="14"/>
-                </StackPanel>
-              </Expander.Header>
-              <StackPanel Spacing="4" Margin="0,4,0,0">
-                <Button Classes="Navigation"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="36,8"
-                        Click="OnMenuClick"
-                        Tag="Status">
-                  <TextBlock Text="系统状态" FontSize="13"/>
-                </Button>
-                <Button Classes="Navigation"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="36,8"
-                        Click="OnMenuClick"
-                        Tag="Logs">
-                  <TextBlock Text="日志输出" FontSize="13"/>
-                </Button>
+            <!-- 系统状态 -->
+            <Button Classes="Navigation"
+                    Click="OnMenuClick"
+                    Tag="Status">
+              <StackPanel Orientation="Horizontal" Spacing="12">
+                <PathIcon Data="M4,6H20V16H4M2,18H22V20H2V18M20,4H4V6H20V4Z"
+                          Width="18" Height="18"/>
+                <TextBlock Text="系统状态" FontSize="13"/>
               </StackPanel>
-            </Expander>
+            </Button>
 
-            <!-- 开发工具分组 -->
-            <Expander HorizontalAlignment="Stretch"
-                      IsExpanded="True"
-                      Margin="0,8,0,0">
-              <Expander.Header>
-                <StackPanel Orientation="Horizontal" Spacing="12">
-                  <PathIcon Data="M9.4,16.6L4.8,12L9.4,7.4L8,6L2,12L8,18L9.4,16.6M14.6,16.6L19.2,12L14.6,7.4L16,6L22,12L16,18L14.6,16.6Z"
-                            Width="20" Height="20"/>
-                  <TextBlock Text="开发工具" FontSize="14"/>
-                </StackPanel>
-              </Expander.Header>
-              <StackPanel Spacing="4" Margin="0,4,0,0">
-                <Button Classes="Navigation"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="36,8"
-                        Click="OnMenuClick"
-                        Tag="Plugins">
-                  <TextBlock Text="插件开发" FontSize="13"/>
-                </Button>
-                <Button Classes="Navigation"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="36,8"
-                        Click="OnMenuClick"
-                        Tag="Files">
-                  <TextBlock Text="文件管理" FontSize="13"/>
-                </Button>
-                <Button Classes="Navigation"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="36,8"
-                        Click="OnMenuClick"
-                        Tag="Sandbox">
-                  <TextBlock Text="沙盒调试" FontSize="13"/>
-                </Button>
-                <Button Classes="Navigation"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="36,8"
-                        Click="OnMenuClick"
-                        Tag="Database">
-                  <TextBlock Text="数据库" FontSize="13"/>
-                </Button>
+            <!-- 日志输出 -->
+            <Button Classes="Navigation"
+                    Click="OnMenuClick"
+                    Tag="Logs">
+              <StackPanel Orientation="Horizontal" Spacing="12">
+                <PathIcon Data="M9.4,16.6L4.8,12L9.4,7.4L8,6L2,12L8,18L9.4,16.6M14.6,16.6L19.2,12L14.6,7.4L16,6L22,12L16,18L14.6,16.6Z"
+                          Width="18" Height="18"/>
+                <TextBlock Text="日志输出" FontSize="13"/>
               </StackPanel>
-            </Expander>
+            </Button>
 
-            <!-- 配置管理分组 -->
-            <Expander HorizontalAlignment="Stretch"
-                      IsExpanded="True"
-                      Margin="0,8,0,0">
-              <Expander.Header>
-                <StackPanel Orientation="Horizontal" Spacing="12">
-                  <PathIcon Data="M19.14,12.94C19.19,12.64 19.22,12.33 19.22,12C19.22,11.68 19.19,11.36 19.14,11.06L21.54,9.11C21.75,8.95 21.81,8.65 21.67,8.42L19.42,4.81C19.28,4.58 19,4.47 18.73,4.57L15.9,5.67C15.43,5.32 14.93,5.03 14.4,4.81L14,1.81C13.96,1.55 13.73,1.36 13.46,1.36H9.54C9.27,1.36 9.04,1.55 9,1.81L8.6,4.81C8.07,5.03 7.57,5.32 7.1,5.67L4.27,4.57C4,4.47 3.72,4.58 3.58,4.81L1.33,8.42C1.19,8.65 1.25,8.95 1.46,9.11L3.86,11.06C3.81,11.36 3.78,11.68 3.78,12C3.78,12.33 3.81,12.64 3.86,12.94L1.46,14.89C1.25,15.05 1.19,15.35 1.33,15.58L3.58,19.19C3.72,19.42 4,19.53 4.27,19.43L7.1,18.33C7.57,18.68 8.07,18.97 8.6,19.19L9,22.19C9.04,22.45 9.27,22.64 9.54,22.64H13.46C13.73,22.64 13.96,22.45 14,22.19L14.4,19.19C14.93,18.97 15.43,18.68 15.9,18.33L18.73,19.43C19,19.53 19.28,19.42 19.42,19.19L21.67,15.58C21.81,15.35 21.75,15.05 21.54,14.89L19.14,12.94M12,15.6A3.6,3.6 0 0,1 8.4,12A3.6,3.6 0 0,1 12,8.4A3.6,3.6 0 0,1 15.6,12A3.6,3.6 0 0,1 12,15.6Z"
-                            Width="20" Height="20"/>
-                  <TextBlock Text="配置管理" FontSize="14"/>
-                </StackPanel>
-              </Expander.Header>
-              <StackPanel Spacing="4" Margin="0,4,0,0">
-                <Button Classes="Navigation"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="36,8"
-                        Click="OnMenuClick"
-                        Tag="ConfigBot">
-                  <TextBlock Text="Bot配置" FontSize="13"/>
-                </Button>
-                <Button Classes="Navigation"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="36,8"
-                        Click="OnMenuClick"
-                        Tag="ConfigPlugin">
-                  <TextBlock Text="插件配置" FontSize="13"/>
-                </Button>
-                <Button Classes="Navigation"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="36,8"
-                        Click="OnMenuClick"
-                        Tag="ConfigUser">
-                  <TextBlock Text="权限配置" FontSize="13"/>
-                </Button>
-                <Button Classes="Navigation"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Left"
-                        Padding="36,8"
-                        Click="OnMenuClick"
-                        Tag="ConfigProtocol">
-                  <TextBlock Text="协议配置" FontSize="13"/>
-                </Button>
+            <!-- 插件开发 -->
+            <Button Classes="Navigation"
+                    Click="OnMenuClick"
+                    Tag="Plugins">
+              <StackPanel Orientation="Horizontal" Spacing="12">
+                <PathIcon Data="M19.14,12.94C19.19,12.64 19.22,12.33 19.22,12C19.22,11.68 19.19,11.36 19.14,11.06L21.54,9.11C21.75,8.95 21.81,8.65 21.67,8.42L19.42,4.81C19.28,4.58 19,4.47 18.73,4.57L15.9,5.67C15.43,5.32 14.93,5.03 14.4,4.81L14,1.81C13.96,1.55 13.73,1.36 13.46,1.36H9.54C9.27,1.36 9.04,1.55 9,1.81L8.6,4.81C8.07,5.03 7.57,5.32 7.1,5.67L4.27,4.57C4,4.47 3.72,4.58 3.58,4.81L1.33,8.42C1.19,8.65 1.25,8.95 1.46,9.11L3.86,11.06C3.81,11.36 3.78,11.68 3.78,12C3.78,12.33 3.81,12.64 3.86,12.94L1.46,14.89C1.25,15.05 1.19,15.35 1.33,15.58L3.58,19.19C3.72,19.42 4,19.53 4.27,19.43L7.1,18.33C7.57,18.68 8.07,18.97 8.6,19.19L9,22.19C9.04,22.45 9.27,22.64 9.54,22.64H13.46C13.73,22.64 13.96,22.45 14,22.19L14.4,19.19C14.93,18.97 15.43,18.68 15.9,18.33L18.73,19.43C19,19.53 19.28,19.42 19.42,19.19L21.67,15.58C21.81,15.35 21.75,15.05 21.54,14.89L19.14,12.94M12,15.6A3.6,3.6 0 0,1 8.4,12A3.6,3.6 0 0,1 12,8.4A3.6,3.6 0 0,1 15.6,12A3.6,3.6 0 0,1 12,15.6Z"
+                          Width="18" Height="18"/>
+                <TextBlock Text="插件开发" FontSize="13"/>
               </StackPanel>
-            </Expander>
+            </Button>
+
+            <!-- 文件管理 -->
+            <Button Classes="Navigation"
+                    Click="OnMenuClick"
+                    Tag="Files">
+              <StackPanel Orientation="Horizontal" Spacing="12">
+                <PathIcon Data="M20,6H12L10,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8A2,2 0 0,0 20,6Z"
+                          Width="18" Height="18"/>
+                <TextBlock Text="文件管理" FontSize="13"/>
+              </StackPanel>
+            </Button>
+
+            <!-- 沙盒调试 -->
+            <Button Classes="Navigation"
+                    Click="OnMenuClick"
+                    Tag="Sandbox">
+              <StackPanel Orientation="Horizontal" Spacing="12">
+                <PathIcon Data="M12,2L2,7V17C2,19.2 3.8,21 6,21H18C20.2,21 22,19.2 22,17V7L12,2M12,4.2L19.5,8H4.5L12,4.2M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"
+                          Width="18" Height="18"/>
+                <TextBlock Text="沙盒调试" FontSize="13"/>
+              </StackPanel>
+            </Button>
+
+            <!-- 数据库 -->
+            <Button Classes="Navigation"
+                    Click="OnMenuClick"
+                    Tag="Database">
+              <StackPanel Orientation="Horizontal" Spacing="12">
+                <PathIcon Data="M12,3C16.4,3 20,4.8 20,7C20,9.2 16.4,11 12,11C7.6,11 4,9.2 4,7C4,4.8 7.6,3 12,3M4,9V12C4,14.2 7.6,16 12,16C16.4,16 20,14.2 20,12V9C20,11.2 16.4,13 12,13C7.6,13 4,11.2 4,9M4,14V17C4,19.2 7.6,21 12,21C16.4,21 20,19.2 20,17V14C20,16.2 16.4,18 12,18C7.6,18 4,16.2 4,14Z"
+                          Width="18" Height="18"/>
+                <TextBlock Text="数据库" FontSize="13"/>
+              </StackPanel>
+            </Button>
+
+            <!-- 分隔线 -->
+            <Border Height="1" Background="#E0E8F0" Margin="16,8" />
+
+            <!-- Bot配置 -->
+            <Button Classes="Navigation"
+                    Click="OnMenuClick"
+                    Tag="ConfigBot">
+              <StackPanel Orientation="Horizontal" Spacing="12">
+                <PathIcon Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"
+                          Width="18" Height="18"/>
+                <TextBlock Text="Bot配置" FontSize="13"/>
+              </StackPanel>
+            </Button>
+
+            <!-- 插件配置 -->
+            <Button Classes="Navigation"
+                    Click="OnMenuClick"
+                    Tag="ConfigPlugin">
+              <StackPanel Orientation="Horizontal" Spacing="12">
+                <PathIcon Data="M17,3H7A2,2 0 0,0 5,5V21L12,18L19,21V5C19,3.89 18.1,3 17,3Z"
+                          Width="18" Height="18"/>
+                <TextBlock Text="插件配置" FontSize="13"/>
+              </StackPanel>
+            </Button>
+
+            <!-- 权限配置 -->
+            <Button Classes="Navigation"
+                    Click="OnMenuClick"
+                    Tag="ConfigUser">
+              <StackPanel Orientation="Horizontal" Spacing="12">
+                <PathIcon Data="M12,12C14.21,12 16,10.21 16,8C16,5.79 14.21,4 12,4C9.79,4 8,5.79 8,8C8,10.21 9.79,12 12,12M12,14C9.33,14 4,15.34 4,18V20H20V18C20,15.34 14.67,14 12,14Z"
+                          Width="18" Height="18"/>
+                <TextBlock Text="权限配置" FontSize="13"/>
+              </StackPanel>
+            </Button>
+
+            <!-- 协议配置 -->
+            <Button Classes="Navigation"
+                    Click="OnMenuClick"
+                    Tag="ConfigProtocol">
+              <StackPanel Orientation="Horizontal" Spacing="12">
+                <PathIcon Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"
+                          Width="18" Height="18"/>
+                <TextBlock Text="协议配置" FontSize="13"/>
+              </StackPanel>
+            </Button>
+
+            <!-- 分隔线 -->
+            <Border Height="1" Background="#E0E8F0" Margin="16,8" />
 
             <!-- 设置 -->
             <Button Classes="Navigation"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Left"
-                    Padding="12,10"
-                    Margin="0,8,0,0"
                     Click="OnMenuClick"
                     Tag="Settings">
               <StackPanel Orientation="Horizontal" Spacing="12">
                 <PathIcon Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"
-                          Width="20" Height="20"/>
-                <TextBlock Text="设置" FontSize="14"/>
+                          Width="18" Height="18"/>
+                <TextBlock Text="设置" FontSize="13"/>
               </StackPanel>
             </Button>
 
             <!-- 关于 -->
             <Button Classes="Navigation"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Left"
-                    Padding="12,10"
-                    Margin="0,4,0,0"
                     Click="OnMenuClick"
                     Tag="About">
               <StackPanel Orientation="Horizontal" Spacing="12">
                 <PathIcon Data="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
-                          Width="20" Height="20"/>
-                <TextBlock Text="关于" FontSize="14"/>
+                          Width="18" Height="18"/>
+                <TextBlock Text="关于" FontSize="13"/>
               </StackPanel>
             </Button>
 
           </StackPanel>
         </ScrollViewer>
 
+        <!-- 滑动选中指示器 (蓝条) - 使用 Canvas 来实现平滑移动 -->
+        <Canvas Grid.Row="1" IsHitTestVisible="False">
+          <Border x:Name="SelectionIndicator"
+                  Classes="SelectionIndicator"
+                  IsVisible="False">
+            <Border.Transitions>
+              <Transitions>
+                <DoubleTransition Property="(Canvas.Top)" Duration="0:0:0.25" Easing="CubicEaseOut"/>
+              </Transitions>
+            </Border.Transitions>
+          </Border>
+        </Canvas>
+
         <!-- 底部用户信息 -->
         <Border Grid.Row="2"
-                Background="{DynamicResource LayerFillColorAltBrush}"
-                Padding="16,12"
-                Margin="12,12,12,12"
-                CornerRadius="8">
+                Classes="UserArea">
           <Grid ColumnDefinitions="Auto,*,Auto">
             <Border Grid.Column="0"
-                    Width="36" Height="36"
-                    CornerRadius="18"
+                    Width="32" Height="32"
+                    CornerRadius="16"
                     Background="{DynamicResource AccentFillColorDefaultBrush}"
                     ClipToBounds="True">
               <Grid>
@@ -232,29 +245,31 @@
                        IsVisible="False"/>
                 <TextBlock x:Name="UserAvatarText"
                            Text="U"
-                           FontSize="14"
+                           FontSize="12"
                            FontWeight="Bold"
                            Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"/>
               </Grid>
             </Border>
-            <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+            <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
               <TextBlock x:Name="UsernameText"
                          Text="用户名"
-                         FontSize="13"
-                         FontWeight="SemiBold"/>
+                         FontSize="12"
+                         FontWeight="SemiBold"
+                         Foreground="{DynamicResource NavigationItemForegroundBrush}"/>
               <TextBlock x:Name="ServerAddressText"
                          Text="服务器地址"
-                         FontSize="11"
-                         Opacity="0.6"/>
+                         FontSize="10"
+                         Opacity="0.6"
+                         Foreground="{DynamicResource NavigationItemForegroundBrush}"/>
             </StackPanel>
             <Button Grid.Column="2"
                     Classes="Ghost"
-                    Padding="6"
+                    Padding="4"
                     Click="OnLogoutClick">
               <PathIcon Data="M17,7L15.59,8.41L18.17,11H8V13H18.17L15.59,15.58L17,17L22,12M4,5H12V3H4A2,2 0 0,0 2,5V19A2,2 0 0,0 4,21H12V19H4V5Z"
-                        Width="18" Height="18"
+                        Width="16" Height="16"
                         Opacity="0.6"/>
             </Button>
           </Grid>
@@ -290,16 +305,33 @@
       <Border Grid.Row="1"
               Background="{DynamicResource LayerFillColorDefaultBrush}"
               ClipToBounds="True">
-        <ContentControl x:Name="MainContentControl"
-                        Margin="24"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch">
-          <ContentControl.Transitions>
-            <Transitions>
-              <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
-            </Transitions>
-          </ContentControl.Transitions>
-        </ContentControl>
+        <Grid>
+          <ContentControl x:Name="MainContentControl"
+                          Margin="24"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch">
+            <ContentControl.Transitions>
+              <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
+              </Transitions>
+            </ContentControl.Transitions>
+          </ContentControl>
+
+          <!-- 调试模式水印 -->
+          <Border x:Name="DebugModeWatermark"
+                  IsVisible="False"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Bottom"
+                  Margin="0,0,16,16"
+                  Background="#80FF0000"
+                  CornerRadius="4"
+                  Padding="8,4">
+            <TextBlock Text="调试模式"
+                       FontSize="11"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+          </Border>
+        </Grid>
       </Border>
     </Grid>
   </Grid>

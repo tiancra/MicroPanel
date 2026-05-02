@@ -333,5 +333,21 @@
         </Border>
       </Grid>
     </Border>
+
+    <!-- 调试模式水印 -->
+    <Border x:Name="DebugModeWatermark"
+            Grid.Column="0" Grid.ColumnSpan="2"
+            IsVisible="False"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Margin="0,0,16,16"
+            Background="#80FF0000"
+            CornerRadius="4"
+            Padding="8,4">
+      <TextBlock Text="调试模式"
+                 FontSize="11"
+                 FontWeight="Bold"
+                 Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+    </Border>
   </Grid>
 </Window>

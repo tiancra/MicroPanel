@@ -7,6 +7,7 @@
 
   <Application.Styles>
     <sty:FluentAvaloniaTheme />
+    <StyleInclude Source="avares://MicroPanelAvalonia/Styles/NavigationSidebar.axaml" />
   </Application.Styles>
 
   <Application.Resources>

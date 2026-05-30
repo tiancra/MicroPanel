@@ -1,0 +1,18 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/bin
+/.vs/MicroPanelAvalonia/FileContentIndex/77c53156-de7c-40b1-b761-f12ffc242696.vsidx
+/.vs/MicroPanelAvalonia/FileContentIndex/5d2a6caa-5e18-46f4-b337-c231bfbcbcca.vsidx
+/.vs/MicroPanelAvalonia/FileContentIndex/6ecf396d-d7be-47d6-aa40-7ae447685e6a.vsidx
+/.vs/MicroPanelAvalonia/FileContentIndex/a2c69b46-0486-416d-a8df-a7d95e8f679c.vsidx
+/.vs/MicroPanelAvalonia/FileContentIndex/cc89ee43-2b19-417b-b3d7-f4e1d50497d1.vsidx
+/.vs/MicroPanelAvalonia/FileContentIndex/cf699854-77e3-4640-bb4a-e39eaddfeacb.vsidx
+/.vs/MicroPanelAvalonia/FileContentIndex/d7120262-8d64-4e8a-8533-c4953b7686b3.vsidx
+/.vs/MicroPanelAvalonia/FileContentIndex/e1ebb502-97d5-48d5-94ca-101ac0ef68c5.vsidx
+/.vs/MicroPanelAvalonia/FileContentIndex/ea58f04a-307a-4bc0-beed-c3771e404cf8.vsidx
+/.vs/MicroPanelAvalonia/FileContentIndex/ff6b2ba2-91b0-4a84-806d-4ea47ba4c137.vsidx
+/.vs/ProjectEvaluation/micropanelavalonia.metadata.v10.bin
+/.vs/ProjectEvaluation/micropanelavalonia.projects.v10.bin
+/.vs/ProjectEvaluation/micropanelavalonia.strings.v10.bin

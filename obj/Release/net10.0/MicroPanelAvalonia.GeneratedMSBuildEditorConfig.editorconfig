@@ -16,7 +16,7 @@ build_property.InvariantGlobalization =
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
-build_property.RootNamespace = MicroPanelAvalonia
+build_property.RootNamespace = MicroPanel
 build_property.ProjectDir = E:\MicroPanel\MicroPanel\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
@@ -27,6 +27,12 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [E:/MicroPanel/MicroPanel/MainWindow.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[E:/MicroPanel/MicroPanel/Styles/FluentStyles.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[E:/MicroPanel/MicroPanel/Styles/NavigationSidebar.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [E:/MicroPanel/MicroPanel/Views/AddServerDialog.axaml]
@@ -41,10 +47,16 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 [E:/MicroPanel/MicroPanel/Views/Controls/CodeEditor.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[E:/MicroPanel/MicroPanel/Views/Controls/DesktopWallpaperControl.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [E:/MicroPanel/MicroPanel/Views/Controls/LogViewer.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [E:/MicroPanel/MicroPanel/Views/Controls/MessageSegmentEditor.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[E:/MicroPanel/MicroPanel/Views/DebugMenuWindow.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
 [E:/MicroPanel/MicroPanel/Views/EditUserDialog.axaml]

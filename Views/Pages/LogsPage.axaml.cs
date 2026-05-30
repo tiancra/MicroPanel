@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using MicroPanelAvalonia.Services;
+using MicroPanel.Services;
 using System;
 using System.Diagnostics;
 using System.Net.WebSockets;
@@ -12,7 +12,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MicroPanelAvalonia.Views.Pages
+namespace MicroPanel.Views.Pages
 {
     public partial class LogsPage : UserControl
     {

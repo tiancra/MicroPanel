@@ -12,7 +12,7 @@ using System.Linq;
 
 using System.Text.RegularExpressions;
 
-namespace MicroPanelAvalonia.Views.Controls
+namespace MicroPanel.Views.Controls
 {
     public partial class LogViewer : UserControl
     {

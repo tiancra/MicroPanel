@@ -6,7 +6,7 @@ using Avalonia.Media;
 using Avalonia.Styling;
 using System;
 
-namespace MicroPanelAvalonia.Views.Controls
+namespace MicroPanel.Views.Controls
 {
     public partial class CodeEditor : UserControl
     {

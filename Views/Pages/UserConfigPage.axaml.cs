@@ -3,15 +3,15 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
-using MicroPanelAvalonia.Models;
-using MicroPanelAvalonia.Services;
+using MicroPanel.Models;
+using MicroPanel.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace MicroPanelAvalonia.Views.Pages
+namespace MicroPanel.Views.Pages
 {
     public partial class UserConfigPage : UserControl
     {
@@ -215,16 +215,18 @@ namespace MicroPanelAvalonia.Views.Pages
 
             foreach (var route in _routeMap)
             {
+                // 必须在循环内创建局部变量，避免闭包陷阱
+                var routeKey = route.Key;
                 var checkBox = new CheckBox
                 {
                     Content = route.Value,
-                    IsChecked = selectedRoutes.Contains(route.Key),
+                    IsChecked = selectedRoutes.Contains(routeKey),
                     Margin = new Thickness(0, 4, 16, 4)
                 };
 
                 checkBox.IsCheckedChanged += (s, e) =>
                 {
-                    UpdateRoutesValue(item, route.Key, checkBox.IsChecked == true);
+                    UpdateRoutesValue(item, routeKey, checkBox.IsChecked == true);
                 };
 
                 panel.Children.Add(checkBox);
@@ -249,6 +251,11 @@ namespace MicroPanelAvalonia.Views.Pages
                         routes.Add(element.GetString() ?? "");
                     }
                 }
+            }
+            else if (value is List<string> stringList)
+            {
+                // 处理 List<string> 类型（UpdateRoutesValue 设置后的类型）
+                routes.AddRange(stringList);
             }
             else if (value is List<object> list)
             {

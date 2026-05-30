@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using MicroPanelAvalonia.Models;
+using MicroPanel.Models;
 
-namespace MicroPanelAvalonia.Services
+namespace MicroPanel.Services
 {
     public class ServerManager
     {
@@ -72,7 +72,7 @@ namespace MicroPanelAvalonia.Services
             }
         }
 
-        public async Task<(bool success, string message)> AddServerAsync(string serverAddress, string username, string password)
+        public async Task<(bool success, string message)> AddServerAsync(string serverAddress, string username, string password, string? serverName = null)
         {
             try
             {
@@ -82,24 +82,35 @@ namespace MicroPanelAvalonia.Services
                     normalizedAddress = "http://" + normalizedAddress;
                 }
 
+                // 记录登录尝试
+                Services.AppDebugLogger.LogUserAction("尝试添加服务器", $"地址: {normalizedAddress}, 用户: {username}");
+                Services.AppDebugLogger.LogLogin(normalizedAddress, username, new { username, password }, null, false);
+
                 var existingServer = _servers.FirstOrDefault(s =>
                     s.ServerAddress.Equals(normalizedAddress, StringComparison.OrdinalIgnoreCase));
 
                 if (existingServer != null)
                 {
+                    Services.AppDebugLogger.LogUserAction("服务器已存在，添加新用户", $"服务器: {existingServer.ServerName}");
+
                     var existingUser = existingServer.Users.FirstOrDefault(u =>
                         u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
 
                     if (existingUser != null)
                     {
+                        Services.AppDebugLogger.LogUserAction("用户已存在，登录失败");
                         return (false, "该服务器已存在此用户");
                     }
 
                     _apiService.SetBaseUrl(normalizedAddress);
                     var response = await _apiService.LoginAsync(username, password);
 
+                    // 记录登录响应
+                    Services.AppDebugLogger.LogLogin(normalizedAddress, username, null, response, response?.IsSuccess == true);
+
                     if (response?.IsSuccess != true)
                     {
+                        Services.AppDebugLogger.LogUserAction("登录失败", $"响应: {response?.Message}");
                         return (false, response?.Data ?? "登录失败");
                     }
 
@@ -115,23 +126,44 @@ namespace MicroPanelAvalonia.Services
                     SaveServers();
                     ServersChanged?.Invoke(this, EventArgs.Empty);
 
+                    Services.AppDebugLogger.LogUserAction("用户添加成功", $"用户: {username}");
                     return (true, "用户添加成功");
                 }
                 else
                 {
+                    Services.AppDebugLogger.LogUserAction("新服务器，添加服务器和用户", $"地址: {normalizedAddress}");
+
                     _apiService.SetBaseUrl(normalizedAddress);
                     var response = await _apiService.LoginAsync(username, password);
 
+                    // 记录登录响应
+                    Services.AppDebugLogger.LogLogin(normalizedAddress, username, null, response, response?.IsSuccess == true);
+
                     if (response?.IsSuccess != true)
                     {
+                        Services.AppDebugLogger.LogUserAction("登录失败", $"响应: {response?.Message}");
                         return (false, response?.Data ?? "登录失败");
+                    }
+
+                    // 计算服务器名称
+                    var finalServerName = serverName;
+                    if (string.IsNullOrWhiteSpace(finalServerName))
+                    {
+                        try
+                        {
+                            finalServerName = new Uri(normalizedAddress).Host;
+                        }
+                        catch
+                        {
+                            finalServerName = normalizedAddress;
+                        }
                     }
 
                     var server = new ServerInfo
                     {
                         Id = Guid.NewGuid().ToString(),
                         ServerAddress = normalizedAddress,
-                        ServerName = new Uri(normalizedAddress).Host,
+                        ServerName = finalServerName,
                         Users = new List<ServerUser>
                         {
                             new()
@@ -151,11 +183,13 @@ namespace MicroPanelAvalonia.Services
 
                     _ = RefreshServerStatusAsync(server);
 
+                    Services.AppDebugLogger.LogUserAction("服务器添加成功", $"服务器: {finalServerName}, 用户: {username}");
                     return (true, "服务器添加成功");
                 }
             }
             catch (Exception ex)
             {
+                Services.AppDebugLogger.LogException("AddServerAsync", ex);
                 return (false, $"添加服务器失败: {ex.Message}");
             }
         }
@@ -166,6 +200,71 @@ namespace MicroPanelAvalonia.Services
             SaveServers();
             ServerRemoved?.Invoke(this, server);
             ServersChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public async Task<(bool success, string message)> UpdateServerAsync(ServerInfo server, string serverAddress, string? username, string? password, string? serverName = null)
+        {
+            try
+            {
+                var normalizedAddress = serverAddress.Trim().TrimEnd('/');
+                if (!normalizedAddress.StartsWith("http://") && !normalizedAddress.StartsWith("https://"))
+                {
+                    normalizedAddress = "http://" + normalizedAddress;
+                }
+
+                // 更新服务器名称
+                if (!string.IsNullOrWhiteSpace(serverName))
+                {
+                    // 用户提供了名称，使用用户输入的名称
+                    server.ServerName = serverName;
+                }
+                else
+                {
+                    // 用户没有提供名称，清空名称，使用地址作为名称
+                    server.ServerName = normalizedAddress;
+                }
+
+                // 检查是否更新了服务器地址
+                if (!server.ServerAddress.Equals(normalizedAddress, StringComparison.OrdinalIgnoreCase))
+                {
+                    // 检查新地址是否已存在
+                    var existingServer = _servers.FirstOrDefault(s =>
+                        s.Id != server.Id &&
+                        s.ServerAddress.Equals(normalizedAddress, StringComparison.OrdinalIgnoreCase));
+
+                    if (existingServer != null)
+                    {
+                        return (false, "该服务器地址已存在");
+                    }
+
+                    // 更新服务器地址
+                    server.ServerAddress = normalizedAddress;
+                    
+                    // 如果没有提供名称，使用新的地址作为名称
+                    if (string.IsNullOrWhiteSpace(serverName))
+                    {
+                        try
+                        {
+                            server.ServerName = new Uri(normalizedAddress).Host;
+                        }
+                        catch
+                        {
+                            server.ServerName = normalizedAddress;
+                        }
+                    }
+                }
+
+                // 编辑模式下不需要添加用户，直接保存
+                SaveServers();
+                ServersChanged?.Invoke(this, EventArgs.Empty);
+                _ = RefreshServerStatusAsync(server);
+
+                return (true, "服务器更新成功");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"更新服务器失败: {ex.Message}");
+            }
         }
 
         public async Task RefreshServerStatusAsync(ServerInfo server)

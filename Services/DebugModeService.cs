@@ -8,7 +8,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
 using FluentAvalonia.UI.Controls;
 
-namespace MicroPanelAvalonia.Services
+namespace MicroPanel.Services
 {
     /// <summary>
     /// 调试模式服务 - 管理应用的调试模式状态和功能

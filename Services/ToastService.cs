@@ -2,16 +2,14 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Threading;
-using MicroPanelAvalonia.Views.Windows;
 using System;
 using System.Threading.Tasks;
 
-namespace MicroPanelAvalonia.Services
+namespace MicroPanel.Services
 {
     /// <summary>
     /// Toast 通知服务
-    /// 桌面模式：使用独立窗口，覆盖在屏幕顶部
-    /// 非桌面模式：使用内嵌控件，显示在窗口顶部
+    /// 使用内嵌控件，在窗口顶部显示
     /// </summary>
     public class ToastService
     {
@@ -19,7 +17,6 @@ namespace MicroPanelAvalonia.Services
         public static ToastService Instance => _instance ??= new ToastService();
 
         private Window? _hostWindow;
-        private ToastWindow? _toastWindow;
         private Border? _embeddedToast;
         private TextBlock? _embeddedToastText;
         private bool _isShowing = false;
@@ -46,65 +43,6 @@ namespace MicroPanelAvalonia.Services
         /// 显示 Toast 通知
         /// </summary>
         public void Show(string message, ToastType type = ToastType.Info, int durationMs = 3000)
-        {
-            if (_hostWindow == null) return;
-
-            // 检查是否桌面模式
-            bool isDesktopMode = DesktopModeManager.Instance.IsDesktopMode;
-
-            if (isDesktopMode)
-            {
-                ShowWindowToast(message, type, durationMs);
-            }
-            else
-            {
-                ShowEmbeddedToast(message, type, durationMs);
-            }
-        }
-
-        /// <summary>
-        /// 桌面模式：使用独立窗口显示 Toast
-        /// </summary>
-        private void ShowWindowToast(string message, ToastType type, int durationMs)
-        {
-            // 如果正在显示，先关闭当前的
-            if (_isShowing && _toastWindow != null)
-            {
-                _toastWindow.Close();
-                _toastWindow = null;
-            }
-
-            _isShowing = true;
-
-            // 计算位置和大小
-            var (position, width, targetY) = CalculateWindowToastPosition();
-
-            // 创建 Toast 窗口
-            _toastWindow = new ToastWindow();
-
-            // 设置 Toast 内容和样式
-            var (background, foreground) = GetToastStyle(type);
-            _toastWindow.SetToast(message, background, foreground);
-
-            // 设置位置和大小
-            _toastWindow.Position = position;
-            _toastWindow.Width = width;
-            _toastWindow.SetTargetY(targetY);
-
-            // 显示 Toast 窗口（作为子窗口）
-            _toastWindow.Show(_hostWindow!);
-
-            // 执行显示动画
-            _toastWindow.AnimateShow();
-
-            // 延迟后自动隐藏
-            _ = AutoHideWindowToast(durationMs);
-        }
-
-        /// <summary>
-        /// 非桌面模式：使用内嵌控件显示 Toast
-        /// </summary>
-        private void ShowEmbeddedToast(string message, ToastType type, int durationMs)
         {
             if (_hostWindow == null) return;
 
@@ -274,24 +212,6 @@ namespace MicroPanelAvalonia.Services
         }
 
         /// <summary>
-        /// 计算桌面模式下 Toast 窗口位置和大小
-        /// </summary>
-        private (PixelPoint position, int width, int targetY) CalculateWindowToastPosition()
-        {
-            if (_hostWindow == null) return (new PixelPoint(0, -50), 400, 0);
-
-            var hostScreen = _hostWindow.Screens?.Primary;
-            if (hostScreen == null) return (new PixelPoint(0, -50), 400, 0);
-
-            var bounds = hostScreen.Bounds;
-            var toastX = bounds.X;
-            var targetY = bounds.Y; // 目标位置：屏幕顶部
-            var toastY = targetY - 50; // 初始在屏幕外，动画会滑入
-            var width = bounds.Width;
-            return (new PixelPoint(toastX, toastY), width, targetY);
-        }
-
-        /// <summary>
         /// 获取 Toast 样式
         /// </summary>
         private (SolidColorBrush background, IBrush foreground) GetToastStyle(ToastType type)
@@ -327,30 +247,6 @@ namespace MicroPanelAvalonia.Services
         public void ShowError(string message)
         {
             Show(message, ToastType.Error);
-        }
-
-        /// <summary>
-        /// 自动隐藏窗口 Toast
-        /// </summary>
-        private async Task AutoHideWindowToast(int durationMs)
-        {
-            await Task.Delay(durationMs);
-            HideWindowToast();
-        }
-
-        /// <summary>
-        /// 隐藏窗口 Toast
-        /// </summary>
-        private void HideWindowToast()
-        {
-            if (_toastWindow == null || !_isShowing) return;
-
-            _toastWindow.AnimateHide(() =>
-            {
-                _toastWindow?.Close();
-                _toastWindow = null;
-                _isShowing = false;
-            });
         }
     }
 }

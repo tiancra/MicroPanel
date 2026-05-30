@@ -5,7 +5,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using System;
 
-namespace MicroPanelAvalonia.Views.Controls
+namespace MicroPanel.Views.Controls
 {
     public partial class CircularProgressBar : UserControl
     {

@@ -6,7 +6,7 @@ using Avalonia.Threading;
 using System;
 using System.Diagnostics;
 
-namespace MicroPanelAvalonia.Services
+namespace MicroPanel.Services
 {
     /// <summary>
     /// 窗口拖动关闭服务 - 实现从顶部向下拖动关闭窗口的跟手动画

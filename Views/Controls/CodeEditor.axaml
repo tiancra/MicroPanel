@@ -1,6 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="MicroPanelAvalonia.Views.Controls.CodeEditor">
+             x:Class="MicroPanel.Views.Controls.CodeEditor">
   <Grid RowDefinitions="Auto,*">
     <!-- 工具栏 -->
     <Border Grid.Row="0"

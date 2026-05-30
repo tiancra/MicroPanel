@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace MicroPanelAvalonia.Converters
+namespace MicroPanel.Converters
 {
     public class CpuUsageConverter : IValueConverter
     {

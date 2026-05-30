@@ -2,241 +2,268 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:svc="using:MicroPanelAvalonia.Services"
-             xmlns:local="using:MicroPanelAvalonia.Views.Pages"
+             xmlns:svc="using:MicroPanel.Services"
+             xmlns:local="using:MicroPanel.Views.Pages"
              mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="800"
-             x:Class="MicroPanelAvalonia.Views.Pages.HomePage">
+             x:Class="MicroPanel.Views.Pages.HomePage">
 
-  <StackPanel Spacing="24">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Spacing="24" Margin="0,0,0,24">
 
-    <!-- 欢迎卡片 -->
-    <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-            CornerRadius="12"
-            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-            BorderThickness="1"
-            Padding="32"
-            BoxShadow="0 4 16 0 #15000000">
-      <Grid ColumnDefinitions="Auto,*">
-        <!-- 头像 -->
-        <Border Grid.Column="0"
-                Width="100" Height="100"
-                CornerRadius="50"
-                Background="{DynamicResource AccentFillColorDefaultBrush}"
-                VerticalAlignment="Center"
-                ClipToBounds="True">
-          <Grid>
-            <Image x:Name="AvatarImage"
-                   Stretch="UniformToFill"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   IsVisible="False"/>
-            <TextBlock x:Name="AvatarText"
-                       Text="U"
-                       FontSize="40"
-                       FontWeight="Bold"
-                       Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
-          </Grid>
-        </Border>
+      <!-- 欢迎卡片 - Fluent Design 风格 -->
+      <Border Background="{DynamicResource CardBackgroundBrush}"
+              CornerRadius="16"
+              BorderBrush="{DynamicResource CardBorderBrush}"
+              BorderThickness="1"
+              Padding="32"
+              BoxShadow="0 4 20 0 #20000000">
+        <Grid ColumnDefinitions="Auto,*">
+          <!-- 头像 -->
+          <Border Grid.Column="0"
+                  Width="100" Height="100"
+                  CornerRadius="50"
+                  Background="{DynamicResource AccentBrush}"
+                  VerticalAlignment="Center"
+                  ClipToBounds="True"
+                  BoxShadow="0 4 12 0 #30000000">
+            <Grid>
+              <Image x:Name="AvatarImage"
+                     Stretch="UniformToFill"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     IsVisible="False"/>
+              <TextBlock x:Name="AvatarText"
+                         Text="U"
+                         FontSize="40"
+                         FontWeight="Bold"
+                         Foreground="{DynamicResource TextOnAccentBrush}"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"/>
+            </Grid>
+          </Border>
 
-        <!-- 欢迎信息 -->
-        <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center">
-          <TextBlock x:Name="WelcomeText"
-                     Text="你好！用户"
-                     FontSize="32"
-                     FontWeight="Bold"/>
-          <TextBlock x:Name="HitokotoText"
-                     Text="正在获取一言..."
-                     FontSize="16"
-                     Opacity="0.6"
-                     Margin="0,8,0,0"
-                     TextWrapping="Wrap"/>
+          <!-- 欢迎信息 -->
+          <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center">
+            <TextBlock x:Name="WelcomeText"
+                       Text="你好！用户"
+                       FontSize="32"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <TextBlock x:Name="HitokotoText"
+                       Text="正在获取一言..."
+                       FontSize="16"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       Margin="0,8,0,0"
+                       TextWrapping="Wrap"
+                       Opacity="0.8"/>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <!-- Bot 信息列表 -->
+      <Border Background="{DynamicResource CardBackgroundBrush}"
+              CornerRadius="16"
+              BorderBrush="{DynamicResource CardBorderBrush}"
+              BorderThickness="1"
+              Padding="24"
+              BoxShadow="0 4 16 0 #15000000">
+        <StackPanel Spacing="16">
+          <!-- 标题 -->
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <PathIcon Data="M12,2A2,2 0 0,1 14,4V6H16A2,2 0 0,1 18,8V20A2,2 0 0,1 16,22H8A2,2 0 0,1 6,20V8A2,2 0 0,1 8,6H10V4A2,2 0 0,1 12,2M8,8V20H16V8H8M12,18A2,2 0 0,1 10,16A2,2 0 0,1 12,14A2,2 0 0,1 14,16A2,2 0 0,1 12,18Z"
+                      Width="20" Height="20"
+                      Foreground="{DynamicResource AccentBrush}"/>
+            <TextBlock Text="Bot 信息"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+          </StackPanel>
+
+          <ItemsControl x:Name="BotInfoItemsControl">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:BotInfoViewModel">
+                <Border Background="{DynamicResource LayerBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,12"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1">
+                  <Grid ColumnDefinitions="Auto,*,Auto">
+                    <!-- 头像 -->
+                    <Border Grid.Column="0"
+                            Width="56" Height="56"
+                            CornerRadius="28"
+                            Background="{DynamicResource AccentBrush}"
+                            ClipToBounds="True">
+                      <Grid>
+                        <Image Source="{Binding AvatarBitmap}"
+                               Stretch="UniformToFill"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding IsAvatarVisible}">
+                          <Image.Clip>
+                            <EllipseGeometry Rect="0,0,56,56"/>
+                          </Image.Clip>
+                        </Image>
+                        <TextBlock Text="{Binding Nickname, StringFormat='{}{0:0}'}"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource TextOnAccentBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   IsVisible="{Binding IsTextAvatarVisible}"/>
+                      </Grid>
+                    </Border>
+
+                    <!-- 昵称和平台 -->
+                    <StackPanel Grid.Column="1" Margin="16,0" VerticalAlignment="Center">
+                      <TextBlock Text="{Binding Nickname}"
+                                 FontSize="16"
+                                 FontWeight="SemiBold"
+                                 Foreground="{DynamicResource TextPrimaryBrush}"/>
+                      <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+                        <Border Background="{DynamicResource AccentLightBrush}"
+                                CornerRadius="4"
+                                Padding="6,2">
+                          <TextBlock Text="{Binding Platform}"
+                                     FontSize="11"
+                                     Foreground="{DynamicResource AccentBrush}"/>
+                        </Border>
+                        <TextBlock Text="{Binding BotVersion, StringFormat='协议 {0}'}"
+                                   FontSize="11"
+                                   Opacity="0.6"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                      </StackPanel>
+                    </StackPanel>
+
+                    <!-- 统计信息 -->
+                    <WrapPanel Grid.Column="2"
+                               VerticalAlignment="Center"
+                               Orientation="Horizontal">
+                      <!-- 好友数 -->
+                      <Border Background="{DynamicResource AccentBrush}"
+                              CornerRadius="6"
+                              Padding="10,6"
+                              Margin="4">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                          <PathIcon Data="M12,12C14.21,12 16,10.21 16,8C16,5.79 14.21,4 12,4C9.79,4 8,5.79 8,8C8,10.21 9.79,12 12,12M12,14C9.33,14 4,15.34 4,18V20H20V18C20,15.34 14.67,14 12,14Z"
+                                    Width="12" Height="12"
+                                    Foreground="{DynamicResource TextOnAccentBrush}"/>
+                          <TextBlock Text="{Binding CountContacts.Friend, StringFormat='好友 {0}'}"
+                                     FontSize="12"
+                                     Foreground="{DynamicResource TextOnAccentBrush}"/>
+                        </StackPanel>
+                      </Border>
+
+                      <!-- 群组数 -->
+                      <Border Background="{DynamicResource SuccessBrush}"
+                              CornerRadius="6"
+                              Padding="10,6"
+                              Margin="4">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                          <PathIcon Data="M12,12C14.21,12 16,10.21 16,8C16,5.79 14.21,4 12,4C9.79,4 8,5.79 8,8C8,10.21 9.79,12 12,12M12,14C9.33,14 4,15.34 4,18V20H20V18C20,15.34 14.67,14 12,14Z"
+                                    Width="12" Height="12"
+                                    Foreground="White"/>
+                          <TextBlock Text="{Binding CountContacts.Group, StringFormat='群组 {0}'}"
+                                     FontSize="12"
+                                     Foreground="White"/>
+                        </StackPanel>
+                      </Border>
+
+                      <!-- 群成员数 -->
+                      <Border Background="{DynamicResource WarningBrush}"
+                              CornerRadius="6"
+                              Padding="10,6"
+                              Margin="4">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                          <PathIcon Data="M12,12C14.21,12 16,10.21 16,8C16,5.79 14.21,4 12,4C9.79,4 8,5.79 8,8C8,10.21 9.79,12 12,12M12,14C9.33,14 4,15.34 4,18V20H20V18C20,15.34 14.67,14 12,14Z"
+                                    Width="12" Height="12"
+                                    Foreground="White"/>
+                          <TextBlock Text="{Binding CountContacts.GroupMember, StringFormat='成员 {0}'}"
+                                     FontSize="12"
+                                     Foreground="White"/>
+                        </StackPanel>
+                      </Border>
+
+                      <!-- 接收消息 -->
+                      <Border Background="{DynamicResource InfoBrush}"
+                              CornerRadius="6"
+                              Padding="10,6"
+                              Margin="4">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                          <PathIcon Data="M20,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6A2,2 0 0,0 20,4M20,18H4V8L12,13L20,8V18M20,6L12,11L4,6V6H20V6Z"
+                                    Width="12" Height="12"
+                                    Foreground="White"/>
+                          <TextBlock Text="{Binding MessageCount.Recv}"
+                                     FontSize="12"
+                                     Foreground="White"/>
+                        </StackPanel>
+                      </Border>
+
+                      <!-- 发送消息 -->
+                      <Border Background="{DynamicResource InfoBrush}"
+                              CornerRadius="6"
+                              Padding="10,6"
+                              Margin="4">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                          <PathIcon Data="M2,21L23,12L2,3V10L17,12L2,14V21Z"
+                                    Width="12" Height="12"
+                                    Foreground="White"/>
+                          <TextBlock Text="{Binding MessageCount.Sent}"
+                                     FontSize="12"
+                                     Foreground="White"/>
+                        </StackPanel>
+                      </Border>
+
+                      <!-- 运行时长 -->
+                      <Border Background="{DynamicResource LayerBackgroundBrush}"
+                              CornerRadius="6"
+                              Padding="10,6"
+                              Margin="4"
+                              BorderBrush="{DynamicResource BorderBrush}"
+                              BorderThickness="1">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                          <PathIcon Data="M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z"
+                                    Width="12" Height="12"
+                                    Opacity="0.6"/>
+                          <TextBlock Text="{Binding BotRunTime}"
+                                     FontSize="12"/>
+                        </StackPanel>
+                      </Border>
+                    </WrapPanel>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <!-- 空状态 -->
+          <StackPanel x:Name="EmptyStatePanel"
+                      Spacing="16"
+                      HorizontalAlignment="Center"
+                      Margin="0,48"
+                      IsVisible="False">
+            <Border Width="80"
+                    Height="80"
+                    CornerRadius="40"
+                    Background="{DynamicResource LayerBackgroundBrush}">
+              <PathIcon Data="M12,2A2,2 0 0,1 14,4V6H16A2,2 0 0,1 18,8V20A2,2 0 0,1 16,22H8A2,2 0 0,1 6,20V8A2,2 0 0,1 8,6H10V4A2,2 0 0,1 12,2M8,8V20H16V8H8M12,18A2,2 0 0,1 10,16A2,2 0 0,1 12,14A2,2 0 0,1 14,16A2,2 0 0,1 12,18Z"
+                        Width="36" Height="36"
+                        Opacity="0.3"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"/>
+            </Border>
+            <TextBlock Text="暂无 Bot 信息"
+                       FontSize="16"
+                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+            <TextBlock Text="连接服务器后将显示 Bot 状态"
+                       FontSize="13"
+                       Opacity="0.6"
+                       Foreground="{DynamicResource TextTertiaryBrush}"/>
+          </StackPanel>
         </StackPanel>
-      </Grid>
-    </Border>
+      </Border>
 
-    <!-- Bot 信息列表 -->
-    <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-            CornerRadius="12"
-            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-            BorderThickness="1"
-            Padding="24"
-            BoxShadow="0 4 16 0 #15000000">
-      <StackPanel Spacing="16">
-        <TextBlock Text="Bot 信息"
-                   FontSize="18"
-                   FontWeight="SemiBold"/>
-
-        <ItemsControl x:Name="BotInfoItemsControl">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate x:DataType="local:BotInfoViewModel">
-              <Border Background="{DynamicResource LayerFillColorDefaultBrush}"
-                      CornerRadius="8"
-                      Padding="16"
-                      Margin="0,0,0,12">
-                <Grid ColumnDefinitions="Auto,*,Auto">
-                  <!-- 头像 -->
-                  <Border Grid.Column="0"
-                          Width="50" Height="50"
-                          CornerRadius="25"
-                          Background="{DynamicResource AccentFillColorDefaultBrush}"
-                          ClipToBounds="True">
-                    <Grid>
-                      <Image Source="{Binding AvatarBitmap}"
-                             Stretch="UniformToFill"
-                             HorizontalAlignment="Center"
-                             VerticalAlignment="Center"
-                             IsVisible="{Binding IsAvatarVisible}">
-                        <Image.Clip>
-                          <EllipseGeometry Rect="0,0,50,50"/>
-                        </Image.Clip>
-                      </Image>
-                      <TextBlock Text="{Binding Nickname, StringFormat='{}{0:0}'}"
-                                 FontSize="20"
-                                 FontWeight="Bold"
-                                 Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
-                                 HorizontalAlignment="Center"
-                                 VerticalAlignment="Center"
-                                 IsVisible="{Binding IsTextAvatarVisible}"/>
-                    </Grid>
-                  </Border>
-
-                  <!-- 昵称 -->
-                  <TextBlock Grid.Column="1"
-                             Text="{Binding Nickname}"
-                             FontSize="16"
-                             FontWeight="SemiBold"
-                             VerticalAlignment="Center"
-                             Margin="16,0"/>
-
-                  <!-- 统计信息 -->
-                  <WrapPanel Grid.Column="2"
-                             VerticalAlignment="Center"
-                             Orientation="Horizontal">
-                    <!-- 好友数 -->
-                    <Border Background="{DynamicResource AccentFillColorDefaultBrush}"
-                            CornerRadius="4"
-                            Padding="8,4"
-                            Margin="4">
-                      <StackPanel Orientation="Horizontal" Spacing="4">
-                        <PathIcon Data="M12,12c2.21,0 4,-1.79 4,-4s-1.79,-4 -4,-4 -4,1.79 -4,4 1.79,4 4,4zM12,14c-2.67,0 -8,1.34 -8,4v2h16v-2c0,-2.66 -5.33,-4 -8,-4z"
-                                  Width="14" Height="14"
-                                  Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"/>
-                        <TextBlock Text="{Binding CountContacts.Friend, StringFormat='好友 {0}'}"
-                                   FontSize="12"
-                                   Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"/>
-                      </StackPanel>
-                    </Border>
-
-                    <!-- 群组数 -->
-                    <Border Background="{DynamicResource SystemFillColorSuccessBrush}"
-                            CornerRadius="4"
-                            Padding="8,4"
-                            Margin="4">
-                      <StackPanel Orientation="Horizontal" Spacing="4">
-                        <PathIcon Data="M16,11C17.66,11 18.99,9.66 18.99,8C18.99,6.34 17.66,5 16,5C14.34,5 13,6.34 13,8C13,9.66 14.34,11 16,11M8,11C9.66,11 10.99,9.66 10.99,8C10.99,6.34 9.66,5 8,5C6.34,5 5,6.34 5,8C5,9.66 6.34,11 8,11M8,13C5.67,13 1,14.17 1,16.5V19H15V16.5C15,14.17 10.33,13 8,13M16,13C15.71,13 15.38,13 15.03,13.05C16.19,13.89 17,15 17,16.5V19H23V16.5C23,14.17 18.33,13 16,13Z"
-                                  Width="14" Height="14"
-                                  Foreground="White"/>
-                        <TextBlock Text="{Binding CountContacts.Group, StringFormat='群组 {0}'}"
-                                   FontSize="12"
-                                   Foreground="White"/>
-                      </StackPanel>
-                    </Border>
-
-                    <!-- 群成员数 -->
-                    <Border Background="{DynamicResource SystemFillColorCautionBrush}"
-                            CornerRadius="4"
-                            Padding="8,4"
-                            Margin="4">
-                      <StackPanel Orientation="Horizontal" Spacing="4">
-                        <PathIcon Data="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25Z"
-                                  Width="14" Height="14"
-                                  Foreground="White"/>
-                        <TextBlock Text="{Binding CountContacts.GroupMember, StringFormat='成员 {0}'}"
-                                   FontSize="12"
-                                   Foreground="White"/>
-                      </StackPanel>
-                    </Border>
-
-                    <!-- 接收消息 -->
-                    <Border Background="{DynamicResource SystemFillColorAttentionBrush}"
-                            CornerRadius="4"
-                            Padding="8,4"
-                            Margin="4">
-                      <StackPanel Orientation="Horizontal" Spacing="4">
-                        <PathIcon Data="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2M6,9H18V11H6V9Z"
-                                  Width="14" Height="14"
-                                  Foreground="White"/>
-                        <TextBlock Text="{Binding MessageCount.Recv}"
-                                   FontSize="12"
-                                   Foreground="White"/>
-                      </StackPanel>
-                    </Border>
-
-                    <!-- 发送消息 -->
-                    <Border Background="{DynamicResource SystemFillColorAttentionBrush}"
-                            CornerRadius="4"
-                            Padding="8,4"
-                            Margin="4">
-                      <StackPanel Orientation="Horizontal" Spacing="4">
-                        <PathIcon Data="M2,21L23,12L2,3V10L17,12L2,14V21Z"
-                                  Width="14" Height="14"
-                                  Foreground="White"/>
-                        <TextBlock Text="{Binding MessageCount.Sent}"
-                                   FontSize="12"
-                                   Foreground="White"/>
-                      </StackPanel>
-                    </Border>
-
-                    <!-- 协议版本 -->
-                    <Border Background="{DynamicResource LayerFillColorAltBrush}"
-                            CornerRadius="4"
-                            Padding="8,4"
-                            Margin="4">
-                      <TextBlock Text="{Binding BotVersion, StringFormat='协议 {0}'}"
-                                 FontSize="12"/>
-                    </Border>
-
-                    <!-- 平台 -->
-                    <Border Background="{DynamicResource LayerFillColorAltBrush}"
-                            CornerRadius="4"
-                            Padding="8,4"
-                            Margin="4">
-                      <TextBlock Text="{Binding Platform, StringFormat='平台 {0}'}"
-                                 FontSize="12"/>
-                    </Border>
-
-                    <!-- 运行时长 -->
-                    <Border Background="{DynamicResource LayerFillColorAltBrush}"
-                            CornerRadius="4"
-                            Padding="8,4"
-                            Margin="4">
-                      <TextBlock Text="{Binding BotRunTime, StringFormat='运行 {0}'}"
-                                 FontSize="12"/>
-                    </Border>
-                  </WrapPanel>
-                </Grid>
-              </Border>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <!-- 空状态 -->
-        <StackPanel x:Name="EmptyStatePanel"
-                    Spacing="12"
-                    HorizontalAlignment="Center"
-                    Margin="0,32"
-                    IsVisible="False">
-          <PathIcon Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"
-                    Width="64" Height="64"
-                    Opacity="0.3"/>
-          <TextBlock Text="暂无 Bot 信息"
-                     FontSize="16"
-                     Opacity="0.5"/>
-        </StackPanel>
-      </StackPanel>
-    </Border>
-
-  </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
 </UserControl>

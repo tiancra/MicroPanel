@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace MicroPanelAvalonia.Models
+namespace MicroPanel.Models
 {
     /// <summary>
     /// 文件或目录项

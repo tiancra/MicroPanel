@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-namespace MicroPanelAvalonia.Services
+namespace MicroPanel.Services
 {
     public enum ThemeType
     {

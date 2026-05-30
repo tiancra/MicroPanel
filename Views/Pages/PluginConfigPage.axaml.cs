@@ -4,15 +4,15 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.VisualTree;
-using MicroPanelAvalonia.Models;
-using MicroPanelAvalonia.Services;
+using MicroPanel.Models;
+using MicroPanel.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace MicroPanelAvalonia.Views.Pages
+namespace MicroPanel.Views.Pages
 {
     public partial class PluginConfigPage : UserControl
     {
@@ -716,12 +716,23 @@ namespace MicroPanelAvalonia.Views.Pages
 
             _apiService.SetBaseUrl(session.CurrentServer.ServerAddress);
 
+            System.Diagnostics.Debug.WriteLine($"[PluginConfigPage] Saving config for plugin: {_currentPluginName}");
+            System.Diagnostics.Debug.WriteLine($"[PluginConfigPage] Config items count: {_pluginConfig.Count}");
+
             var response = await _apiService.SetPluginConfigAsync(session.Token, _currentPluginName, _currentSource, _pluginConfig);
+
+            System.Diagnostics.Debug.WriteLine($"[PluginConfigPage] Save response: Code={response?.Code}, Message={response?.Message}");
+
             if (response?.IsSuccess == true)
             {
                 // 显示保存成功 Toast
                 ToastService.Instance.ShowSuccess("插件配置保存成功");
                 RenderPluginsList();
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"[PluginConfigPage] Save failed: {response?.Message}");
+                ToastService.Instance.ShowError($"保存失败: {response?.Message}");
             }
         }
 

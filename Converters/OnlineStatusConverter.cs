@@ -3,7 +3,7 @@ using Avalonia.Media;
 using System;
 using System.Globalization;
 
-namespace MicroPanelAvalonia.Converters
+namespace MicroPanel.Converters
 {
     public class OnlineStatusBrushConverter : IValueConverter
     {

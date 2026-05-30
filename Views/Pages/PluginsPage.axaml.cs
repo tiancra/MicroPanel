@@ -3,16 +3,16 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using FluentAvalonia.UI.Controls;
-using MicroPanelAvalonia.Models;
-using MicroPanelAvalonia.Services;
-using MicroPanelAvalonia.Views;
+using MicroPanel.Models;
+using MicroPanel.Services;
+using MicroPanel.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MicroPanelAvalonia.Views.Pages
+namespace MicroPanel.Views.Pages
 {
     public partial class PluginsPage : UserControl
     {

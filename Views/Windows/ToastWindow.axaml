@@ -1,6 +1,8 @@
-<Window xmlns="https://github.com/avaloniaui"
+<local:MyWindow xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="MicroPanelAvalonia.Views.Windows.ToastWindow"
+        xmlns:local="using:MicroPanel.Controls"
+        xmlns:windowing="clr-namespace:FluentAvalonia.UI.Windowing;assembly=FluentAvalonia"
+        x:Class="MicroPanel.Views.Windows.ToastWindow"
         Height="50"
         WindowStartupLocation="Manual"
         ShowInTaskbar="False"
@@ -24,4 +26,4 @@
                TextWrapping="Wrap"
                Margin="20,0,20,0"/>
   </Border>
-</Window>
+</local:MyWindow>

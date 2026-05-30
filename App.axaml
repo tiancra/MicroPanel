@@ -1,21 +1,27 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sty="using:FluentAvalonia.Styling"
-             xmlns:converters="using:MicroPanelAvalonia.Converters"
-             x:Class="MicroPanelAvalonia.App"
+             xmlns:converters="using:MicroPanel.Converters"
+             x:Class="MicroPanel.App"
              RequestedThemeVariant="Default">
 
   <Application.Styles>
     <sty:FluentAvaloniaTheme />
-    <StyleInclude Source="avares://MicroPanelAvalonia/Styles/NavigationSidebar.axaml" />
+    <StyleInclude Source="avares://MicroPanel/Styles/NavigationSidebar.axaml" />
   </Application.Styles>
 
   <Application.Resources>
-    <FontFamily x:Key="SymbolThemeFontFamily">avares://FluentAvalonia/Fonts#Symbols</FontFamily>
-    <converters:OnlineStatusBrushConverter x:Key="OnlineStatusBrushConverter"/>
-    <converters:OnlineStatusTextConverter x:Key="OnlineStatusTextConverter"/>
-    <converters:CpuUsageConverter x:Key="CpuUsageConverter"/>
-    <converters:RamUsageConverter x:Key="RamUsageConverter"/>
-    <converters:DiskUsageConverter x:Key="DiskUsageConverter"/>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="avares://MicroPanel/Styles/FluentStyles.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+      
+      <FontFamily x:Key="SymbolThemeFontFamily">avares://FluentAvalonia/Fonts#Symbols</FontFamily>
+      <converters:OnlineStatusBrushConverter x:Key="OnlineStatusBrushConverter"/>
+      <converters:OnlineStatusTextConverter x:Key="OnlineStatusTextConverter"/>
+      <converters:CpuUsageConverter x:Key="CpuUsageConverter"/>
+      <converters:RamUsageConverter x:Key="RamUsageConverter"/>
+      <converters:DiskUsageConverter x:Key="DiskUsageConverter"/>
+    </ResourceDictionary>
   </Application.Resources>
 </Application>

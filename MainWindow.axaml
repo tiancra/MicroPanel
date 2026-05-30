@@ -1,353 +1,173 @@
-<Window xmlns="https://github.com/avaloniaui"
+<local:MyWindow xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:views="using:MicroPanelAvalonia.Views"
-        xmlns:pages="using:MicroPanelAvalonia.Views.Pages"
+        xmlns:views="using:MicroPanel.Views"
+        xmlns:pages="using:MicroPanel.Views.Pages"
+        xmlns:controls="using:FluentAvalonia.UI.Controls"
+        xmlns:customControls="using:MicroPanel.Views.Controls"
+        xmlns:windowing="clr-namespace:FluentAvalonia.UI.Windowing;assembly=FluentAvalonia"
+        xmlns:local="using:MicroPanel.Controls"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
-        x:Class="MicroPanelAvalonia.MainWindow"
+        x:Class="MicroPanel.MainWindow"
         Title="Micro Panel"
         Width="1200" Height="800"
         MinWidth="900" MinHeight="600"
         WindowStartupLocation="CenterScreen"
+        SystemDecorations="None"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
         TransparencyLevelHint="Mica"
-        Background="Transparent">
+        Background="Transparent"
+        EnableMicaWindow="True"
+        windowing:AppWindow.AllowInteractionInTitleBar="True">
 
-  <Grid ColumnDefinitions="Auto,*">
+  <Grid>
+    <controls:NavigationView x:Name="NavigationView"
+                             PaneDisplayMode="Left"
+                             IsSettingsVisible="False"
+                             IsBackButtonVisible="False"
+                             OpenPaneLength="240">
+      <controls:NavigationView.MenuItems>
+        <!-- 主页 -->
+        <controls:NavigationViewItem Tag="Home" IsSelected="True">
+          <controls:NavigationViewItem.IconSource>
+            <controls:PathIconSource Data="M12,3L4,9v12h5v-7h6v7h5V9L12,3z" />
+          </controls:NavigationViewItem.IconSource>
+          <TextBlock Text="服务器管理" />
+        </controls:NavigationViewItem>
 
-    <Border Grid.Column="0"
-            Width="200"
-            Background="{DynamicResource LayerFillColorDefaultBrush}"
-            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-            BorderThickness="0,0,1,0">
-      <Grid RowDefinitions="Auto,*,Auto">
+        <!-- 设置 -->
+        <controls:NavigationViewItem Tag="Settings">
+          <controls:NavigationViewItem.IconSource>
+            <controls:PathIconSource Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
+          </controls:NavigationViewItem.IconSource>
+          <TextBlock Text="设置" />
+        </controls:NavigationViewItem>
 
-        <Border Grid.Row="0" Padding="16,20">
-          <TextBlock Text="Micro Panel"
-                     FontSize="20"
-                     FontWeight="Bold"
-                     HorizontalAlignment="Center"/>
-        </Border>
+        <!-- 关于 -->
+        <controls:NavigationViewItem Tag="About">
+          <controls:NavigationViewItem.IconSource>
+            <controls:PathIconSource Data="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" />
+          </controls:NavigationViewItem.IconSource>
+          <TextBlock Text="关于" />
+        </controls:NavigationViewItem>
+      </controls:NavigationView.MenuItems>
 
-        <StackPanel Grid.Row="1" Margin="8,0">
-          <Button x:Name="HomeButton"
-                  Classes="Navigation"
-                  HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Left"
-                  Padding="12,10"
-                  Click="OnHomeClick">
-            <StackPanel Orientation="Horizontal" Spacing="12">
-              <PathIcon Data="M12,3L4,9v12h5v-7h6v7h5V9L12,3zM12,5.5L18,10v9h-3v-7H9v7H6v-9L12,5.5z"
-                        Width="18" Height="18"/>
-              <TextBlock Text="主页" FontSize="14"/>
-            </StackPanel>
-          </Button>
-        </StackPanel>
-
-        <StackPanel Grid.Row="2" Margin="16,16" Spacing="8">
-          <Button Classes="Navigation"
-                  HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Left"
-                  Padding="12,10"
-                  Click="OnSettingsClick">
-            <StackPanel Orientation="Horizontal" Spacing="12">
-              <PathIcon Data="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"
-                        Width="18" Height="18"/>
-              <TextBlock Text="设置" FontSize="14"/>
-            </StackPanel>
-          </Button>
-          <Button Classes="Navigation"
-                  HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Left"
-                  Padding="12,10"
-                  Click="OnAboutClick">
-            <StackPanel Orientation="Horizontal" Spacing="12">
-              <PathIcon Data="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
-                        Width="18" Height="18"/>
-              <TextBlock Text="关于" FontSize="14"/>
-            </StackPanel>
-          </Button>
-          <TextBlock Text="Micro Panel v2.0.0_Beta"
+      <!-- 底部版本信息 -->
+      <controls:NavigationView.PaneFooter>
+        <Border Background="{DynamicResource LayerBackgroundBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="16,12">
+          <TextBlock Text="Micro Panel v2.0.0_Beta3"
                      FontSize="11"
                      Opacity="0.5"
-                     HorizontalAlignment="Center"/>
-        </StackPanel>
-      </Grid>
-    </Border>
-
-    <Grid Grid.Column="1">
-      <Grid x:Name="ServerListView" RowDefinitions="Auto,*">
-        <Border Grid.Row="0"
-                Background="{DynamicResource LayerFillColorDefaultBrush}"
-                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                BorderThickness="0,0,0,1"
-                Padding="20,16">
-          <Grid ColumnDefinitions="*,Auto">
-            <TextBlock Grid.Column="0"
-                       Text="服务器管理"
-                       FontSize="18"
-                       FontWeight="SemiBold"
-                       VerticalAlignment="Center"/>
-
-            <Button Grid.Column="1"
-                    x:Name="RefreshButton"
-                    Classes="Ghost"
-                    Padding="8"
-                    Click="OnRefreshClick">
-              <PathIcon Data="M17.65,6.35C16.2,4.9 14.21,4 12,4c-4.42,0 -7.99,3.58 -7.99,8s3.57,8 7.99,8c3.73,0 6.84,-2.55 7.73,-6h-2.08c-0.82,2.33 -3.04,4 -5.65,4 -3.31,0 -6,-2.69 -6,-6s2.69,-6 6,-6c1.66,0 3.14,0.69 4.22,1.78L13,11h7V4l-2.35,2.35z"
-                        Width="16" Height="16"/>
-            </Button>
-          </Grid>
+                     HorizontalAlignment="Center"
+                     Foreground="{DynamicResource TextSecondaryBrush}"/>
         </Border>
+      </controls:NavigationView.PaneFooter>
 
-        <ScrollViewer Grid.Row="1"
-                      HorizontalScrollBarVisibility="Disabled"
-                      VerticalScrollBarVisibility="Auto"
-                      Padding="20">
-          <WrapPanel x:Name="ServersWrapPanel"
-                     Orientation="Horizontal"
-                     HorizontalAlignment="Left"
-                     VerticalAlignment="Top">
-            <ItemsControl x:Name="ServersItemsControl">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <WrapPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-            </ItemsControl>
+      <!-- 内容区域 - ClassIsland风格，简洁布局 -->
+      <Grid>
+        <!-- 桌面壁纸控件 - 只在右侧内容区域显示 -->
+        <customControls:DesktopWallpaperControl x:Name="WallpaperControl" ZIndex="0"/>
 
-            <Button x:Name="AddServerButton"
-                    Width="320"
-                    Height="200"
-                    Classes="Ghost"
-                    BorderThickness="2"
-                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                    CornerRadius="8"
-                    Click="OnAddServerClick">
-              <StackPanel Spacing="12" HorizontalAlignment="Center">
-                <PathIcon Data="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
-                          Width="48" Height="48"
-                          Opacity="0.4"/>
-                <TextBlock Text="添加服务器"
-                           FontSize="16"
-                           Opacity="0.6"/>
-              </StackPanel>
-            </Button>
-          </WrapPanel>
-        </ScrollViewer>
+        <!-- 服务器列表页面 -->
+        <Grid x:Name="ServerListView">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+
+          <!-- 简洁的顶部栏 -->
+          <Border Grid.Row="0"
+                  Background="{DynamicResource WindowBackgroundBrush}"
+                  BorderBrush="{DynamicResource BorderBrush}"
+                  BorderThickness="0,0,0,1"
+                  Padding="20,12">
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0"
+                         Text="服务器管理"
+                         FontSize="20"
+                         FontWeight="SemiBold"
+                         VerticalAlignment="Center"
+                         Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+              <Button Grid.Column="1"
+                      x:Name="RefreshButton"
+                      Classes="Ghost"
+                      Padding="8"
+                      Click="OnRefreshClick">
+                <PathIcon Data="M17.65,6.35C16.2,4.9 14.21,4 12,4c-4.42,0 -7.99,3.58 -7.99,8s3.57,8 7.99,8c3.73,0 6.84,-2.55 7.73,-6h-2.08c-0.82,2.33 -3.04,4 -5.65,4 -3.31,0 -6,-2.69 -6,-6s2.69,-6 6,-6c1.66,0 3.14,0.69 4.22,1.78L13,11h7V4l-2.35,2.35z"
+                          Width="16" Height="16"/>
+              </Button>
+            </Grid>
+          </Border>
+
+          <!-- 服务器列表 -->
+          <ScrollViewer Grid.Row="1"
+                        HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Auto"
+                        Padding="20">
+            <WrapPanel x:Name="ServersWrapPanel"
+                       Orientation="Horizontal"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top">
+              <ItemsControl x:Name="ServersItemsControl">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+              </ItemsControl>
+
+              <Button x:Name="AddServerButton"
+                      Width="320"
+                      Height="200"
+                      Classes="Ghost"
+                      BorderThickness="2"
+                      BorderBrush="{DynamicResource CardBorderBrush}"
+                      CornerRadius="8"
+                      Click="OnAddServerClick">
+                <StackPanel Spacing="12" HorizontalAlignment="Center">
+                  <PathIcon Data="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                            Width="48" Height="48"
+                            Opacity="0.4"/>
+                  <TextBlock Text="添加服务器"
+                             FontSize="16"
+                             Opacity="0.6"/>
+                </StackPanel>
+              </Button>
+            </WrapPanel>
+          </ScrollViewer>
+        </Grid>
+
+        <!-- 设置页面 -->
+        <pages:SettingsPage x:Name="SettingsView" IsVisible="False"/>
+
+        <!-- 关于页面 -->
+        <pages:AboutPage x:Name="AboutView" IsVisible="False"/>
       </Grid>
+    </controls:NavigationView>
 
-      <!-- 设置页面 -->
-      <pages:SettingsPage x:Name="SettingsView" IsVisible="False"/>
 
-      <!-- 关于页面 -->
-      <pages:AboutPage x:Name="AboutView" IsVisible="False"/>
-    </Grid>
-
-    <!-- 添加服务器弹窗 -->
-    <Border x:Name="AddServerOverlay"
-            Grid.Column="0" Grid.ColumnSpan="2"
-            Grid.Row="0" Grid.RowSpan="2"
-            Background="#80000000"
-            IsVisible="False"
-            Opacity="0">
-      <Border.Transitions>
-        <Transitions>
-          <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
-        </Transitions>
-      </Border.Transitions>
-      <Grid HorizontalAlignment="Center"
-            VerticalAlignment="Center">
-        <Border x:Name="AddServerDialogContainer"
-                Background="{DynamicResource LayerFillColorDefaultBrush}"
-                CornerRadius="8"
-                BoxShadow="0 8 32 0 #40000000"
-                RenderTransformOrigin="0.5,0.5"
-                Opacity="0">
-          <Border.RenderTransform>
-            <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
-          </Border.RenderTransform>
-          <Border.Transitions>
-            <Transitions>
-              <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
-              <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25">
-                <TransformOperationsTransition.Easing>
-                  <CubicEaseOut/>
-                </TransformOperationsTransition.Easing>
-              </TransformOperationsTransition>
-            </Transitions>
-          </Border.Transitions>
-          <views:AddServerDialog x:Name="AddServerDialog"/>
-        </Border>
-      </Grid>
-    </Border>
-
-    <!-- 用户选择弹窗 -->
-    <Border x:Name="UserSelectOverlay"
-            Grid.Column="0" Grid.ColumnSpan="2"
-            Grid.Row="0" Grid.RowSpan="2"
-            Background="#80000000"
-            IsVisible="False"
-            Opacity="0">
-      <Border.Transitions>
-        <Transitions>
-          <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
-        </Transitions>
-      </Border.Transitions>
-      <Grid HorizontalAlignment="Center"
-            VerticalAlignment="Center">
-        <Border x:Name="UserSelectDialogContainer"
-                Background="{DynamicResource LayerFillColorDefaultBrush}"
-                CornerRadius="8"
-                BoxShadow="0 8 32 0 #40000000"
-                RenderTransformOrigin="0.5,0.5"
-                Opacity="0">
-          <Border.RenderTransform>
-            <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
-          </Border.RenderTransform>
-          <Border.Transitions>
-            <Transitions>
-              <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
-              <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25">
-                <TransformOperationsTransition.Easing>
-                  <CubicEaseOut/>
-                </TransformOperationsTransition.Easing>
-              </TransformOperationsTransition>
-            </Transitions>
-          </Border.Transitions>
-          <views:UserSelectDialog x:Name="UserSelectDialog"/>
-        </Border>
-      </Grid>
-    </Border>
-
-    <!-- 用户管理弹窗 -->
-    <Border x:Name="UserManagementOverlay"
-            Grid.Column="0" Grid.ColumnSpan="2"
-            Grid.Row="0" Grid.RowSpan="2"
-            Background="#80000000"
-            IsVisible="False"
-            Opacity="0">
-      <Border.Transitions>
-        <Transitions>
-          <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
-        </Transitions>
-      </Border.Transitions>
-      <Grid HorizontalAlignment="Center"
-            VerticalAlignment="Center">
-        <Border x:Name="UserManagementDialogContainer"
-                Background="{DynamicResource LayerFillColorDefaultBrush}"
-                CornerRadius="8"
-                BoxShadow="0 8 32 0 #40000000"
-                RenderTransformOrigin="0.5,0.5"
-                Opacity="0">
-          <Border.RenderTransform>
-            <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
-          </Border.RenderTransform>
-          <Border.Transitions>
-            <Transitions>
-              <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
-              <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25">
-                <TransformOperationsTransition.Easing>
-                  <CubicEaseOut/>
-                </TransformOperationsTransition.Easing>
-              </TransformOperationsTransition>
-            </Transitions>
-          </Border.Transitions>
-          <views:UserManagementDialog x:Name="UserManagementDialog"/>
-        </Border>
-      </Grid>
-    </Border>
-
-    <!-- 编辑/添加用户弹窗 -->
-    <Border x:Name="EditUserOverlay"
-            Grid.Column="0" Grid.ColumnSpan="2"
-            Grid.Row="0" Grid.RowSpan="2"
-            Background="#80000000"
-            IsVisible="False"
-            Opacity="0">
-      <Border.Transitions>
-        <Transitions>
-          <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
-        </Transitions>
-      </Border.Transitions>
-      <Grid HorizontalAlignment="Center"
-            VerticalAlignment="Center">
-        <Border x:Name="EditUserDialogContainer"
-                Background="{DynamicResource LayerFillColorDefaultBrush}"
-                CornerRadius="8"
-                BoxShadow="0 8 32 0 #40000000"
-                RenderTransformOrigin="0.5,0.5"
-                Opacity="0">
-          <Border.RenderTransform>
-            <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
-          </Border.RenderTransform>
-          <Border.Transitions>
-            <Transitions>
-              <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
-              <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25">
-                <TransformOperationsTransition.Easing>
-                  <CubicEaseOut/>
-                </TransformOperationsTransition.Easing>
-              </TransformOperationsTransition>
-            </Transitions>
-          </Border.Transitions>
-          <views:EditUserDialog x:Name="EditUserDialog"/>
-        </Border>
-      </Grid>
-    </Border>
-
-    <!-- 确认弹窗 -->
-    <Border x:Name="ConfirmOverlay"
-            Grid.Column="0" Grid.ColumnSpan="2"
-            Grid.Row="0" Grid.RowSpan="2"
-            Background="#80000000"
-            IsVisible="False"
-            Opacity="0">
-      <Border.Transitions>
-        <Transitions>
-          <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
-        </Transitions>
-      </Border.Transitions>
-      <Grid HorizontalAlignment="Center"
-            VerticalAlignment="Center">
-        <Border x:Name="ConfirmDialogContainer"
-                Background="{DynamicResource LayerFillColorDefaultBrush}"
-                CornerRadius="8"
-                BoxShadow="0 8 32 0 #40000000"
-                RenderTransformOrigin="0.5,0.5"
-                Opacity="0">
-          <Border.RenderTransform>
-            <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
-          </Border.RenderTransform>
-          <Border.Transitions>
-            <Transitions>
-              <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
-              <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25">
-                <TransformOperationsTransition.Easing>
-                  <CubicEaseOut/>
-                </TransformOperationsTransition.Easing>
-              </TransformOperationsTransition>
-            </Transitions>
-          </Border.Transitions>
-          <views:ConfirmDialog x:Name="ConfirmDialogControl"/>
-        </Border>
-      </Grid>
-    </Border>
 
     <!-- 调试模式水印 -->
     <Border x:Name="DebugModeWatermark"
-            Grid.Column="0" Grid.ColumnSpan="2"
             IsVisible="False"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Margin="0,0,16,16"
-            Background="#80FF0000"
+            Background="{DynamicResource ErrorBrush}"
             CornerRadius="4"
-            Padding="8,4">
+            Padding="8,4"
+            Opacity="0.9">
       <TextBlock Text="调试模式"
                  FontSize="11"
                  FontWeight="Bold"
-                 Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+                 Foreground="White"/>
     </Border>
   </Grid>
-</Window>
+</local:MyWindow>

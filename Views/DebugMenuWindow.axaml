@@ -1,173 +1,107 @@
-<Window xmlns="https://github.com/avaloniaui"
+<local:MyWindow xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
-        x:Class="MicroPanelAvalonia.Views.DebugMenuWindow"
+        xmlns:controls="using:FluentAvalonia.UI.Controls"
+        xmlns:windowing="clr-namespace:FluentAvalonia.UI.Windowing;assembly=FluentAvalonia"
+        xmlns:local="using:MicroPanel.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+        x:Class="MicroPanel.Views.DebugMenuWindow"
         Title="调试菜单"
-        Width="400" Height="600"
-        MinWidth="350" MinHeight="400"
+        Width="800" Height="600"
+        MinWidth="600" MinHeight="400"
         WindowStartupLocation="CenterScreen"
-        CanResize="False">
+        CanResize="True"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        TransparencyLevelHint="Mica"
+        Background="Transparent"
+        EnableMicaWindow="True"
+        windowing:AppWindow.AllowInteractionInTitleBar="True">
 
-  <Window.Styles>
-    <Style Selector="Button.DebugItem">
-      <Setter Property="HorizontalAlignment" Value="Stretch" />
-      <Setter Property="HorizontalContentAlignment" Value="Left" />
-      <Setter Property="Padding" Value="16,12" />
-      <Setter Property="Margin" Value="8,4" />
-      <Setter Property="CornerRadius" Value="6" />
-    </Style>
+  <controls:NavigationView x:Name="NavigationView"
+                           PaneDisplayMode="Left"
+                           IsSettingsVisible="False"
+                           IsBackButtonVisible="False"
+                           OpenPaneLength="280"
+                           SelectionChanged="NavigationView_SelectionChanged">
+    <controls:NavigationView.MenuItems>
+      <!-- 应用信息分组 -->
+      <controls:NavigationViewItemHeader Content="应用信息" />
+      <controls:NavigationViewItem Tag="AppInfo" IsSelected="True">
+        <controls:NavigationViewItem.IconSource>
+          <controls:PathIconSource Data="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" />
+        </controls:NavigationViewItem.IconSource>
+        <TextBlock Text="显示应用信息" />
+      </controls:NavigationViewItem>
+      <controls:NavigationViewItem Tag="MemoryInfo">
+        <controls:NavigationViewItem.IconSource>
+          <controls:PathIconSource Data="M17,17H15V13H13V17H9V13H7V17H5V11H3V21H21V11H19V17H17M6,2H8V4H16V2H18V4H19A2,2 0 0,1 21,6V9H3V6A2,2 0 0,1 5,4H6V2M17,12H7V10H17V12Z" />
+        </controls:NavigationViewItem.IconSource>
+        <TextBlock Text="显示内存信息" />
+      </controls:NavigationViewItem>
 
-    <Style Selector="Button.DebugItem.Danger">
-      <Setter Property="Background" Value="#FFE0E0" />
-      <Setter Property="Foreground" Value="#D00000" />
-    </Style>
+      <!-- 网络测试分组 -->
+      <controls:NavigationViewItemHeader Content="网络测试" />
+      <controls:NavigationViewItem Tag="NetworkTest">
+        <controls:NavigationViewItem.IconSource>
+          <controls:PathIconSource Data="M16.36,14C16.44,13.34 16.5,12.68 16.5,12C16.5,11.32 16.44,10.66 16.36,10H19.74C19.9,10.64 20,11.31 20,12C20,12.69 19.9,13.36 19.74,14H16.36M14.59,19.56C15.19,18.45 15.65,17.25 15.97,16H18.92C17.96,17.65 16.43,18.93 14.59,19.56M14.34,14H9.66C9.56,13.34 9.5,12.68 9.5,12C9.5,11.32 9.56,10.65 9.66,10H14.34C14.43,10.65 14.5,11.32 14.5,12C14.5,12.68 14.43,13.34 14.34,14M12,19.96C10.96,18.76 10.14,17.36 9.6,15.8H14.4C13.86,17.36 13.04,18.76 12,19.96M8,8H5.08C6.03,6.34 7.57,5.06 9.4,4.44C8.8,5.55 8.35,6.75 8,8M5.08,16H8C8.35,17.25 8.8,18.45 9.4,19.56C7.57,18.93 6.03,17.65 5.08,16M4.26,14C4.1,13.36 4,12.69 4,12C4,11.31 4.1,10.64 4.26,10H7.64C7.56,10.66 7.5,11.32 7.5,12C7.5,12.68 7.56,13.34 7.64,14H4.26M12,4.03C13.04,5.23 13.86,6.63 14.4,8.2H9.6C10.14,6.64 10.96,5.24 12,4.03M18.92,8H15.97C15.65,6.75 15.19,5.55 14.59,4.44C16.43,5.07 17.96,6.34 18.92,8Z" />
+        </controls:NavigationViewItem.IconSource>
+        <TextBlock Text="测试网络连接" />
+      </controls:NavigationViewItem>
 
-    <Style Selector="Button.DebugItem.Danger:pointerover">
-      <Setter Property="Background" Value="#FFD0D0" />
-    </Style>
+      <!-- 危险操作分组 -->
+      <controls:NavigationViewItemHeader Content="危险操作" />
+      <controls:NavigationViewItem Tag="TestCrash">
+        <controls:NavigationViewItem.IconSource>
+          <controls:PathIconSource Data="M12,2C17.5,2 22,6.5 22,12C22,17.5 17.5,22 12,22C6.5,22 2,17.5 2,12C2,6.5 6.5,2 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,17A1,1 0 0,1 11,16A1,1 0 0,1 12,15A1,1 0 0,1 13,16A1,1 0 0,1 12,17M13,7H11V13H13V7Z" />
+        </controls:NavigationViewItem.IconSource>
+        <TextBlock Text="测试崩溃（立即崩溃）" Foreground="{DynamicResource ErrorBrush}" />
+      </controls:NavigationViewItem>
+      <controls:NavigationViewItem Tag="TestNullRef">
+        <controls:NavigationViewItem.IconSource>
+          <controls:PathIconSource Data="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+        </controls:NavigationViewItem.IconSource>
+        <TextBlock Text="测试空引用异常" Foreground="{DynamicResource ErrorBrush}" />
+      </controls:NavigationViewItem>
+      <controls:NavigationViewItem Tag="TestUiFreeze">
+        <controls:NavigationViewItem.IconSource>
+          <controls:PathIconSource Data="M6,2H18V8H18V8L14,12L18,16V16H18V22H6V16H6V16L10,12L6,8V8H6V2M16,16.5L12,12.5L8,16.5V20H16V16.5M12,11.5L16,7.5V4H8V7.5L12,11.5Z" />
+        </controls:NavigationViewItem.IconSource>
+        <TextBlock Text="测试 UI 卡死（5秒）" Foreground="{DynamicResource ErrorBrush}" />
+      </controls:NavigationViewItem>
 
-    <Style Selector="Separator.DebugSeparator">
-      <Setter Property="Margin" Value="16,8" />
-    </Style>
+      <!-- 其他分组 -->
+      <controls:NavigationViewItemHeader Content="其他" />
+      <controls:NavigationViewItem Tag="ReloadConfig">
+        <controls:NavigationViewItem.IconSource>
+          <controls:PathIconSource Data="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
+        </controls:NavigationViewItem.IconSource>
+        <TextBlock Text="重新加载配置" />
+      </controls:NavigationViewItem>
+      <controls:NavigationViewItem Tag="ToggleMode">
+        <controls:NavigationViewItem.IconSource>
+          <controls:PathIconSource Data="M21,16H3V4H21M21,2H3C1.89,2 1,2.89 1,4V16A2,2 0 0,0 3,18H10V20H8V22H16V20H14V18H21A2,2 0 0,0 23,16V4C23,2.89 22.1,2 21,2Z" />
+        </controls:NavigationViewItem.IconSource>
+        <TextBlock x:Name="ToggleModeButtonText" Text="重启到桌面模式" />
+      </controls:NavigationViewItem>
+      <controls:NavigationViewItem Tag="ExitDebugMode">
+        <controls:NavigationViewItem.IconSource>
+          <controls:PathIconSource Data="M17,7L15.59,8.41L18.17,11H8V13H18.17L15.59,15.58L17,17L22,12M4,5H12V3H4A2,2 0 0,0 2,5V19A2,2 0 0,0 4,21H12V19H4V5Z" />
+        </controls:NavigationViewItem.IconSource>
+        <TextBlock Text="退出调试模式（重启）" />
+      </controls:NavigationViewItem>
+    </controls:NavigationView.MenuItems>
 
-    <Style Selector="TextBlock.GroupHeader">
-      <Setter Property="FontSize" Value="12" />
-      <Setter Property="FontWeight" Value="Bold" />
-      <Setter Property="Opacity" Value="0.6" />
-      <Setter Property="Margin" Value="16,16,16,8" />
-    </Style>
-  </Window.Styles>
-
-  <Grid RowDefinitions="Auto,*">
-    <!-- 标题栏 -->
-    <Border Grid.Row="0"
-            Background="{DynamicResource LayerFillColorDefaultBrush}"
-            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-            BorderThickness="0,0,0,1"
-            Padding="16,12">
-      <Grid ColumnDefinitions="*,Auto">
-        <TextBlock Grid.Column="0"
-                   Text="调试菜单"
-                   FontSize="16"
-                   FontWeight="SemiBold"
-                   VerticalAlignment="Center"/>
-        <Border Grid.Column="1"
-                Background="#80FF0000"
-                CornerRadius="4"
-                Padding="8,4">
-          <TextBlock Text="DEBUG"
-                     FontSize="10"
-                     FontWeight="Bold"
-                     Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-        </Border>
-      </Grid>
-    </Border>
-
-    <!-- 调试项目列表 -->
-    <ScrollViewer Grid.Row="1"
-                  VerticalScrollBarVisibility="Auto">
-      <StackPanel Margin="0,8">
-
-        <!-- 应用信息 -->
-        <TextBlock Classes="GroupHeader" Text="应用信息"/>
-        <Button Classes="DebugItem"
-                Click="OnShowAppInfoClick">
-          <StackPanel Orientation="Horizontal" Spacing="12">
-            <PathIcon Data="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
-                      Width="20" Height="20"/>
-            <TextBlock Text="显示应用信息" FontSize="13"/>
-          </StackPanel>
-        </Button>
-
-        <Button Classes="DebugItem"
-                Click="OnShowMemoryInfoClick">
-          <StackPanel Orientation="Horizontal" Spacing="12">
-            <PathIcon Data="M4,6H20V16H4M2,18H22V20H2V18M20,4H4V6H20V4Z"
-                      Width="20" Height="20"/>
-            <TextBlock Text="显示内存信息" FontSize="13"/>
-          </StackPanel>
-        </Button>
-
-        <Separator Classes="DebugSeparator"/>
-
-        <!-- 网络测试 -->
-        <TextBlock Classes="GroupHeader" Text="网络测试"/>
-        <Button Classes="DebugItem"
-                Click="OnTestNetworkClick">
-          <StackPanel Orientation="Horizontal" Spacing="12">
-            <PathIcon Data="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10-4.48 10-10S17.52,2 12,2zm-1,17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9,15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
-                      Width="20" Height="20"/>
-            <TextBlock Text="测试网络连接" FontSize="13"/>
-          </StackPanel>
-        </Button>
-
-        <Separator Classes="DebugSeparator"/>
-
-        <!-- 危险操作 -->
-        <TextBlock Classes="GroupHeader" Text="危险操作"/>
-        <Button Classes="DebugItem Danger"
-                Click="OnTestCrashClick">
-          <StackPanel Orientation="Horizontal" Spacing="12">
-            <PathIcon Data="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"
-                      Width="20" Height="20"/>
-            <TextBlock Text="测试崩溃（立即崩溃）" FontSize="13"/>
-          </StackPanel>
-        </Button>
-
-        <Button Classes="DebugItem Danger"
-                Click="OnTestNullReferenceClick">
-          <StackPanel Orientation="Horizontal" Spacing="12">
-            <PathIcon Data="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10-4.48 10-10S17.52,2 12,2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
-                      Width="20" Height="20"/>
-            <TextBlock Text="测试空引用异常" FontSize="13"/>
-          </StackPanel>
-        </Button>
-
-        <Button Classes="DebugItem Danger"
-                Click="OnTestUiFreezeClick">
-          <StackPanel Orientation="Horizontal" Spacing="12">
-            <PathIcon Data="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"
-                      Width="20" Height="20"/>
-            <TextBlock Text="测试 UI 卡死（5秒）" FontSize="13"/>
-          </StackPanel>
-        </Button>
-
-        <Separator Classes="DebugSeparator"/>
-
-        <!-- 其他 -->
-        <TextBlock Classes="GroupHeader" Text="其他"/>
-        <Button Classes="DebugItem"
-                Click="OnReloadConfigClick">
-          <StackPanel Orientation="Horizontal" Spacing="12">
-            <PathIcon Data="M17.65,6.35C16.2,4.9 14.21,4 12,4c-4.42,0 -7.99,3.58 -7.99,8s3.57,8 7.99,8c3.73,0 6.84,-2.55 7.73,-6h-2.08c-0.82,2.33 -3.04,4 -5.65,4 -3.31,0 -6,-2.69 -6,-6s2.69,-6 6,-6c1.66,0 3.14,0.69 4.22,1.78L13,11h7V4l-2.35,2.35z"
-                      Width="20" Height="20"/>
-            <TextBlock Text="重新加载配置" FontSize="13"/>
-          </StackPanel>
-        </Button>
-
-        <!-- 桌面模式/正常模式切换按钮 - 动态文本 -->
-        <Button x:Name="ToggleModeButton"
-                Classes="DebugItem"
-                Click="OnToggleModeClick">
-          <StackPanel Orientation="Horizontal" Spacing="12">
-            <PathIcon Data="M4,6H20V16H4M2,18H22V20H2V18M20,4H4V6H20V4Z"
-                      Width="20" Height="20"/>
-            <TextBlock x:Name="ToggleModeButtonText" Text="重启到桌面模式" FontSize="13"/>
-          </StackPanel>
-        </Button>
-
-        <Button Classes="DebugItem"
-                Click="OnExitDebugModeClick">
-          <StackPanel Orientation="Horizontal" Spacing="12">
-            <PathIcon Data="M17,7L15.59,8.41L18.17,11H8V13H18.17L15.59,15.58L17,17L22,12M4,5H12V3H4A2,2 0 0,0 2,5V19A2,2 0 0,0 4,21H12V19H4V5Z"
-                      Width="20" Height="20"/>
-            <TextBlock Text="退出调试模式（重启）" FontSize="13"/>
-          </StackPanel>
-        </Button>
-
-      </StackPanel>
-    </ScrollViewer>
-  </Grid>
-</Window>
+    <!-- 内容区域 -->
+    <Grid Margin="24">
+      <TextBlock x:Name="ContentTextBlock"
+                 Text="请从左侧菜单选择调试功能"
+                 FontSize="16"
+                 Foreground="{DynamicResource TextSecondaryBrush}"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center" />
+    </Grid>
+  </controls:NavigationView>
+</local:MyWindow>

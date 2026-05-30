@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using MicroPanelAvalonia.Models;
+using MicroPanel.Models;
 
-namespace MicroPanelAvalonia.Services
+namespace MicroPanel.Services
 {
     public class ApiService
     {
@@ -443,41 +444,37 @@ namespace MicroPanelAvalonia.Services
         /// <summary>
         /// 设置插件配置
         /// </summary>
-        public async Task<ApiResponse<string>?> SetPluginConfigAsync(string token, string pluginName, string source, List<SchemaItem> config)
+        public async Task<ApiResponse<object>?> SetPluginConfigAsync(string token, string pluginName, string source, List<SchemaItem> config)
         {
             try
             {
                 _httpClient.DefaultRequestHeaders.Remove("token");
                 _httpClient.DefaultRequestHeaders.Add("token", token);
 
-                // 转换配置数据为字典格式
-                var configDict = new Dictionary<string, object>();
-                foreach (var item in config)
+                // 直接发送 SchemaItem 数组，保持与 micro-plugin 后端一致的格式
+                var json = JsonSerializer.Serialize(config, new JsonSerializerOptions
                 {
-                    configDict[item.Field] = item.Value ?? "";
-                }
-
-                var request = new
-                {
-                    pluginName,
-                    source,
-                    config = configDict
-                };
-
-                var json = JsonSerializer.Serialize(request);
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                });
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                System.Diagnostics.Debug.WriteLine($"[Plugin API] SetPluginConfig request: {json}");
 
                 var response = await _httpClient.PostAsync($"{_baseUrl}/api/plugins/setcfg?source={source}&pluginName={pluginName}", content);
                 var responseJson = await response.Content.ReadAsStringAsync();
 
-                return JsonSerializer.Deserialize<ApiResponse<string>>(responseJson, new JsonSerializerOptions
+                System.Diagnostics.Debug.WriteLine($"[Plugin API] SetPluginConfig response: {responseJson}");
+
+                return JsonSerializer.Deserialize<ApiResponse<object>>(responseJson, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
             }
             catch (Exception ex)
             {
-                return new ApiResponse<string>
+                System.Diagnostics.Debug.WriteLine($"[Plugin API] SetPluginConfig error: {ex}");
+                return new ApiResponse<object>
                 {
                     Code = 500,
                     Message = $"请求失败: {ex.Message}"

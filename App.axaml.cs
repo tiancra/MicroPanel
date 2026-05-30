@@ -4,10 +4,10 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using FluentAvalonia.UI;
-using MicroPanelAvalonia.Services;
+using MicroPanel.Services;
 using System;
 
-namespace MicroPanelAvalonia;
+namespace MicroPanel;
 
 public partial class App : Application
 {
@@ -38,7 +38,7 @@ public partial class App : Application
     {
         try
         {
-            var uri = new Uri("avares://MicroPanelAvalonia/Assets/logo.png");
+            var uri = new Uri("avares://MicroPanel/Assets/logo.png");
             var stream = AssetLoader.Open(uri);
             window.Icon = new WindowIcon(stream);
         }
@@ -55,7 +55,7 @@ public partial class App : Application
     {
         try
         {
-            var uri = new Uri("avares://MicroPanelAvalonia/Assets/logo.png");
+            var uri = new Uri("avares://MicroPanel/Assets/logo.png");
             var stream = AssetLoader.Open(uri);
             window.Icon = new WindowIcon(stream);
         }

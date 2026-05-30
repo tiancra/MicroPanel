@@ -5,17 +5,17 @@ using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using FluentAvalonia.UI.Controls;
-using MicroPanelAvalonia.Models;
-using MicroPanelAvalonia.Services;
-using MicroPanelAvalonia.Views;
-using MicroPanelAvalonia.Views.Controls;
+using MicroPanel.Models;
+using MicroPanel.Services;
+using MicroPanel.Views;
+using MicroPanel.Views.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MicroPanelAvalonia.Views.Pages
+namespace MicroPanel.Views.Pages
 {
     public partial class PluginEditPage : UserControl
     {

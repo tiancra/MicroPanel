@@ -3,15 +3,15 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
-using MicroPanelAvalonia.Models;
-using MicroPanelAvalonia.Services;
+using MicroPanel.Models;
+using MicroPanel.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace MicroPanelAvalonia.Views.Pages
+namespace MicroPanel.Views.Pages
 {
     public partial class ProtocolConfigPage : UserControl
     {

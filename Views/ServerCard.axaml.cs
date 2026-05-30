@@ -2,10 +2,10 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using MicroPanelAvalonia.Models;
+using MicroPanel.Models;
 using System;
 
-namespace MicroPanelAvalonia.Views
+namespace MicroPanel.Views
 {
     public partial class ServerCard : UserControl
     {
@@ -21,6 +21,8 @@ namespace MicroPanelAvalonia.Views
         public event EventHandler<ServerInfo>? CardClicked;
         public event EventHandler<ServerInfo>? UserManagementRequested;
         public event EventHandler<ServerInfo>? DeleteRequested;
+        public event EventHandler<ServerInfo>? RefreshRequested;
+        public event EventHandler<ServerInfo>? EditRequested;
 
         private Border? _cardBorder;
 
@@ -91,6 +93,24 @@ namespace MicroPanelAvalonia.Views
             if (Server != null)
             {
                 DeleteRequested?.Invoke(this, Server);
+            }
+            e.Handled = true;
+        }
+
+        private void OnRefreshClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (Server != null)
+            {
+                RefreshRequested?.Invoke(this, Server);
+            }
+            e.Handled = true;
+        }
+
+        private void OnEditClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (Server != null)
+            {
+                EditRequested?.Invoke(this, Server);
             }
             e.Handled = true;
         }

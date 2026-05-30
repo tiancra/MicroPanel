@@ -6,7 +6,7 @@ using Avalonia.Threading;
 using System;
 using System.Collections.Generic;
 
-namespace MicroPanelAvalonia.Services
+namespace MicroPanel.Services
 {
     /// <summary>
     /// 导航历史记录服务 - 记录页面访问历史，支持返回上一级

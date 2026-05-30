@@ -2,107 +2,205 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:models="using:MicroPanelAvalonia.Models"
-             mc:Ignorable="d" d:DesignWidth="320" d:DesignHeight="200"
-             x:Class="MicroPanelAvalonia.Views.ServerCard"
+             xmlns:models="using:MicroPanel.Models"
+             mc:Ignorable="d" d:DesignWidth="340" d:DesignHeight="220"
+             x:Class="MicroPanel.Views.ServerCard"
              x:DataType="models:ServerInfo"
-             Width="320" Height="200">
+             Width="340" Height="220">
 
   <Border x:Name="CardBorder"
-          Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-          CornerRadius="8"
-          BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+          Background="{DynamicResource CardBackgroundBrush}"
+          CornerRadius="12"
+          BorderBrush="{DynamicResource CardBorderBrush}"
           BorderThickness="1"
-          BoxShadow="0 2 8 0 #20000000">
+          BoxShadow="0 2 8 0 #15000000">
 
     <Grid RowDefinitions="Auto,*,Auto">
 
+      <!-- 头部 - 服务器名称和状态 -->
       <Border Grid.Row="0"
-              Background="{DynamicResource AccentFillColorDefaultBrush}"
-              CornerRadius="8,8,0,0"
-              Padding="12,8">
-        <Grid ColumnDefinitions="*,Auto">
-          <TextBlock Grid.Column="0"
-                     Text="{Binding ServerAddress}"
-                     Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
-                     FontWeight="SemiBold"
-                     FontSize="14"
-                     TextTrimming="CharacterEllipsis"/>
+              Background="{DynamicResource AccentBrush}"
+              CornerRadius="12,12,0,0"
+              Padding="16,12">
+        <Grid ColumnDefinitions="*,Auto,Auto">
+          <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+            <!-- 主标题：根据是否有名称显示名称或地址 -->
+            <TextBlock Text="{Binding ServerName}"
+                       Foreground="{DynamicResource TextOnAccentBrush}"
+                       FontWeight="SemiBold"
+                       FontSize="14"
+                       TextTrimming="CharacterEllipsis"
+                       VerticalAlignment="Center"
+                       IsVisible="{Binding ServerName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+            <TextBlock Text="{Binding ServerAddress}"
+                       Foreground="{DynamicResource TextOnAccentBrush}"
+                       FontWeight="SemiBold"
+                       FontSize="14"
+                       TextTrimming="CharacterEllipsis"
+                       VerticalAlignment="Center"
+                       IsVisible="{Binding ServerName, Converter={x:Static StringConverters.IsNullOrEmpty}}"/>
+            <!-- 副标题（仅在有名称时显示地址） -->
+            <TextBlock Text="{Binding ServerAddress}"
+                       Foreground="{DynamicResource TextOnAccentBrush}"
+                       Opacity="0.7"
+                       FontSize="11"
+                       TextTrimming="CharacterEllipsis"
+                       VerticalAlignment="Center"
+                       IsVisible="{Binding ServerName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+          </StackPanel>
 
-          <Ellipse Grid.Column="1"
-                   Width="10" Height="10"
-                   Fill="{Binding IsOnline, Converter={StaticResource OnlineStatusBrushConverter}}"
-                   Margin="8,0,0,0"
-                   ToolTip.Tip="{Binding IsOnline, Converter={StaticResource OnlineStatusTextConverter}}"/>
+          <!-- 状态指示器 -->
+          <Border Grid.Column="1"
+                  Background="{DynamicResource TextOnAccentBrush}"
+                  CornerRadius="10"
+                  Padding="8,4"
+                  Margin="8,0,0,0"
+                  Opacity="0.9">
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <Ellipse Width="6" Height="6"
+                       Fill="{Binding IsOnline, Converter={StaticResource OnlineStatusBrushConverter}}"/>
+              <TextBlock Text="{Binding IsOnline, Converter={StaticResource OnlineStatusTextConverter}}"
+                         FontSize="10"
+                         FontWeight="Medium"
+                         Foreground="{DynamicResource AccentBrush}"
+                         VerticalAlignment="Center"/>
+            </StackPanel>
+          </Border>
+
+          <!-- 刷新按钮 -->
+          <Button Grid.Column="2"
+                  Classes="Ghost"
+                  Padding="4"
+                  Margin="4,0,0,0"
+                  Click="OnRefreshClick"
+                  ToolTip.Tip="刷新状态">
+            <PathIcon Data="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"
+                      Width="14" Height="14"
+                      Foreground="{DynamicResource TextOnAccentBrush}"/>
+          </Button>
         </Grid>
       </Border>
 
-      <Grid Grid.Row="1" ColumnDefinitions="*,*" Margin="12,12">
+      <!-- 内容区域 - 系统信息 -->
+      <Grid Grid.Row="1" ColumnDefinitions="*,*" Margin="16,16">
 
-        <StackPanel Grid.Column="0" Spacing="8">
-          <StackPanel Orientation="Horizontal" Spacing="6">
-            <PathIcon Data="M9,2v2H7V2H9M19,2v2H17V2H19M9,20v2H7V20H9M19,20v2H17V20H19M14,2v2H10V2H14M5,4h2V6H5V4M19,4h2V6H19V4M2,9h2v2H2V9M22,9h2v2H22V9M5,18h2v2H5V18M19,18h2v2H19V18M2,14h2v2H2V14M22,14h2v2H22V14M9,6h6v2H9V6M6,9h2v6H6V9M16,9h2v6H16V9M9,16h6v2H9V16Z"
-                      Width="14" Height="14" Opacity="0.6"/>
-            <TextBlock Text="CPU"
-                       FontSize="12"
-                       Opacity="0.6"/>
-          </StackPanel>
-          <TextBlock Text="{Binding Status.CpuInfo, Converter={StaticResource CpuUsageConverter}, FallbackValue='--'}"
-                     FontSize="14"
-                     FontWeight="SemiBold"
-                     TextTrimming="CharacterEllipsis"/>
-
-          <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,8,0,0">
-            <PathIcon Data="M17,17H7V7H17M17,5H7A2,2 0 0,0 5,7V17A2,2 0 0,0 7,19H17A2,2 0 0,0 19,17V7A2,2 0 0,0 17,5Z"
-                      Width="14" Height="14" Opacity="0.6"/>
-            <TextBlock Text="内存"
-                       FontSize="12"
-                       Opacity="0.6"/>
-          </StackPanel>
-          <TextBlock Text="{Binding Status.RamInfo, Converter={StaticResource RamUsageConverter}, FallbackValue='--'}"
-                     FontSize="14"
-                     FontWeight="SemiBold"
-                     TextTrimming="CharacterEllipsis"/>
-        </StackPanel>
-
-        <StackPanel Grid.Column="1" Spacing="4" HorizontalAlignment="Right">
-          <TextBlock Text="{Binding Users.Count, StringFormat='{}{0} 个用户'}"
-                     FontSize="11"
-                     Opacity="0.5"/>
-          <TextBlock Text="{Binding LastUpdate, StringFormat='{}{0:HH:mm:ss}', FallbackValue='--'}"
-                     FontSize="11"
-                     Opacity="0.5"/>
-        </StackPanel>
-      </Grid>
-
-      <Border Grid.Row="2"
-              Background="{DynamicResource LayerFillColorDefaultBrush}"
-              CornerRadius="0,0,8,8"
-              Padding="12,8">
-        <Grid ColumnDefinitions="*,Auto">
-          <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
-            <PathIcon Data="M12,14a2,2 0 1,0 2,-2A2,2 0 0,0 12,14M4,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M4,6V18H20V6H4Z"
-                      Width="14" Height="14" Opacity="0.6"/>
-            <TextBlock Text="{Binding Status.DiskSizeInfo, Converter={StaticResource DiskUsageConverter}, FallbackValue='--'}"
-                       FontSize="12"
-                       VerticalAlignment="Center"
+        <!-- 左侧信息 -->
+        <StackPanel Grid.Column="0" Spacing="12">
+          <!-- CPU -->
+          <StackPanel Spacing="4">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <PathIcon Data="M6,4H18V6H6V4M6,20H18V18H6V20M6,8H8V16H6V8M16,8H18V16H16V8M10,8H14V16H10V8M4,2H20A2,2 0 0,1 22,4V20A2,2 0 0,1 20,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2Z"
+                        Width="14" Height="14"
+                        Opacity="0.6"
+                        Foreground="{DynamicResource TextSecondaryBrush}"/>
+              <TextBlock Text="CPU"
+                         FontSize="11"
+                         Opacity="0.7"
+                         Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </StackPanel>
+            <TextBlock Text="{Binding Status.CpuInfo, Converter={StaticResource CpuUsageConverter}, FallbackValue='--'}"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
                        TextTrimming="CharacterEllipsis"/>
           </StackPanel>
 
+          <!-- 内存 -->
+          <StackPanel Spacing="4">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <PathIcon Data="M17,17H7V7H17M17,5H7A2,2 0 0,0 5,7V17A2,2 0 0,0 7,19H17A2,2 0 0,0 19,17V7A2,2 0 0,0 17,5Z"
+                        Width="14" Height="14"
+                        Opacity="0.6"
+                        Foreground="{DynamicResource TextSecondaryBrush}"/>
+              <TextBlock Text="内存"
+                         FontSize="11"
+                         Opacity="0.7"
+                         Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </StackPanel>
+            <TextBlock Text="{Binding Status.RamInfo, Converter={StaticResource RamUsageConverter}, FallbackValue='--'}"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       TextTrimming="CharacterEllipsis"/>
+          </StackPanel>
+        </StackPanel>
+
+        <!-- 右侧信息 -->
+        <StackPanel Grid.Column="1" Spacing="8" HorizontalAlignment="Right">
+          <!-- 用户数量 -->
+          <Border Background="{DynamicResource AccentLightBrush}"
+                  CornerRadius="6"
+                  Padding="10,6">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <PathIcon Data="M12,12C14.21,12 16,10.21 16,8C16,5.79 14.21,4 12,4C9.79,4 8,5.79 8,8C8,10.21 9.79,12 12,12M12,14C9.33,14 4,15.34 4,18V20H20V18C20,15.34 14.67,14 12,14Z"
+                        Width="12" Height="12"
+                        Foreground="{DynamicResource AccentBrush}"/>
+              <TextBlock Text="{Binding Users.Count, StringFormat='{}{0} 用户'}"
+                         FontSize="12"
+                         FontWeight="Medium"
+                         Foreground="{DynamicResource AccentBrush}"/>
+            </StackPanel>
+          </Border>
+
+          <!-- 最后更新时间 -->
+          <StackPanel Orientation="Horizontal" Spacing="4" Opacity="0.6">
+            <PathIcon Data="M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z"
+                      Width="12" Height="12"
+                      Foreground="{DynamicResource TextTertiaryBrush}"/>
+            <TextBlock Text="{Binding LastUpdate, StringFormat='{}{0:HH:mm}', FallbackValue='--'}"
+                       FontSize="11"
+                       Foreground="{DynamicResource TextTertiaryBrush}"/>
+          </StackPanel>
+        </StackPanel>
+      </Grid>
+
+      <!-- 底部 - 磁盘信息和操作按钮 -->
+      <Border Grid.Row="2"
+              Background="{DynamicResource LayerBackgroundBrush}"
+              CornerRadius="0,0,12,12"
+              Padding="16,12">
+        <Grid ColumnDefinitions="*,Auto">
+          <!-- 磁盘信息 -->
+          <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+            <PathIcon Data="M6,2H18A2,2 0 0,1 20,4V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2M12,4A6,6 0 0,0 6,10C6,13.31 8.69,16 12,16A6,6 0 0,0 18,10A6,6 0 0,0 12,4M12,14A4,4 0 0,1 8,10A4,4 0 0,1 12,6A4,4 0 0,1 16,10A4,4 0 0,1 12,14Z"
+                      Width="14" Height="14"
+                      Opacity="0.6"
+                      Foreground="{DynamicResource TextSecondaryBrush}"/>
+            <TextBlock Text="{Binding Status.DiskSizeInfo, Converter={StaticResource DiskUsageConverter}, FallbackValue='--'}"
+                       FontSize="12"
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       TextTrimming="CharacterEllipsis"/>
+          </StackPanel>
+
+          <!-- 操作按钮 -->
           <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
             <Button Classes="Ghost"
-                    Padding="4"
+                    Padding="6"
                     ToolTip.Tip="用户管理"
                     Click="OnUserManagementClick">
-              <PathIcon Data="M12,12c2.21,0 4,-1.79 4,-4s-1.79,-4 -4,-4 -4,1.79 -4,4 1.79,4 4,4zM12,14c-2.67,0 -8,1.34 -8,4v2h16v-2c0,-2.66 -5.33,-4 -8,-4z"
-                        Width="16" Height="16" Opacity="0.6"/>
+              <PathIcon Data="M12,12C14.21,12 16,10.21 16,8C16,5.79 14.21,4 12,4C9.79,4 8,5.79 8,8C8,10.21 9.79,12 12,12M12,14C9.33,14 4,15.34 4,18V20H20V18C20,15.34 14.67,14 12,14Z"
+                        Width="16" Height="16"
+                        Opacity="0.7"
+                        Foreground="{DynamicResource TextSecondaryBrush}"/>
             </Button>
             <Button Classes="Ghost"
-                    Padding="4"
+                    Padding="6"
+                    ToolTip.Tip="编辑服务器"
+                    Click="OnEditClick">
+              <PathIcon Data="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"
+                        Width="16" Height="16"
+                        Opacity="0.7"
+                        Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </Button>
+            <Button Classes="Ghost"
+                    Padding="6"
                     ToolTip.Tip="删除服务器"
                     Click="OnDeleteClick">
-              <PathIcon Data="M6,19c0,1.1 0.9,2 2,2h8c1.1,0 2,-0.9 2,-2V7H6v12zM19,4h-3.5l-1,-1h-5l-1,1H5v2h14V4z"
-                        Width="16" Height="16" Opacity="0.6"/>
+              <PathIcon Data="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"
+                        Width="16" Height="16"
+                        Opacity="0.7"
+                        Foreground="{DynamicResource ErrorBrush}"/>
             </Button>
           </StackPanel>
         </Grid>

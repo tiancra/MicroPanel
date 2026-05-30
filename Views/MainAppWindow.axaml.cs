@@ -9,9 +9,9 @@ using Avalonia.Rendering.Composition.Animations;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Avalonia.Layout;
-using MicroPanelAvalonia.Models;
-using MicroPanelAvalonia.Services;
-using MicroPanelAvalonia.Views.Pages;
+using MicroPanel.Models;
+using MicroPanel.Services;
+using MicroPanel.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,10 +20,11 @@ using System.Net.Http;
 using System.Numerics;
 using System.Text.Json;
 using System.Threading.Tasks;
+using MicroPanel.Controls;
 
-namespace MicroPanelAvalonia.Views
+namespace MicroPanel.Views
 {
-    public partial class MainAppWindow : Window
+    public partial class MainAppWindow : MyWindow
     {
         private UserControl? _currentPage;
         private Button? _currentMenuButton;
@@ -251,12 +252,49 @@ namespace MicroPanelAvalonia.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+            
+            // 订阅NavigationView的SelectionChanged事件
+            var navigationView = this.FindControl<FluentAvalonia.UI.Controls.NavigationView>("NavigationView");
+            if (navigationView != null)
+            {
+                navigationView.SelectionChanged += NavigationView_SelectionChanged;
+            }
+        }
+        
+        /// <summary>
+        /// NavigationView选择改变事件处理
+        /// </summary>
+        private void NavigationView_SelectionChanged(object? sender, FluentAvalonia.UI.Controls.NavigationViewSelectionChangedEventArgs e)
+        {
+            if (e.SelectedItem is FluentAvalonia.UI.Controls.NavigationViewItem item && item.Tag is string tag)
+            {
+                Services.AppDebugLogger.LogComponentInteraction("NavigationView", "SelectionChanged", $"Tag: {tag}");
+
+                NavigateToPage(tag);
+
+                // 更新窗口标题为当前页面标题
+                string pageTitle = tag;
+                if (item.Content is TextBlock textBlock)
+                {
+                    pageTitle = textBlock.Text ?? tag;
+                }
+                else if (item.Content != null)
+                {
+                    pageTitle = item.Content.ToString() ?? tag;
+                }
+                this.Title = $"Micro Panel - {pageTitle}";
+
+                Services.AppDebugLogger.LogStateChange("WindowTitle", null, $"Micro Panel - {pageTitle}");
+            }
         }
 
         private async Task OnWindowLoadedAsync(object? sender, RoutedEventArgs e)
         {
             // 更新用户信息显示
             await UpdateUserInfoAsync();
+
+            // 根据用户路由权限隐藏菜单项
+            ApplyRoutePermissions();
 
             // 初始化导航历史服务
             InitializeNavigationHistory();
@@ -269,6 +307,99 @@ namespace MicroPanelAvalonia.Views
             if (homeButton != null)
             {
                 SetMenuButtonActive(homeButton);
+            }
+        }
+
+        /// <summary>
+        /// 根据用户路由权限隐藏菜单项
+        /// </summary>
+        private void ApplyRoutePermissions()
+        {
+            var session = SessionService.Instance;
+            var userRoutes = session.UserRoutes;
+
+            if (userRoutes == null || userRoutes.Count == 0)
+            {
+                Debug.WriteLine("[RoutePermission] 用户没有路由限制，显示所有菜单");
+                return;
+            }
+
+            Debug.WriteLine($"[RoutePermission] 用户路由: {string.Join(", ", userRoutes)}");
+
+            // 遍历 NavigationView 的所有菜单项
+            var navigationView = this.FindControl<FluentAvalonia.UI.Controls.NavigationView>("NavigationView");
+            if (navigationView == null)
+            {
+                Debug.WriteLine("[RoutePermission] 未找到 NavigationView");
+                return;
+            }
+
+            // 遍历所有 MenuItems 和 FooterMenuItems
+            ApplyRoutePermissionsToItems(navigationView.MenuItems, userRoutes);
+            ApplyRoutePermissionsToItems(navigationView.FooterMenuItems, userRoutes);
+
+            Debug.WriteLine("[RoutePermission] 路由权限应用完成");
+        }
+
+        /// <summary>
+        /// 根据路由权限显示/隐藏菜单项
+        /// routes 列表中的项是要隐藏的，其他全部显示
+        /// </summary>
+        private void ApplyRoutePermissionsToItems(
+            IList<object>? items,
+            List<string> userRoutes)
+        {
+            if (items == null) return;
+
+            // 后端路由到前端 Tag 的映射
+            var routeToTagMap = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Plugins"] = new[] { "Plugins" },           // 插件开发
+                ["Permission"] = new[] { "ConfigUser" },     // 权限配置
+                ["Plugin"] = new[] { "ConfigPlugin" },       // 插件配置
+                ["Bot"] = new[] { "ConfigBot" },             // Bot配置
+                ["Fs"] = new[] { "Files" },                  // 文件管理
+            };
+
+            foreach (var item in items.ToList())
+            {
+                if (item is FluentAvalonia.UI.Controls.NavigationViewItem navItem && navItem.Tag is string tag)
+                {
+                    // 检查该 Tag 是否在隐藏列表中
+                    bool shouldHide = false;
+                    
+                    // 直接匹配
+                    if (userRoutes.Contains(tag, StringComparer.OrdinalIgnoreCase))
+                    {
+                        shouldHide = true;
+                    }
+                    else
+                    {
+                        // 通过映射表检查
+                        foreach (var route in userRoutes)
+                        {
+                            if (routeToTagMap.TryGetValue(route, out var tags))
+                            {
+                                if (tags.Contains(tag, StringComparer.OrdinalIgnoreCase))
+                                {
+                                    shouldHide = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (shouldHide)
+                    {
+                        Debug.WriteLine($"[RoutePermission] 隐藏菜单项: {tag} (在隐藏列表中)");
+                        navItem.IsVisible = false;
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"[RoutePermission] 显示菜单项: {tag} (不在隐藏列表中)");
+                        navItem.IsVisible = true;
+                    }
+                }
             }
         }
 
@@ -610,6 +741,11 @@ namespace MicroPanelAvalonia.Views
 
             if (contentControl == null) return;
 
+            // 记录导航前的页面
+            var fromPage = _currentPage?.GetType().Name ?? "None";
+
+            Services.AppDebugLogger.LogNavigation(fromPage, pageName, recordHistory ? "记录历史" : "不记录历史");
+
             UserControl? newPage = pageName switch
             {
                 "Home" => new HomePage(),
@@ -631,6 +767,8 @@ namespace MicroPanelAvalonia.Views
 
             if (newPage != null)
             {
+                Services.AppDebugLogger.LogComponentInteraction("NavigationView", "Navigate", $"目标页面: {pageName}");
+
                 // 执行页面切换动画
                 await AnimatePageTransitionAsync(contentControl, newPage);
 
@@ -659,7 +797,14 @@ namespace MicroPanelAvalonia.Views
                 if (recordHistory)
                 {
                     NavigationHistoryService.Instance.Push(pageName);
+                    Services.AppDebugLogger.LogStateChange("NavigationHistory", null, pageName);
                 }
+
+                Services.AppDebugLogger.LogUserAction("页面导航完成", $"当前页面: {pageName}");
+            }
+            else
+            {
+                Services.AppDebugLogger.LogComponentInteraction("NavigationView", "Navigate Failed", $"未知页面: {pageName}");
             }
         }
 

@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:pages="clr-namespace:MicroPanelAvalonia.Views.Pages"
-             x:Class="MicroPanelAvalonia.Views.Pages.PluginsPage">
+             xmlns:pages="clr-namespace:MicroPanel.Views.Pages"
+             x:Class="MicroPanel.Views.Pages.PluginsPage">
   <Grid RowDefinitions="Auto,*">
     <!-- 顶部工具栏 -->
     <Border Grid.Row="0" 

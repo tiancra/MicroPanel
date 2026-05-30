@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace MicroPanelAvalonia.Services
+namespace MicroPanel.Services
 {
     /// <summary>
     /// 桌面模式管理器 - 管理全屏和分屏窗口布局

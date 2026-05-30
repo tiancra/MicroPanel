@@ -4,10 +4,11 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
 using System;
+using MicroPanel.Controls;
 
-namespace MicroPanelAvalonia.Views.Windows
+namespace MicroPanel.Views.Windows
 {
-    public partial class ToastWindow : Window
+    public partial class ToastWindow : MyWindow
     {
         private Border? _toastBorder;
         private TextBlock? _toastText;

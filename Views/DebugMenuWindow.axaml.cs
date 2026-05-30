@@ -2,21 +2,26 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using MicroPanelAvalonia.Services;
+using MicroPanel.Services;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAvalonia.UI.Controls;
+using MicroPanel.Controls;
 
-namespace MicroPanelAvalonia.Views
+namespace MicroPanel.Views
 {
     /// <summary>
     /// 调试菜单窗口
     /// </summary>
-    public partial class DebugMenuWindow : Window
+    public partial class DebugMenuWindow : MyWindow
     {
+        private NavigationView? _navigationView;
+        private TextBlock? _contentTextBlock;
+
         public DebugMenuWindow()
         {
             InitializeComponent();
@@ -47,6 +52,57 @@ namespace MicroPanelAvalonia.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+            
+            _navigationView = this.FindControl<NavigationView>("NavigationView");
+            _contentTextBlock = this.FindControl<TextBlock>("ContentTextBlock");
+        }
+
+        /// <summary>
+        /// NavigationView 选择改变事件处理
+        /// </summary>
+        private void NavigationView_SelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
+        {
+            if (e.SelectedItem is NavigationViewItem item && item.Tag is string tag)
+            {
+                HandleNavigationItemSelected(tag);
+            }
+        }
+
+        /// <summary>
+        /// 处理导航项选择
+        /// </summary>
+        private void HandleNavigationItemSelected(string tag)
+        {
+            switch (tag)
+            {
+                case "AppInfo":
+                    ShowAppInfo();
+                    break;
+                case "MemoryInfo":
+                    ShowMemoryInfo();
+                    break;
+                case "NetworkTest":
+                    TestNetwork();
+                    break;
+                case "TestCrash":
+                    TestCrash();
+                    break;
+                case "TestNullRef":
+                    TestNullReference();
+                    break;
+                case "TestUiFreeze":
+                    TestUiFreeze();
+                    break;
+                case "ReloadConfig":
+                    ReloadConfig();
+                    break;
+                case "ToggleMode":
+                    ToggleMode();
+                    break;
+                case "ExitDebugMode":
+                    ExitDebugMode();
+                    break;
+            }
         }
 
         /// <summary>
@@ -71,7 +127,7 @@ namespace MicroPanelAvalonia.Views
         /// <summary>
         /// 显示应用信息
         /// </summary>
-        private void OnShowAppInfoClick(object? sender, RoutedEventArgs e)
+        private void ShowAppInfo()
         {
             var info = $"""
                 应用信息:
@@ -85,13 +141,16 @@ namespace MicroPanelAvalonia.Views
                 """;
 
             DebugModeService.LogDebug(info);
-            ShowInfoDialog("应用信息", info);
+            if (_contentTextBlock != null)
+            {
+                _contentTextBlock.Text = info;
+            }
         }
 
         /// <summary>
         /// 显示内存信息
         /// </summary>
-        private void OnShowMemoryInfoClick(object? sender, RoutedEventArgs e)
+        private void ShowMemoryInfo()
         {
             var process = Process.GetCurrentProcess();
             var info = $"""
@@ -104,70 +163,100 @@ namespace MicroPanelAvalonia.Views
                 """;
 
             DebugModeService.LogDebug(info);
-            ShowInfoDialog("内存信息", info);
+            if (_contentTextBlock != null)
+            {
+                _contentTextBlock.Text = info;
+            }
         }
 
         /// <summary>
         /// 测试网络连接
         /// </summary>
-        private async void OnTestNetworkClick(object? sender, RoutedEventArgs e)
+        private async void TestNetwork()
         {
-            DebugModeService.LogDebug("测试网络连接...");
+            if (_contentTextBlock != null)
+            {
+                _contentTextBlock.Text = "正在测试网络连接...";
+            }
+
             try
             {
                 using var client = new HttpClient();
                 client.Timeout = TimeSpan.FromSeconds(10);
                 var response = await client.GetAsync("https://www.baidu.com");
-                var result = $"网络连接测试: {(response.IsSuccessStatusCode ? "成功" : "失败")}\n状态码: {response.StatusCode}";
+                var result = $"""
+                    网络连接测试结果:
+                    - 状态: {(response.IsSuccessStatusCode ? "成功" : "失败")}
+                    - 状态码: {response.StatusCode}
+                    - 响应时间: {DateTime.Now:HH:mm:ss}
+                    """;
                 DebugModeService.LogDebug(result);
-                ShowInfoDialog("网络测试", result);
+                if (_contentTextBlock != null)
+                {
+                    _contentTextBlock.Text = result;
+                }
             }
             catch (Exception ex)
             {
-                var error = $"网络连接测试失败: {ex.Message}";
+                var error = $"""
+                    网络连接测试失败:
+                    - 错误: {ex.Message}
+                    - 时间: {DateTime.Now:HH:mm:ss}
+                    """;
                 DebugModeService.LogDebug(error);
-                ShowInfoDialog("网络测试", error);
+                if (_contentTextBlock != null)
+                {
+                    _contentTextBlock.Text = error;
+                }
             }
         }
 
         /// <summary>
         /// 测试崩溃 - 立即崩溃（带二次确认）
         /// </summary>
-        private async void OnTestCrashClick(object? sender, RoutedEventArgs e)
+        private async void TestCrash()
         {
-            var dialog = new FluentAvalonia.UI.Controls.ContentDialog
+            var dialog = new ContentDialog
             {
                 Title = "危险操作确认",
                 Content = "确定要立即崩溃应用吗？\n\n这将导致应用异常退出，未保存的数据可能会丢失。",
                 PrimaryButtonText = "确定崩溃",
                 CloseButtonText = "取消",
-                DefaultButton = FluentAvalonia.UI.Controls.ContentDialogButton.Close
+                DefaultButton = ContentDialogButton.Close
             };
 
             var result = await dialog.ShowAsync();
-            if (result == FluentAvalonia.UI.Controls.ContentDialogResult.Primary)
+            if (result == ContentDialogResult.Primary)
             {
                 DebugModeService.LogDebug("触发测试崩溃!");
                 Environment.FailFast("测试崩溃");
+            }
+            else
+            {
+                // 用户取消，恢复默认显示
+                if (_contentTextBlock != null)
+                {
+                    _contentTextBlock.Text = "请从左侧菜单选择调试功能";
+                }
             }
         }
 
         /// <summary>
         /// 测试空引用异常（带二次确认）
         /// </summary>
-        private async void OnTestNullReferenceClick(object? sender, RoutedEventArgs e)
+        private async void TestNullReference()
         {
-            var dialog = new FluentAvalonia.UI.Controls.ContentDialog
+            var dialog = new ContentDialog
             {
                 Title = "危险操作确认",
                 Content = "确定要测试空引用异常吗？\n\n这将触发一个异常并被捕获。",
                 PrimaryButtonText = "确定",
                 CloseButtonText = "取消",
-                DefaultButton = FluentAvalonia.UI.Controls.ContentDialogButton.Close
+                DefaultButton = ContentDialogButton.Close
             };
 
             var result = await dialog.ShowAsync();
-            if (result == FluentAvalonia.UI.Controls.ContentDialogResult.Primary)
+            if (result == ContentDialogResult.Primary)
             {
                 DebugModeService.LogDebug("触发空引用异常测试");
                 try
@@ -177,8 +266,24 @@ namespace MicroPanelAvalonia.Views
                 }
                 catch (NullReferenceException ex)
                 {
-                    DebugModeService.LogDebug($"捕获到空引用异常: {ex.Message}");
-                    ShowInfoDialog("异常测试", $"成功捕获空引用异常:\n{ex.Message}");
+                    var message = $"""
+                        成功捕获空引用异常:
+                        - 消息: {ex.Message}
+                        - 时间: {DateTime.Now:HH:mm:ss}
+                        """;
+                    DebugModeService.LogDebug(message);
+                    if (_contentTextBlock != null)
+                    {
+                        _contentTextBlock.Text = message;
+                    }
+                }
+            }
+            else
+            {
+                // 用户取消，恢复默认显示
+                if (_contentTextBlock != null)
+                {
+                    _contentTextBlock.Text = "请从左侧菜单选择调试功能";
                 }
             }
         }
@@ -186,41 +291,61 @@ namespace MicroPanelAvalonia.Views
         /// <summary>
         /// 测试 UI 卡死（带二次确认）
         /// </summary>
-        private async void OnTestUiFreezeClick(object? sender, RoutedEventArgs e)
+        private async void TestUiFreeze()
         {
-            var dialog = new FluentAvalonia.UI.Controls.ContentDialog
+            var dialog = new ContentDialog
             {
                 Title = "危险操作确认",
                 Content = "确定要测试 UI 卡死吗？\n\n应用界面将冻结 5 秒钟。",
                 PrimaryButtonText = "确定",
                 CloseButtonText = "取消",
-                DefaultButton = FluentAvalonia.UI.Controls.ContentDialogButton.Close
+                DefaultButton = ContentDialogButton.Close
             };
 
             var result = await dialog.ShowAsync();
-            if (result == FluentAvalonia.UI.Controls.ContentDialogResult.Primary)
+            if (result == ContentDialogResult.Primary)
             {
                 DebugModeService.LogDebug("触发 UI 卡死测试（5秒）");
+                if (_contentTextBlock != null)
+                {
+                    _contentTextBlock.Text = "UI 卡死测试中...（5秒）";
+                }
+                
                 // 在 UI 线程上阻塞 5 秒
                 Thread.Sleep(5000);
+                
                 DebugModeService.LogDebug("UI 卡死测试结束");
+                if (_contentTextBlock != null)
+                {
+                    _contentTextBlock.Text = "UI 卡死测试完成";
+                }
+            }
+            else
+            {
+                // 用户取消，恢复默认显示
+                if (_contentTextBlock != null)
+                {
+                    _contentTextBlock.Text = "请从左侧菜单选择调试功能";
+                }
             }
         }
 
         /// <summary>
         /// 重新加载配置
         /// </summary>
-        private void OnReloadConfigClick(object? sender, RoutedEventArgs e)
+        private void ReloadConfig()
         {
             DebugModeService.LogDebug("重新加载配置");
-            // 这里可以实现重新加载配置的逻辑
-            ShowInfoDialog("提示", "配置已重新加载");
+            if (_contentTextBlock != null)
+            {
+                _contentTextBlock.Text = "配置已重新加载\n\n时间: " + DateTime.Now.ToString("HH:mm:ss");
+            }
         }
 
         /// <summary>
         /// 切换桌面/正常模式
         /// </summary>
-        private async void OnToggleModeClick(object? sender, RoutedEventArgs e)
+        private async void ToggleMode()
         {
             bool isDesktopMode = DesktopModeManager.Instance.IsDesktopMode;
             string targetMode = isDesktopMode ? "正常模式" : "桌面模式";
@@ -228,17 +353,17 @@ namespace MicroPanelAvalonia.Views
                 ? "确定要重启到正常模式吗？\n\n这将移除桌面模式参数。"
                 : "确定要重启到桌面模式吗？\n\n这将同时保留调试模式。";
 
-            var dialog = new FluentAvalonia.UI.Controls.ContentDialog
+            var dialog = new ContentDialog
             {
                 Title = $"重启到{targetMode}",
                 Content = message,
                 PrimaryButtonText = "确定",
                 CloseButtonText = "取消",
-                DefaultButton = FluentAvalonia.UI.Controls.ContentDialogButton.Primary
+                DefaultButton = ContentDialogButton.Primary
             };
 
             var result = await dialog.ShowAsync();
-            if (result == FluentAvalonia.UI.Controls.ContentDialogResult.Primary)
+            if (result == ContentDialogResult.Primary)
             {
                 if (isDesktopMode)
                 {
@@ -247,6 +372,14 @@ namespace MicroPanelAvalonia.Views
                 else
                 {
                     RestartToDesktopMode();
+                }
+            }
+            else
+            {
+                // 用户取消，恢复默认显示
+                if (_contentTextBlock != null)
+                {
+                    _contentTextBlock.Text = "请从左侧菜单选择调试功能";
                 }
             }
         }
@@ -340,24 +473,32 @@ namespace MicroPanelAvalonia.Views
         /// <summary>
         /// 退出调试模式
         /// </summary>
-        private async void OnExitDebugModeClick(object? sender, RoutedEventArgs e)
+        private async void ExitDebugMode()
         {
             DebugModeService.LogDebug("退出调试模式");
             
-            var dialog = new FluentAvalonia.UI.Controls.ContentDialog
+            var dialog = new ContentDialog
             {
                 Title = "退出调试模式",
                 Content = "确定要退出调试模式并重启应用吗？",
                 PrimaryButtonText = "确定",
                 CloseButtonText = "取消",
-                DefaultButton = FluentAvalonia.UI.Controls.ContentDialogButton.Primary
+                DefaultButton = ContentDialogButton.Primary
             };
 
             var result = await dialog.ShowAsync();
-            if (result == FluentAvalonia.UI.Controls.ContentDialogResult.Primary)
+            if (result == ContentDialogResult.Primary)
             {
                 // 移除调试模式参数并重启
                 RestartWithoutDebugMode();
+            }
+            else
+            {
+                // 用户取消，恢复默认显示
+                if (_contentTextBlock != null)
+                {
+                    _contentTextBlock.Text = "请从左侧菜单选择调试功能";
+                }
             }
         }
 
@@ -397,20 +538,6 @@ namespace MicroPanelAvalonia.Views
             {
                 DebugModeService.LogDebug($"退出调试模式失败: {ex}");
             }
-        }
-
-        /// <summary>
-        /// 显示信息对话框
-        /// </summary>
-        private async void ShowInfoDialog(string title, string content)
-        {
-            var dialog = new FluentAvalonia.UI.Controls.ContentDialog
-            {
-                Title = title,
-                Content = content,
-                CloseButtonText = "确定"
-            };
-            await dialog.ShowAsync();
         }
     }
 }

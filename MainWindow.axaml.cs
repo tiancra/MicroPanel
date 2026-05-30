@@ -1,526 +1,414 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
-using FluentAvalonia.Styling;
-using MicroPanelAvalonia.Models;
-using MicroPanelAvalonia.Services;
-using MicroPanelAvalonia.Views;
+using FluentAvalonia.UI.Controls;
+using MicroPanel.Models;
+using MicroPanel.Services;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using MicroPanelAvalonia.Views.Pages;
+using MicroPanel.Views.Pages;
+using MicroPanel.Helpers.UI;
+using MicroPanel.Views;
+using MicroPanel.Controls;
 
-namespace MicroPanelAvalonia
+namespace MicroPanel;
+
+public partial class MainWindow : MyWindow
 {
-    public partial class MainWindow : Window
+    private readonly ApiService _apiService;
+    private readonly ServerManager _serverManager;
+    private readonly Timer _refreshTimer;
+    private ServerInfo? _currentContextServer;
+
+    public MainWindow()
     {
-        private readonly ApiService _apiService;
-        private readonly ServerManager _serverManager;
-        private readonly Timer _refreshTimer;
-        private ServerInfo? _currentContextServer;
-        private ServerUser? _currentEditingUser;
+        InitializeComponent();
 
-        public MainWindow()
+        _apiService = new ApiService();
+        _serverManager = new ServerManager(_apiService);
+
+        _refreshTimer = new Timer(5000);
+        _refreshTimer.Elapsed += async (s, e) => await _serverManager.RefreshAllServersAsync();
+        _refreshTimer.Start();
+
+        LoadServers();
+
+        DesktopModeManager.Instance.RegisterMainWindow(this);
+
+        if (DebugModeService.IsDebugMode)
         {
-            InitializeComponent();
+            ShowDebugModeWatermark();
+        }
 
-            _apiService = new ApiService();
-            _serverManager = new ServerManager(_apiService);
-
-            _refreshTimer = new Timer(5000);
-            _refreshTimer.Elapsed += async (s, e) => await _serverManager.RefreshAllServersAsync();
-            _refreshTimer.Start();
-
-            SetupConverters();
-            SetupDialogs();
-            LoadServers();
-
-            // 注册到桌面模式管理器
-            DesktopModeManager.Instance.RegisterMainWindow(this);
-
-            // 如果是调试模式，显示水印
+        Loaded += async (s, e) => 
+        {
+            await _serverManager.RefreshAllServersAsync();
+            
             if (DebugModeService.IsDebugMode)
             {
-                ShowDebugModeWatermark();
-            }
-
-            // 窗口加载完成后立即刷新所有服务器状态
-            Loaded += async (s, e) => 
-            {
-                await _serverManager.RefreshAllServersAsync();
+                await DebugModeService.ShowDebugModeWarningDialog(this);
                 
-                // 如果是调试模式，显示警告弹窗并打开调试菜单
-                if (DebugModeService.IsDebugMode)
+                await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    await DebugModeService.ShowDebugModeWarningDialog(this);
-                    
-                    // 打开调试菜单（无法关闭）
-                    await Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        OpenDebugMenu();
-                    }, DispatcherPriority.Background);
-                }
-            };
-
-        }
-
-
-
-        /// <summary>
-        /// 打开调试菜单（无法关闭）
-        /// </summary>
-        private void OpenDebugMenu()
-        {
-            try
-            {
-                DebugModeService.LogDebug("正在创建调试菜单窗口...");
-                var debugMenu = new DebugMenuWindow();
-                
-                // 注意：关闭事件阻止已在 DebugMenuWindow 构造函数中处理
-                
-                debugMenu.Show();
-                DebugModeService.LogDebug("调试菜单窗口已显示（无法关闭）");
-            }
-            catch (Exception ex)
-            {
-                DebugModeService.LogDebug($"打开调试菜单失败: {ex}");
-            }
-        }
-
-        /// <summary>
-        /// 显示调试模式水印
-        /// </summary>
-        private void ShowDebugModeWatermark()
-        {
-            var watermark = this.FindControl<Border>("DebugModeWatermark");
-            if (watermark != null)
-            {
-                watermark.IsVisible = true;
-            }
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
-
-        private void SetupConverters()
-        {
-            // 转换器已在 App.axaml 中定义
-        }
-
-        private void SetupDialogs()
-        {
-            // 添加服务器弹窗
-            var addServerDialog = this.FindControl<AddServerDialog>("AddServerDialog");
-            if (addServerDialog != null)
-            {
-                addServerDialog.Cancelled += (s, e) => HideAddServerDialog();
-                addServerDialog.Confirmed += async (s, e) =>
-                {
-                    var result = await _serverManager.AddServerAsync(e.serverAddress, e.username, e.password);
-                    if (result.success)
-                    {
-                        HideAddServerDialog();
-                        LoadServers();
-                    }
-                    else
-                    {
-                        addServerDialog.ShowError(result.message);
-                    }
-                };
-            }
-
-            // 用户选择弹窗
-            var userSelectDialog = this.FindControl<UserSelectDialog>("UserSelectDialog");
-            if (userSelectDialog != null)
-            {
-                userSelectDialog.Cancelled += (s, e) => HideUserSelectDialog();
-                userSelectDialog.UserSelected += (s, e) =>
-                {
-                    HideUserSelectDialog();
-                    OnUserLoggedIn(e.server, e.user, e.token);
-                };
-                userSelectDialog.ShowUserConfig += (s, e) =>
-                {
-                    HideUserSelectDialog();
-                    _currentContextServer = e.server;
-                    ShowUserManagementDialog(e.server);
-                    // 选中当前用户并打开编辑
-                    var userManagementDialog = this.FindControl<UserManagementDialog>("UserManagementDialog");
-                    userManagementDialog?.SelectUser(e.user);
-                };
-            }
-
-            // 用户管理弹窗
-            var userManagementDialog = this.FindControl<UserManagementDialog>("UserManagementDialog");
-            if (userManagementDialog != null)
-            {
-                userManagementDialog.CloseRequested += (s, e) => HideUserManagementDialog();
-                userManagementDialog.EditUserRequested += (s, user) =>
-                {
-                    _currentEditingUser = user;
-                    ShowEditUserDialog(user);
-                };
-                userManagementDialog.DeleteUserRequested += (s, user) =>
-                {
-                    ShowConfirmDialog(
-                        "删除用户",
-                        $"确定要删除用户 \"{user.Username}\" 吗？",
-                        () =>
-                        {
-                            if (_currentContextServer != null)
-                            {
-                                _serverManager.RemoveUser(_currentContextServer, user);
-                                userManagementDialog.RefreshUsersList();
-                            }
-                        });
-                };
-                userManagementDialog.AddUserRequested += (s, e) =>
-                {
-                    ShowAddUserDialog();
-                };
-            }
-
-            // 编辑/添加用户弹窗
-            var editUserDialog = this.FindControl<EditUserDialog>("EditUserDialog");
-            if (editUserDialog != null)
-            {
-                editUserDialog.Cancelled += (s, e) => HideEditUserDialog();
-                editUserDialog.Confirmed += async (s, e) =>
-                {
-                    if (_currentContextServer == null) return;
-
-                    if (_currentEditingUser != null)
-                    {
-                        // 编辑模式 - 更新密码
-                        _serverManager.UpdateUser(_currentContextServer, _currentEditingUser, e.password);
-                        HideEditUserDialog();
-                        var userManagementDialog2 = this.FindControl<UserManagementDialog>("UserManagementDialog");
-                        userManagementDialog2?.RefreshUsersList();
-                    }
-                    else
-                    {
-                        // 添加模式
-                        var result = await _serverManager.AddUserToServerAsync(_currentContextServer, e.username, e.password);
-                        if (result.success)
-                        {
-                            HideEditUserDialog();
-                            var userManagementDialog2 = this.FindControl<UserManagementDialog>("UserManagementDialog");
-                            userManagementDialog2?.RefreshUsersList();
-                        }
-                        else
-                        {
-                            editUserDialog.ShowError(result.message);
-                        }
-                    }
-                };
-            }
-
-            // 确认弹窗
-            var confirmDialog = this.FindControl<ConfirmDialog>("ConfirmDialogControl");
-            if (confirmDialog != null)
-            {
-                confirmDialog.Cancelled += (s, e) => HideConfirmDialog();
-                confirmDialog.Confirmed += (s, e) =>
-                {
-                    HideConfirmDialog();
-                    _confirmAction?.Invoke();
-                };
-            }
-        }
-
-        private Action? _confirmAction;
-
-        private void ShowConfirmDialog(string title, string message, Action onConfirm)
-        {
-            _confirmAction = onConfirm;
-            var confirmDialog = this.FindControl<ConfirmDialog>("ConfirmDialogControl");
-            confirmDialog?.SetContent(title, message);
-            ShowOverlay("ConfirmOverlay", "ConfirmDialogContainer");
-        }
-
-        private void HideConfirmDialog()
-        {
-            HideOverlay("ConfirmOverlay", "ConfirmDialogContainer");
-        }
-
-        private void LoadServers()
-        {
-            var itemsControl = this.FindControl<ItemsControl>("ServersItemsControl");
-            if (itemsControl == null) return;
-
-            itemsControl.ItemsSource = null;
-
-            var serverCards = new List<ServerCard>();
-            foreach (var server in _serverManager.Servers)
-            {
-                var card = new ServerCard
-                {
-                    DataContext = server,
-                    Margin = new Thickness(0, 0, 16, 16)
-                };
-                card.CardClicked += OnServerCardClicked;
-                card.UserManagementRequested += OnUserManagementRequested;
-                card.DeleteRequested += OnDeleteRequested;
-                serverCards.Add(card);
-            }
-
-            itemsControl.ItemsSource = serverCards;
-        }
-
-        private void OnUserManagementRequested(object? sender, ServerInfo server)
-        {
-            _currentContextServer = server;
-            ShowUserManagementDialog(server);
-        }
-
-        private void OnDeleteRequested(object? sender, ServerInfo server)
-        {
-            ShowConfirmDialog(
-                "删除服务器",
-                $"确定要删除服务器 \"{server.ServerAddress}\" 吗？",
-                () =>
-                {
-                    _serverManager.RemoveServer(server);
-                    LoadServers();
-                });
-        }
-
-        private void ShowUserManagementDialog(ServerInfo server)
-        {
-            var dialog = this.FindControl<UserManagementDialog>("UserManagementDialog");
-            dialog?.SetServer(server);
-            ShowOverlay("UserManagementOverlay", "UserManagementDialogContainer");
-        }
-
-        private void HideUserManagementDialog()
-        {
-            HideOverlay("UserManagementOverlay", "UserManagementDialogContainer");
-            _currentContextServer = null;
-        }
-
-        private void ShowEditUserDialog(ServerUser user)
-        {
-            var dialog = this.FindControl<EditUserDialog>("EditUserDialog");
-            dialog?.SetEditMode(user);
-            dialog?.Reset();
-            ShowOverlay("EditUserOverlay", "EditUserDialogContainer");
-        }
-
-        private void ShowAddUserDialog()
-        {
-            _currentEditingUser = null;
-            var dialog = this.FindControl<EditUserDialog>("EditUserDialog");
-            dialog?.SetAddMode();
-            dialog?.Reset();
-            ShowOverlay("EditUserOverlay", "EditUserDialogContainer");
-        }
-
-        private void HideEditUserDialog()
-        {
-            HideOverlay("EditUserOverlay", "EditUserDialogContainer");
-        }
-
-        private void ShowOverlay(string overlayName, string containerName)
-        {
-            var overlay = this.FindControl<Border>(overlayName);
-            var container = this.FindControl<Border>(containerName);
-
-            if (overlay != null && container != null)
-            {
-                overlay.IsVisible = true;
-                Dispatcher.UIThread.Post(() =>
-                {
-                    overlay.Opacity = 1;
-                    container.Opacity = 1;
-                    container.RenderTransform = new ScaleTransform(1, 1);
-                }, DispatcherPriority.Render);
-            }
-        }
-
-        private void HideOverlay(string overlayName, string containerName)
-        {
-            var overlay = this.FindControl<Border>(overlayName);
-            var container = this.FindControl<Border>(containerName);
-
-            if (overlay != null && container != null)
-            {
-                overlay.Opacity = 0;
-                container.Opacity = 0;
-                container.RenderTransform = new ScaleTransform(0.9, 0.9);
-
-                Dispatcher.UIThread.Post(async () =>
-                {
-                    await Task.Delay(250);
-                    overlay.IsVisible = false;
+                    OpenDebugMenu();
                 }, DispatcherPriority.Background);
             }
-        }
+        };
+    }
 
-        private void OnAddServerClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void OpenDebugMenu()
+    {
+        try
         {
-            ShowOverlay("AddServerOverlay", "AddServerDialogContainer");
-            var dialog = this.FindControl<AddServerDialog>("AddServerDialog");
-            dialog?.Reset();
+            DebugModeService.LogDebug("正在创建调试菜单窗口...");
+            var debugMenu = new DebugMenuWindow();
+            debugMenu.Show();
+            DebugModeService.LogDebug("调试菜单窗口已显示（无法关闭）");
         }
-
-        private void HideAddServerDialog()
+        catch (Exception ex)
         {
-            HideOverlay("AddServerOverlay", "AddServerDialogContainer");
+            DebugModeService.LogDebug($"打开调试菜单失败: {ex}");
         }
+    }
 
-        private void OnServerCardClicked(object? sender, ServerInfo server)
+    private void ShowDebugModeWatermark()
+    {
+        var watermark = this.FindControl<Border>("DebugModeWatermark");
+        if (watermark != null)
         {
-            // 检查服务器是否在线
-            if (!server.IsOnline)
+            watermark.IsVisible = true;
+        }
+    }
+
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
+        
+        var navigationView = this.FindControl<NavigationView>("NavigationView");
+        if (navigationView != null)
+        {
+            navigationView.SelectionChanged += NavigationView_SelectionChanged;
+        }
+    }
+    
+    private void NavigationView_SelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs e)
+    {
+        if (e.SelectedItem is NavigationViewItem item && item.Tag is string tag)
+        {
+            string pageTitle = tag;
+            if (item.Content is TextBlock textBlock)
             {
-                ShowError("服务器离线", "该服务器当前处于离线状态，无法进入主界面。");
-                return;
+                pageTitle = textBlock.Text ?? tag;
+            }
+            else if (item.Content != null)
+            {
+                pageTitle = item.Content.ToString() ?? tag;
             }
             
-            if (server.Users.Count == 1)
+            switch (tag)
             {
-                _ = LoginWithUserAsync(server, server.Users[0]);
+                case "Home":
+                    ShowServerListView();
+                    this.Title = $"Micro Panel - {pageTitle}";
+                    break;
+                case "Settings":
+                    ShowSettingsView();
+                    this.Title = $"Micro Panel - {pageTitle}";
+                    break;
+                case "About":
+                    ShowAboutView();
+                    this.Title = $"Micro Panel - {pageTitle}";
+                    break;
             }
-            else if (server.Users.Count > 1)
+        }
+    }
+    
+    private void ShowServerListView()
+    {
+        var serverListView = this.FindControl<Grid>("ServerListView");
+        var settingsView = this.FindControl<SettingsPage>("SettingsView");
+        var aboutView = this.FindControl<AboutPage>("AboutView");
+        
+        if (serverListView != null) serverListView.IsVisible = true;
+        if (settingsView != null) settingsView.IsVisible = false;
+        if (aboutView != null) aboutView.IsVisible = false;
+    }
+    
+    private void ShowSettingsView()
+    {
+        var serverListView = this.FindControl<Grid>("ServerListView");
+        var settingsView = this.FindControl<SettingsPage>("SettingsView");
+        var aboutView = this.FindControl<AboutPage>("AboutView");
+        
+        if (serverListView != null) serverListView.IsVisible = false;
+        if (settingsView != null) settingsView.IsVisible = true;
+        if (aboutView != null) aboutView.IsVisible = false;
+    }
+    
+    private void ShowAboutView()
+    {
+        var serverListView = this.FindControl<Grid>("ServerListView");
+        var settingsView = this.FindControl<SettingsPage>("SettingsView");
+        var aboutView = this.FindControl<AboutPage>("AboutView");
+        
+        if (serverListView != null) serverListView.IsVisible = false;
+        if (settingsView != null) settingsView.IsVisible = false;
+        if (aboutView != null) aboutView.IsVisible = true;
+    }
+
+    private void LoadServers()
+    {
+        var itemsControl = this.FindControl<ItemsControl>("ServersItemsControl");
+        if (itemsControl == null) return;
+
+        itemsControl.ItemsSource = null;
+
+        var serverCards = new List<ServerCard>();
+        foreach (var server in _serverManager.Servers)
+        {
+            var card = new ServerCard
             {
-                ShowUserSelectDialog(server);
-            }
+                DataContext = server,
+                Margin = new Thickness(0, 0, 16, 16)
+            };
+            card.CardClicked += OnServerCardClicked;
+            card.UserManagementRequested += OnUserManagementRequested;
+            card.DeleteRequested += OnDeleteRequested;
+            card.EditRequested += OnEditRequested;
+            serverCards.Add(card);
         }
 
-        private void ShowUserSelectDialog(ServerInfo server)
-        {
-            var dialog = this.FindControl<UserSelectDialog>("UserSelectDialog");
-            dialog?.SetServer(server);
-            dialog?.Reset();
-            ShowOverlay("UserSelectOverlay", "UserSelectDialogContainer");
-        }
+        itemsControl.ItemsSource = serverCards;
+    }
 
-        private void HideUserSelectDialog()
+    private async void OnEditRequested(object? sender, ServerInfo server)
+    {
+        var result = await MicroPanelDialogs.ShowAddServerDialog(server, this);
+        if (result.success)
         {
-            HideOverlay("UserSelectOverlay", "UserSelectDialogContainer");
-        }
-
-        private async Task LoginWithUserAsync(ServerInfo server, ServerUser user)
-        {
-            var result = await _serverManager.LoginWithUserAsync(server, user);
-            if (result.success && result.token != null)
+            var updateResult = await _serverManager.UpdateServerAsync(server, result.serverAddress!, result.username!, result.password!, result.serverName);
+            if (updateResult.success)
             {
-                OnUserLoggedIn(server, user, result.token);
+                LoadServers();
+                ToastService.Instance.ShowSuccess("服务器更新成功");
             }
             else
             {
-                ShowError("登录失败", result.token ?? "未知错误");
+                await CommonTaskDialogs.ShowDialog("更新失败", updateResult.message, this);
             }
         }
+    }
 
-        private void OnUserLoggedIn(ServerInfo server, ServerUser user, string token)
+    private async void OnUserManagementRequested(object? sender, ServerInfo server)
+    {
+        while (true)
         {
-            Console.WriteLine($"用户 {user.Username} 已登录服务器 {server.ServerAddress}");
-            Console.WriteLine($"Token: {token}");
-
-            // 创建会话
-            SessionService.Instance.StartSession(server, user, token);
-
-            // 打开主应用窗口
-            var mainAppWindow = new Views.MainAppWindow();
-            mainAppWindow.Show();
-
-            // 隐藏当前窗口（服务器列表窗口）
-            Hide();
-
-            // 当主应用窗口关闭时，重新显示当前窗口
-            mainAppWindow.Closed += (s, e) =>
+            var result = await MicroPanelDialogs.ShowUserManagementDialog(server, this);
+            switch (result.action)
             {
-                Show();
-                // 刷新服务器状态
-                _ = _serverManager.RefreshAllServersAsync();
-            };
-        }
+                case MicroPanelDialogs.UserManagementAction.EditUser:
+                    if (result.targetUser != null)
+                    {
+                        var editResult = await MicroPanelDialogs.ShowEditUserDialog(result.targetUser, this);
+                        if (editResult.success && !string.IsNullOrWhiteSpace(editResult.password))
+                        {
+                            _serverManager.UpdateUser(server, result.targetUser, editResult.password);
+                            LoadServers();
+                        }
+                    }
+                    break;
 
-        private async void OnRefreshClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            await _serverManager.RefreshAllServersAsync();
-        }
+                case MicroPanelDialogs.UserManagementAction.DeleteUser:
+                    if (result.targetUser != null)
+                    {
+                        var confirm = await MicroPanelDialogs.ShowConfirmDialog("删除用户", $"确定要删除用户 \"{result.targetUser.Username}\" 吗？", this);
+                        if (confirm)
+                        {
+                            _serverManager.RemoveUser(server, result.targetUser);
+                            LoadServers();
+                        }
+                    }
+                    break;
 
-        private void ShowError(string title, string message)
-        {
-            Console.WriteLine($"[{title}] {message}");
-        }
+                case MicroPanelDialogs.UserManagementAction.AddUser:
+                    var addResult = await MicroPanelDialogs.ShowEditUserDialog(null, this);
+                    if (addResult.success && !string.IsNullOrWhiteSpace(addResult.username) && !string.IsNullOrWhiteSpace(addResult.password))
+                    {
+                        var addResult2 = await _serverManager.AddUserToServerAsync(server, addResult.username, addResult.password);
+                        if (!addResult2.success)
+                        {
+                            await CommonTaskDialogs.ShowDialog("添加失败", addResult2.message, this);
+                        }
+                        else
+                        {
+                            LoadServers();
+                        }
+                    }
+                    break;
 
-        protected override void OnClosed(EventArgs e)
-        {
-            _refreshTimer?.Stop();
-            _refreshTimer?.Dispose();
-            base.OnClosed(e);
-        }
-
-        /// <summary>
-        /// 主页按钮点击
-        /// </summary>
-        private void OnHomeClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            ShowServerList();
-        }
-
-        /// <summary>
-        /// 设置按钮点击
-        /// </summary>
-        private void OnSettingsClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            // 切换显示设置页面
-            var serverListView = this.FindControl<Grid>("ServerListView");
-            var settingsView = this.FindControl<Views.Pages.SettingsPage>("SettingsView");
-            var aboutView = this.FindControl<Views.Pages.AboutPage>("AboutView");
-
-            if (serverListView != null && settingsView != null)
-            {
-                serverListView.IsVisible = false;
-                aboutView!.IsVisible = false;
-                settingsView.IsVisible = true;
+                default:
+                    return;
             }
         }
+    }
 
-        /// <summary>
-        /// 关于按钮点击
-        /// </summary>
-        private void OnAboutClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void OnDeleteRequested(object? sender, ServerInfo server)
+    {
+        var confirmed = await MicroPanelDialogs.ShowConfirmDialog("删除服务器", $"确定要删除服务器 \"{server.ServerName}\" 吗？", this);
+        if (confirmed)
         {
-            // 切换显示关于页面
-            var serverListView = this.FindControl<Grid>("ServerListView");
-            var settingsView = this.FindControl<Views.Pages.SettingsPage>("SettingsView");
-            var aboutView = this.FindControl<Views.Pages.AboutPage>("AboutView");
+            _serverManager.RemoveServer(server);
+            LoadServers();
+        }
+    }
 
-            if (serverListView != null && aboutView != null)
+    private async void OnAddServerClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var result = await MicroPanelDialogs.ShowAddServerDialog(null, this);
+        if (result.success)
+        {
+            var addResult = await _serverManager.AddServerAsync(result.serverAddress!, result.username!, result.password!, result.serverName);
+            if (addResult.success)
             {
-                serverListView.IsVisible = false;
-                settingsView!.IsVisible = false;
-                aboutView.IsVisible = true;
+                LoadServers();
+            }
+            else
+            {
+                await CommonTaskDialogs.ShowDialog("添加失败", addResult.message, this);
             }
         }
+    }
 
-        /// <summary>
-        /// 显示服务器列表
-        /// </summary>
-        public void ShowServerList()
+    private async void OnServerCardClicked(object? sender, ServerInfo server)
+    {
+        if (!server.IsOnline)
         {
-            var serverListView = this.FindControl<Grid>("ServerListView");
-            var settingsView = this.FindControl<Views.Pages.SettingsPage>("SettingsView");
-            var aboutView = this.FindControl<Views.Pages.AboutPage>("AboutView");
-
-            if (serverListView != null)
+            await CommonTaskDialogs.ShowDialog("服务器离线", "该服务器当前处于离线状态，无法进入主界面。", this);
+            return;
+        }
+        
+        if (server.Users.Count == 1)
+        {
+            _ = LoginWithUserAsync(server, server.Users[0]);
+        }
+        else if (server.Users.Count > 1)
+        {
+            var result = await MicroPanelDialogs.ShowUserSelectDialog(server, this);
+            if (result.success && result.user != null)
             {
-                serverListView.IsVisible = true;
-                settingsView!.IsVisible = false;
-                aboutView!.IsVisible = false;
+                _ = LoginWithUserAsync(server, result.user);
             }
+        }
+    }
+
+    private async Task LoginWithUserAsync(ServerInfo server, ServerUser user)
+    {
+        var result = await _serverManager.LoginWithUserAsync(server, user);
+        if (result.success && result.token != null)
+        {
+            await OnUserLoggedInAsync(server, user, result.token);
+        }
+        else
+        {
+            await CommonTaskDialogs.ShowDialog("登录失败", result.token ?? "未知错误", this);
+        }
+    }
+
+    private async Task OnUserLoggedInAsync(ServerInfo server, ServerUser user, string token)
+    {
+        Console.WriteLine($"用户 {user.Username} 已登录服务器 {server.ServerAddress}");
+        Console.WriteLine($"Token: {token}");
+
+        // 获取用户信息以获取 routes
+        _apiService.SetBaseUrl(server.ServerAddress);
+        var userInfoResponse = await _apiService.GetUserInfoAsync(token);
+        
+        // 如果返回 403 "未找到该用户登录"，尝试刷新 Token
+        if (userInfoResponse?.Code == 403 && userInfoResponse?.Message?.Contains("未找到该用户登录") == true)
+        {
+            Console.WriteLine("Token 已过期，尝试重新登录...");
+            
+            // 使用保存的密码重新登录
+            var loginResponse = await _apiService.LoginAsync(user.Username, user.Password);
+            
+            if (loginResponse?.IsSuccess == true && !string.IsNullOrEmpty(loginResponse.Data))
+            {
+                // 更新本地 Token
+                var newToken = loginResponse.Data;
+                user.Token = newToken;
+                user.TokenExpiry = DateTime.Now.AddHours(24);
+                _serverManager.SaveServers();
+                
+                Console.WriteLine($"Token 刷新成功，新 Token: {newToken}");
+                
+                // 使用新 Token 重新获取用户信息
+                userInfoResponse = await _apiService.GetUserInfoAsync(newToken);
+                token = newToken;
+                
+                // 如果还是失败，说明账号真的过期了
+                if (userInfoResponse?.Code == 403)
+                {
+                    Console.WriteLine("Token 刷新后仍然失败，账号已过期");
+                    await CommonTaskDialogs.ShowDialog("登录失败", "账号已过期，请重新登录", this);
+                    return;
+                }
+            }
+            else
+            {
+                // 重新登录失败
+                Console.WriteLine($"重新登录失败: {loginResponse?.Message}");
+                await CommonTaskDialogs.ShowDialog("登录失败", "账号已过期，请重新登录", this);
+                return;
+            }
+        }
+        
+        var userRoutes = userInfoResponse?.Data?.Routes;
+
+        Console.WriteLine($"用户路由权限: {string.Join(", ", userRoutes ?? new List<string>())}");
+
+        // 启动会话并存储 routes
+        SessionService.Instance.StartSession(server, user, token, userRoutes);
+
+        var mainAppWindow = new Views.MainAppWindow();
+        mainAppWindow.Show();
+
+        Hide();
+
+        mainAppWindow.Closed += (s, e) =>
+        {
+            Show();
+            _ = _serverManager.RefreshAllServersAsync();
+        };
+    }
+
+    private async void OnRefreshClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        await _serverManager.RefreshAllServersAsync();
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        _refreshTimer?.Stop();
+        _refreshTimer?.Dispose();
+        base.OnClosed(e);
+    }
+
+    public void ShowServerList()
+    {
+        var serverListView = this.FindControl<Grid>("ServerListView");
+        var settingsView = this.FindControl<SettingsPage>("SettingsView");
+        var aboutView = this.FindControl<AboutPage>("AboutView");
+
+        if (serverListView != null)
+        {
+            serverListView.IsVisible = true;
+            settingsView!.IsVisible = false;
+            aboutView!.IsVisible = false;
         }
     }
 }

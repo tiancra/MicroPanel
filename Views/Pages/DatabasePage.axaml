@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:models="clr-namespace:MicroPanelAvalonia.Models"
-             x:Class="MicroPanelAvalonia.Views.Pages.DatabasePage">
+             xmlns:models="clr-namespace:MicroPanel.Models"
+             x:Class="MicroPanel.Views.Pages.DatabasePage">
   <UserControl.Styles>
     <!-- TreeViewItem 展开/折叠动画 -->
     <Style Selector="TreeViewItem">

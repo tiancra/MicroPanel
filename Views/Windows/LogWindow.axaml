@@ -1,12 +1,21 @@
-<Window xmlns="https://github.com/avaloniaui"
+<local:MyWindow xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:MicroPanelAvalonia.Views.Controls"
-        x:Class="MicroPanelAvalonia.Views.Windows.LogWindow"
+        xmlns:local="using:MicroPanel.Controls"
+        xmlns:windowing="clr-namespace:FluentAvalonia.UI.Windowing;assembly=FluentAvalonia"
+        xmlns:controls="using:MicroPanel.Views.Controls"
+        x:Class="MicroPanel.Views.Windows.LogWindow"
         Title="日志输出"
         Width="900"
         Height="600"
         MinWidth="300"
-        MinHeight="200">
+        MinHeight="200"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        TransparencyLevelHint="Mica"
+        Background="Transparent"
+        EnableMicaWindow="True"
+        windowing:AppWindow.AllowInteractionInTitleBar="True">
   <Grid RowDefinitions="Auto,*">
     <!-- 顶部工具栏 -->
     <Border Grid.Row="0"
@@ -92,4 +101,4 @@
       </Grid>
     </Border>
   </Grid>
-</Window>
+</local:MyWindow>

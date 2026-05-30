@@ -2,17 +2,18 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using MicroPanelAvalonia.Services;
+using MicroPanel.Services;
 using System;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using MicroPanel.Controls;
 
-namespace MicroPanelAvalonia.Views.Windows
+namespace MicroPanel.Views.Windows
 {
-    public partial class LogWindow : Window
+    public partial class LogWindow : MyWindow
     {
         private ClientWebSocket? _webSocket;
         private CancellationTokenSource? _cts;

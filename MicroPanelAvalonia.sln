@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.4.11626.88 stable
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroPanelAvalonia", "MicroPanelAvalonia.csproj", "{F07228B2-5A6A-46CD-D3C9-FD95C6492337}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroPanel", "MicroPanel.csproj", "{F07228B2-5A6A-46CD-D3C9-FD95C6492337}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

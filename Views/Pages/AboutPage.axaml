@@ -1,6 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="MicroPanelAvalonia.Views.Pages.AboutPage">
+             x:Class="MicroPanel.Views.Pages.AboutPage">
   <Grid RowDefinitions="Auto,*">
     <!-- 标题栏 -->
     <Border Grid.Row="0"
@@ -26,7 +26,7 @@
                 Padding="32">
           <StackPanel Spacing="12" HorizontalAlignment="Center">
             <!-- Logo -->
-            <Image Source="avares://MicroPanelAvalonia/Assets/logo.png"
+            <Image Source="avares://MicroPanel/Assets/logo.png"
                    Width="64" Height="64"/>
 
             <!-- 应用名称 -->
@@ -37,7 +37,7 @@
 
             <!-- 版本号 - 点击5次进入调试模式 -->
             <TextBlock x:Name="VersionText"
-                       Text="版本 2.0.0_Beta2"
+                       Text="版本 2.0.0_Beta3"
                        FontSize="14"
                        Opacity="0.6"
                        HorizontalAlignment="Center"

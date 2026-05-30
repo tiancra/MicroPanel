@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="MicroPanel.Views.Controls.DesktopWallpaperControl">
+  <Grid>
+    <!-- 壁纸图片 -->
+    <Image x:Name="WallpaperImage"
+           Stretch="UniformToFill"
+           HorizontalAlignment="Stretch"
+           VerticalAlignment="Stretch"/>
+
+    <!-- 模糊效果层 - 使用模糊后的壁纸图片 -->
+    <Image x:Name="BlurredWallpaperImage"
+           Stretch="UniformToFill"
+           HorizontalAlignment="Stretch"
+           VerticalAlignment="Stretch"
+           IsVisible="False">
+      <Image.Effect>
+        <BlurEffect Radius="30"/>
+      </Image.Effect>
+    </Image>
+
+    <!-- 背景遮罩层 - 用于调节整体透明度 -->
+    <Border x:Name="OverlayBorder"
+            Background="{DynamicResource WindowBackgroundBrush}"
+            Opacity="0.3"
+            IsVisible="False"/>
+  </Grid>
+</UserControl>

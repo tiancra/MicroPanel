@@ -126,7 +126,7 @@ MicroPanel/
 │   │   └── Windows/            # 窗口
 │   ├── App.axaml               # 应用入口
 │   ├── MainWindow.axaml        # 主窗口
-│   └── MicroPanelAvalonia.csproj
+│   └── MicroPanel.csproj
 │
 ├── MicroPanelApp/              # 移动应用 (.NET MAUI)
 │   ├── Platforms/              # 平台特定代码

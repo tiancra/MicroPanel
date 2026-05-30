@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MicroPanel")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a2d25d5c773288b04eae24db79ec2feaf7a1645f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a6dc30c4d868b313ce4367887e02c0064b6a0731")]
 [assembly: System.Reflection.AssemblyProductAttribute("MicroPanel")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MicroPanel")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

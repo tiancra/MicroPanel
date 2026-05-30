@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace MicroPanelAvalonia.Models
+namespace MicroPanel.Models
 {
     public class ServerInfo : INotifyPropertyChanged
     {

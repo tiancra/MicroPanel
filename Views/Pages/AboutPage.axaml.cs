@@ -10,7 +10,7 @@ using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
 
-namespace MicroPanelAvalonia.Views.Pages
+namespace MicroPanel.Views.Pages
 {
     public partial class AboutPage : UserControl
     {

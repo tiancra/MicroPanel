@@ -3,12 +3,12 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
-using MicroPanelAvalonia.Models;
+using MicroPanel.Models;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace MicroPanelAvalonia.Views.Controls
+namespace MicroPanel.Views.Controls
 {
     public partial class MessageSegmentEditor : UserControl
     {

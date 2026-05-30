@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "MicroPanelAvalonia": {
+    "MicroPanel": {
       "commandName": "Project",
       "commandLineArgs": "--debugmode"
     }

@@ -1,6 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="MicroPanelAvalonia.Views.Pages.SettingsPage">
+             x:Class="MicroPanel.Views.Pages.SettingsPage">
   <Grid RowDefinitions="Auto,*">
     <!-- 标题栏 -->
     <Border Grid.Row="0"
@@ -44,6 +44,83 @@
                 <ComboBoxItem Content="跟随系统"/>
               </ComboBox>
             </Grid>
+          </StackPanel>
+        </Border>
+
+        <!-- 桌面壁纸设置卡片（仅在桌面模式下显示） -->
+        <Border x:Name="DesktopWallpaperCard"
+                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="8"
+                Padding="24"
+                IsVisible="False">
+          <StackPanel Spacing="16">
+            <TextBlock Text="桌面壁纸"
+                       FontSize="16"
+                       FontWeight="SemiBold"/>
+            
+            <!-- 启用桌面壁纸 -->
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Grid.Column="0" 
+                         Text="显示桌面壁纸" 
+                         FontSize="14"
+                         VerticalAlignment="Center"/>
+              <ToggleSwitch Grid.Column="1"
+                            x:Name="EnableWallpaperToggle"
+                            OnContent=""
+                            OffContent=""/>
+            </Grid>
+
+            <!-- 壁纸设置选项（启用后显示） -->
+            <StackPanel x:Name="WallpaperOptionsPanel"
+                        Spacing="16"
+                        IsVisible="False">
+              
+              <!-- 透明度滑块 -->
+              <Grid RowDefinitions="Auto,Auto">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0"
+                           Text="透明度" 
+                           FontSize="14"
+                           VerticalAlignment="Center"
+                           Margin="0,0,16,0"/>
+                <Slider Grid.Row="0" Grid.Column="1"
+                        x:Name="OpacitySlider"
+                        Minimum="0"
+                        Maximum="100"
+                        Value="50"
+                        VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="2"
+                           x:Name="OpacityValueText"
+                           Text="50%"
+                           FontSize="14"
+                           VerticalAlignment="Center"
+                           Margin="16,0,0,0"
+                           MinWidth="40"/>
+              </Grid>
+
+              <!-- 模糊效果 -->
+              <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" 
+                           Text="启用模糊效果" 
+                           FontSize="14"
+                           VerticalAlignment="Center"/>
+                <ToggleSwitch Grid.Column="1"
+                              x:Name="EnableBlurToggle"
+                              OnContent=""
+                              OffContent=""/>
+              </Grid>
+
+              <!-- 模糊遮罩说明 -->
+              <TextBlock x:Name="BlurDescriptionText"
+                         Text="启用后将在壁纸上方添加模糊遮罩效果"
+                         FontSize="12"
+                         Opacity="0.6"
+                         IsVisible="False"/>
+            </StackPanel>
           </StackPanel>
         </Border>
       </StackPanel>

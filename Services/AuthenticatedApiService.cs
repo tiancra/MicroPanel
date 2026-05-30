@@ -1,4 +1,4 @@
-using MicroPanelAvalonia.Models;
+using MicroPanel.Models;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace MicroPanelAvalonia.Services
+namespace MicroPanel.Services
 {
     public class AuthenticatedApiService
     {

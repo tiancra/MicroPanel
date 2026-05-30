@@ -1,5 +1,5 @@
-using MicroPanelAvalonia.Models;
-using MicroPanelAvalonia.Services;
+using MicroPanel.Models;
+using MicroPanel.Services;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace MicroPanelAvalonia.Services
+namespace MicroPanel.Services
 {
     /// <summary>
     /// 插件管理服务

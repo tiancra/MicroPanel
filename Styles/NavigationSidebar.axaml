@@ -1,108 +1,213 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <!-- Windows 11 Style Navigation Sidebar with Animated Selection Indicator -->
+  <!-- ============================================ -->
+  <!-- Fluent Design Navigation Sidebar Styles -->
+  <!-- 基于 ClassIsland 和 WinUI 3 设计规范 -->
+  <!-- ============================================ -->
 
-  <Styles.Resources>
-    <!-- 侧边栏背景色 -->
-    <SolidColorBrush x:Key="NavigationSidebarBackgroundBrush" Color="#F5F9FF" />
-    <SolidColorBrush x:Key="NavigationSidebarBackgroundBrushDark" Color="#1E1E1E" />
+  <!-- ============================================ -->
+  <!-- 导航按钮样式 -->
+  <!-- ============================================ -->
 
-    <!-- 导航项背景色 -->
-    <SolidColorBrush x:Key="NavigationItemBackgroundBrush" Color="Transparent" />
-    <!-- 悬停时变深 -->
-    <SolidColorBrush x:Key="NavigationItemBackgroundHoverBrush" Color="#D0E0F0" />
-    <SolidColorBrush x:Key="NavigationItemBackgroundHoverBrushDark" Color="#3A3A3A" />
-    <!-- 选中项背景为灰色 -->
-    <SolidColorBrush x:Key="NavigationItemBackgroundSelectedBrush" Color="#E5E5E5" />
-    <SolidColorBrush x:Key="NavigationItemBackgroundSelectedBrushDark" Color="#3A3A3A" />
+  <Style Selector="Button.Navigation">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Foreground" Value="{DynamicResource NavItemForegroundBrush}"/>
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="Margin" Value="4,2"/>
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="CornerRadius" Value="8"/>
+    <Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="MinHeight" Value="40"/>
+  </Style>
 
-    <!-- 导航项文字颜色 -->
-    <SolidColorBrush x:Key="NavigationItemForegroundBrush" Color="#1F1F1F" />
-    <SolidColorBrush x:Key="NavigationItemForegroundBrushDark" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="NavigationItemForegroundSelectedBrush" Color="#005FB8" />
-    <SolidColorBrush x:Key="NavigationItemForegroundSelectedBrushDark" Color="#4CC2FF" />
+  <!-- 悬停状态 -->
+  <Style Selector="Button.Navigation:pointerover">
+    <Setter Property="Background" Value="{DynamicResource NavItemBackgroundHoverBrush}"/>
+  </Style>
 
-    <!-- 选中指示器颜色 -->
-    <SolidColorBrush x:Key="NavigationSelectionIndicatorBrush" Color="#005FB8" />
-    <SolidColorBrush x:Key="NavigationSelectionIndicatorBrushDark" Color="#4CC2FF" />
-  </Styles.Resources>
+  <!-- 选中状态 -->
+  <Style Selector="Button.Navigation.Selected">
+    <Setter Property="Background" Value="{DynamicResource NavItemBackgroundSelectedBrush}"/>
+    <Setter Property="Foreground" Value="{DynamicResource NavItemForegroundSelectedBrush}"/>
+  </Style>
+
+  <Style Selector="Button.Navigation.Selected:pointerover">
+    <Setter Property="Background" Value="{DynamicResource NavItemBackgroundSelectedBrush}"/>
+  </Style>
+
+  <!-- 按下状态 -->
+  <Style Selector="Button.Navigation:pressed">
+    <Setter Property="Background" Value="{DynamicResource NavItemBackgroundHoverBrush}"/>
+    <Setter Property="RenderTransform" Value="scale(0.98)"/>
+  </Style>
+
+  <!-- ============================================ -->
+  <!-- 幽灵按钮样式 -->
+  <!-- ============================================ -->
+
+  <Style Selector="Button.Ghost">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Padding" Value="8"/>
+    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="Cursor" Value="Hand"/>
+  </Style>
+
+  <Style Selector="Button.Ghost:pointerover">
+    <Setter Property="Background" Value="{DynamicResource NavItemBackgroundHoverBrush}"/>
+    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+  </Style>
+
+  <Style Selector="Button.Ghost:pressed">
+    <Setter Property="Background" Value="{DynamicResource NavItemBackgroundSelectedBrush}"/>
+  </Style>
 
   <!-- ============================================ -->
   <!-- 侧边栏容器样式 -->
   <!-- ============================================ -->
 
   <Style Selector="Border.Sidebar">
-    <Setter Property="Background" Value="{DynamicResource NavigationSidebarBackgroundBrush}" />
-    <Setter Property="BorderThickness" Value="0,0,1,0" />
-    <Setter Property="BorderBrush" Value="#E0E8F0" />
-    <Setter Property="Width" Value="240" />
-  </Style>
-
-  <Style Selector="Border.Sidebar:dark">
-    <Setter Property="Background" Value="{DynamicResource NavigationSidebarBackgroundBrushDark}" />
-    <Setter Property="BorderBrush" Value="#333333" />
+    <Setter Property="Background" Value="{DynamicResource SidebarBackgroundBrush}"/>
+    <Setter Property="BorderThickness" Value="0,0,1,0"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+    <Setter Property="Width" Value="260"/>
   </Style>
 
   <!-- ============================================ -->
-  <!-- 导航按钮样式 - 无内置指示器 -->
-  <!-- ============================================ -->
-
-  <Style Selector="Button.Navigation">
-    <Setter Property="Background" Value="{DynamicResource NavigationItemBackgroundBrush}" />
-    <Setter Property="Foreground" Value="{DynamicResource NavigationItemForegroundBrush}" />
-    <Setter Property="Padding" Value="22,10,16,10" />
-    <Setter Property="Margin" Value="8,2" />
-    <Setter Property="HorizontalAlignment" Value="Stretch" />
-    <Setter Property="HorizontalContentAlignment" Value="Left" />
-    <Setter Property="VerticalContentAlignment" Value="Center" />
-    <Setter Property="CornerRadius" Value="6" />
-    <Setter Property="Cursor" Value="Hand" />
-    <Setter Property="MinHeight" Value="40" />
-  </Style>
-
-  <!-- 悬停状态 - 使用更具体的选择器覆盖默认样式 -->
-  <Style Selector="Button.Navigation:pointerover">
-    <Setter Property="Background" Value="#D0E0F0" />
-  </Style>
-  <Style Selector="Button.Navigation:pointerover /template/ ContentPresenter">
-    <Setter Property="Background" Value="#D0E0F0" />
-  </Style>
-
-  <!-- 选中状态 - 灰色背景 -->
-  <Style Selector="Button.Navigation.Selected">
-    <Setter Property="Background" Value="{DynamicResource NavigationItemBackgroundSelectedBrush}" />
-    <Setter Property="Foreground" Value="{DynamicResource NavigationItemForegroundSelectedBrush}" />
-  </Style>
-
-  <!-- ============================================ -->
-  <!-- 深色模式 -->
-  <!-- ============================================ -->
-
-  <Style Selector="Button.Navigation:dark">
-    <Setter Property="Foreground" Value="{DynamicResource NavigationItemForegroundBrushDark}" />
-  </Style>
-  <Style Selector="Button.Navigation:pointerover:dark">
-    <Setter Property="Background" Value="{DynamicResource NavigationItemBackgroundHoverBrushDark}" />
-  </Style>
-  <Style Selector="Button.Navigation.Selected:dark">
-    <Setter Property="Background" Value="{DynamicResource NavigationItemBackgroundSelectedBrushDark}" />
-    <Setter Property="Foreground" Value="{DynamicResource NavigationItemForegroundSelectedBrushDark}" />
-  </Style>
-
-  <!-- ============================================ -->
-  <!-- 底部用户区域样式 -->
+  <!-- 用户区域样式 -->
   <!-- ============================================ -->
 
   <Style Selector="Border.UserArea">
-    <Setter Property="Background" Value="{DynamicResource NavigationItemBackgroundHoverBrush}" />
-    <Setter Property="CornerRadius" Value="8" />
-    <Setter Property="Padding" Value="12,10" />
-    <Setter Property="Margin" Value="12,8" />
+    <Setter Property="Background" Value="{DynamicResource LayerBackgroundBrush}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+    <Setter Property="BorderThickness" Value="0,1,0,0"/>
+    <Setter Property="Padding" Value="16,12"/>
   </Style>
 
-  <Style Selector="Border.UserArea:dark">
-    <Setter Property="Background" Value="{DynamicResource NavigationItemBackgroundHoverBrushDark}" />
+  <!-- ============================================ -->
+  <!-- 分隔线样式 -->
+  <!-- ============================================ -->
+
+  <Style Selector="Border.Divider">
+    <Setter Property="Height" Value="1"/>
+    <Setter Property="Background" Value="{DynamicResource DividerBrush}"/>
+    <Setter Property="Margin" Value="16,12"/>
+  </Style>
+
+  <!-- ============================================ -->
+  <!-- 分组标题样式 -->
+  <!-- ============================================ -->
+
+  <Style Selector="TextBlock.GroupHeader">
+    <Setter Property="FontSize" Value="11"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="Foreground" Value="{DynamicResource TextTertiaryBrush}"/>
+    <Setter Property="Margin" Value="16,16,16,8"/>
+  </Style>
+
+  <!-- ============================================ -->
+  <!-- 卡片样式 -->
+  <!-- ============================================ -->
+
+  <Style Selector="Border.Card">
+    <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="8"/>
+    <Setter Property="BoxShadow" Value="0 2 8 0 #15000000"/>
+  </Style>
+
+  <Style Selector="Border.CardPrimary">
+    <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="12"/>
+    <Setter Property="BoxShadow" Value="0 4 16 0 #20000000"/>
+  </Style>
+
+  <!-- ============================================ -->
+  <!-- 页面标题栏样式 -->
+  <!-- ============================================ -->
+
+  <Style Selector="Border.PageHeader">
+    <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+    <Setter Property="Padding" Value="24,16"/>
+  </Style>
+
+  <!-- ============================================ -->
+  <!-- 弹窗样式 -->
+  <!-- ============================================ -->
+
+  <Style Selector="Border.DialogOverlay">
+    <Setter Property="Background" Value="#80000000"/>
+  </Style>
+
+  <Style Selector="Border.DialogContainer">
+    <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+    <Setter Property="CornerRadius" Value="12"/>
+    <Setter Property="BoxShadow" Value="0 8 32 0 #40000000"/>
+    <Setter Property="Padding" Value="24"/>
+  </Style>
+
+  <!-- ============================================ -->
+  <!-- 徽章/标签样式 -->
+  <!-- ============================================ -->
+
+  <Style Selector="Border.Badge">
+    <Setter Property="Background" Value="{DynamicResource AccentLightBrush}"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="Padding" Value="8,4"/>
+  </Style>
+
+  <Style Selector="Border.BadgeAccent">
+    <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="Padding" Value="8,4"/>
+  </Style>
+
+  <Style Selector="Border.BadgeSuccess">
+    <Setter Property="Background" Value="{DynamicResource SuccessBrush}"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="Padding" Value="8,4"/>
+  </Style>
+
+  <Style Selector="Border.BadgeWarning">
+    <Setter Property="Background" Value="{DynamicResource WarningBrush}"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="Padding" Value="8,4"/>
+  </Style>
+
+  <Style Selector="Border.BadgeError">
+    <Setter Property="Background" Value="{DynamicResource ErrorBrush}"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="Padding" Value="8,4"/>
+  </Style>
+
+  <!-- ============================================ -->
+  <!-- 状态指示器样式 -->
+  <!-- ============================================ -->
+
+  <Style Selector="Ellipse.StatusIndicator">
+    <Setter Property="Width" Value="10"/>
+    <Setter Property="Height" Value="10"/>
+  </Style>
+
+  <Style Selector="Ellipse.StatusOnline">
+    <Setter Property="Fill" Value="{DynamicResource SuccessBrush}"/>
+  </Style>
+
+  <Style Selector="Ellipse.StatusOffline">
+    <Setter Property="Fill" Value="{DynamicResource ErrorBrush}"/>
+  </Style>
+
+  <Style Selector="Ellipse.StatusWarning">
+    <Setter Property="Fill" Value="{DynamicResource WarningBrush}"/>
   </Style>
 
 </Styles>

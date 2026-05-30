@@ -1,6 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="MicroPanelAvalonia.Views.Pages.PluginEditPage">
+             x:Class="MicroPanel.Views.Pages.PluginEditPage">
   <Grid RowDefinitions="Auto,*">
     <!-- 顶部工具栏 -->
     <Border Grid.Row="0" 
